@@ -37,14 +37,14 @@ force.on("tick", function(e) {
   for (i = 1; i < n; ++i) q.visit(collide(nodes[i]));
 
   context.clearRect(0, 0, width, height);
-  context.fillStyle = "red";
+  context.fillStyle = "orange";
   context.beginPath();
   for (i = 1; i < n; ++i) {
     d = nodes[i];
     context.moveTo(d.x, d.y);
     context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
   }
-  context.fillRect(20,20,mouseCharge,mouseCharge);
+  context.fillRect(20,20,mouseCharge/100,mouseCharge/100);
   context.fill();
 });
 
