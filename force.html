@@ -14,7 +14,7 @@ root.radius = 0;
 root.fixed = true;
 
 mouseCharge = 1000;
-colorStyle = "green";
+colorStyle = "blue";
 var force = d3.layout.force()
     .gravity(0.05)
     .charge(function(d, i) { return i ? 0 : -mouseCharge; })
@@ -25,11 +25,7 @@ force.start();
 
 var canvas = d3.select("body").append("canvas")
     .attr("width", width)
-    .attr("height", height)
-    .on("mouseclick",function(){ 
-        mouseCharge += 100; 
-        force.charge(function(d, i) { return i ? 0 : -mouseCharge; }); 
-        colorStyle="red"; });
+    .attr("height", height);
 
 var context = canvas.node().getContext("2d");
 
@@ -60,6 +56,13 @@ canvas.on("mousemove", function() {
   force.resume();
 });
 
+canvas.on("mouseclick",function(){ 
+        mouseCharge += 100; 
+        force.charge(function(d, i) { return i ? 0 : -mouseCharge; }); 
+        colorStyle="red";
+        force.resume()
+    });
+        
 var zoom = d3.behavior.zoom()
     .scale(function(d) { force.charge(function(d, i) { return i ? 0 : -mouseCharge; }) })
     .scaleExtent([100, 5000])
