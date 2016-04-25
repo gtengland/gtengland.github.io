@@ -56,7 +56,7 @@ canvas.on("mousemove", function() {
 });
 
 var zoom = d3.behavior.zoom()
-    .scale(*mouseCharge)
+    .scale(mouseCharge)
     .scaleExtent([100, 5000])
     .on("zoom", zoomed);
     
