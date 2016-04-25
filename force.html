@@ -25,7 +25,7 @@ force.start();
 var canvas = d3.select("body").append("canvas")
     .attr("width", width)
     .attr("height", height)
-    .on("mouseclick",function(){ mouseCharge += 100; });
+    .on("mouseclick",function(){ mouseCharge += 100; force.charge(function(d, i) { return i ? 0 : -mouseCharge; }); });
 
 var context = canvas.node().getContext("2d");
 
@@ -38,7 +38,7 @@ force.on("tick", function(e) {
   for (i = 1; i < n; ++i) q.visit(collide(nodes[i]));
 
   context.clearRect(0, 0, width, height);
-  context.fillStyle = "black";
+  context.fillStyle = "purple";
   context.beginPath();
   for (i = 1; i < n; ++i) {
     d = nodes[i];
