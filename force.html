@@ -7,7 +7,7 @@
 var width = 960,
     height = 500;
 
-var nodes = d3.range(200).map(function() { return {radius: Math.random() * 12 + 4}; }),
+var nodes = d3.range(300).map(function() { return {radius: Math.random() * 15 + 3}; }),
     root = nodes[0];
 
 root.radius = 0;
@@ -15,7 +15,7 @@ root.fixed = true;
 
 var force = d3.layout.force()
     .gravity(0.05)
-    .charge(function(d, i) { return i ? 0 : -2000; })
+    .charge(function(d, i) { return i ? 0 : -1000; })
     .nodes(nodes)
     .size([width, height]);
 
@@ -36,7 +36,7 @@ force.on("tick", function(e) {
   for (i = 1; i < n; ++i) q.visit(collide(nodes[i]));
 
   context.clearRect(0, 0, width, height);
-  context.fillStyle = "steelblue";
+  context.fillStyle = "green";
   context.beginPath();
   for (i = 1; i < n; ++i) {
     d = nodes[i];
