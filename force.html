@@ -37,7 +37,7 @@ force.on("tick", function(e) {
   for (i = 1; i < n; ++i) q.visit(collide(nodes[i]));
 
   context.clearRect(0, 0, width, height);
-  context.fillStyle = "green";
+  context.fillStyle = "yellow";
   context.beginPath();
   for (i = 1; i < n; ++i) {
     d = nodes[i];
@@ -56,7 +56,7 @@ canvas.on("mousemove", function() {
 
  d3.behavior.zoom()
     .scale(mouseCharge)
-    .scaleExtent([100 5000])
+    .scaleExtent([100, 5000])
     .on("zoom", zoomed);
 function collide(node) {
   var r = node.radius + 16,
