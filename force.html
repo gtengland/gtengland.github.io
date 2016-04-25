@@ -14,7 +14,7 @@ root.radius = 0;
 root.fixed = true;
 
 mouseCharge = 1000;
-colorStyle = "blue";
+colorStyle = "steelblue";
 var force = d3.layout.force()
     .gravity(0.05)
     .charge(function(d, i) { return i ? 0 : -mouseCharge; })
@@ -56,11 +56,12 @@ canvas.on("mousemove", function() {
   force.resume();
 });
 
-canvas.on("mouseclick",function(){ 
+canvas.on("mouseclick", function() { 
         mouseCharge += 100; 
         force.charge(function(d, i) { return i ? 0 : -mouseCharge; }); 
         colorStyle="red";
-        force.resume()
+        force.resume();
+        d3.select("body").append("span").text("click");
     });
         
 var zoom = d3.behavior.zoom()
