@@ -14,7 +14,7 @@ root.radius = 0;
 root.fixed = true;
 
 mouseCharge = 1000;
-colorStyle = "steelblue";
+colorStyle = "pink";
 var force = d3.layout.force()
     .gravity(0.05)
     .charge(function(d, i) { return i ? 0 : -mouseCharge; })
@@ -56,7 +56,7 @@ canvas.on("mousemove", function() {
   force.resume();
 });
 
-canvas.on("mouseclick", function() { 
+canvas.on("click", function() { 
         mouseCharge += 100; 
         force.charge(function(d, i) { return i ? 0 : -mouseCharge; }); 
         colorStyle="red";
