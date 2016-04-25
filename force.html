@@ -59,6 +59,10 @@ canvas.on("mousemove", function() {
     .scale(mouseCharge)
     .scaleExtent([100, 5000])
     .on("zoom", zoomed);
+canvas.behavior.zoom()
+    .scale(mouseCharge)
+    .scaleExtent([100, 5000])
+    .on("zoom", zoomed);
 function collide(node) {
   var r = node.radius + 16,
       nx1 = node.x - r,
