@@ -53,6 +53,7 @@ force.on("tick", function(e) {
   }
   context.fill();
   if (mouseCharge>0) {
+  	context.fillStyle = "red";
   	 context.fillRect(20, 20, mouseCharge / 100, mouseCharge / 100);
   }
   if (mouseCharge<0) {
