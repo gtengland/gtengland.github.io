@@ -21,7 +21,7 @@ var nodes = d3.range(200).map(function() {
 root.radius = 0;
 root.fixed = true;
 mouseCharge = 1000;
-colorStyle = "steelblue";
+colorStyle = "green";
 var force = d3.layout.force()
   .gravity(0.05)
   .charge(function(d, i) {
@@ -138,6 +138,8 @@ function update(sGravity) {
   // adjust the text on the range slider
   d3.select("#sGravity-value").text(sGravity/100);
   d3.select("#sGravity").property("value", sGravity);
+  force.gravity(sGravity/100);
+  force.start();
 }
 
 </script>
