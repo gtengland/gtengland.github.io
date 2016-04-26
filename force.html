@@ -4,19 +4,16 @@
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 
-var width = 960,
-  height = 800;
-
-var nodes = d3.range(600).map(function() {
+var width = 800,
+  height = 600;
+var nodes = d3.range(200).map(function() {
     return {
       radius: Math.random() * 0 + 10
     };
   }),
   root = nodes[0];
-
 root.radius = 0;
 root.fixed = true;
-
 mouseCharge = 1000;
 colorStyle = "steelblue";
 var force = d3.layout.force()
@@ -26,23 +23,17 @@ var force = d3.layout.force()
   })
   .nodes(nodes)
   .size([width, height]);
-
 force.start();
-
 var canvas = d3.select("body").append("canvas")
   .attr("width", width)
   .attr("height", height);
-
 var context = canvas.node().getContext("2d");
-
 force.on("tick", function(e) {
   var q = d3.geom.quadtree(nodes),
     i,
     d,
     n = nodes.length;
-
   for (i = 1; i < n; ++i) q.visit(collide(nodes[i]));
-
   context.clearRect(0, 0, width, height);
   context.fillStyle = colorStyle;
   context.beginPath();
@@ -52,47 +43,52 @@ force.on("tick", function(e) {
     context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
   }
   context.fill();
-  if (mouseCharge>0) {
-  	context.fillStyle = "red";
-  	 context.fillRect(20, 20, mouseCharge / 100, mouseCharge / 100);
+  if (mouseCharge > 0) {
+    context.fillStyle = "red";
+    context.fillRect(20, 20, mouseCharge / 100, mouseCharge / 100);
   }
-  if (mouseCharge<0) {
-  	context.fillStyle = "green";
-  	 context.fillRect(20, 20, -mouseCharge / 100, -mouseCharge / 100);
+  if (mouseCharge < 0) {
+    context.fillStyle = "green";
+    context.fillRect(20, 20, -mouseCharge / 100, -mouseCharge / 100);
   }
- 
-});
 
+});
 canvas.on("mousemove", function() {
   var p1 = d3.mouse(this);
   root.px = p1[0];
   root.py = p1[1];
   force.resume();
 });
-
 canvas.on("click", function() {
   colorStyle = "rgba(" + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + ",.5)";
   force.start();
   force.resume();
 });
+d3.select("#sGravity").on("input", function() {
+  update(+this.value);
+});
+
+// Initial starting radius of the circle 
+update(.05);
+
+
 
 d3.select("body").on("keydown", function() {
-    if (d3.event.keyCode == 38) {
-      mouseCharge += 100;
-      force.charge(function(d, i) {
-        return i ? 0 : -mouseCharge;
-      });
-      force.start();
-    }
-    if (d3.event.keyCode == 40) {
-      mouseCharge -= 100;
-      force.charge(function(d, i) {
-        return i ? 0 : -mouseCharge;
-      });
-      force.start();
-    }
-  });
-
+  if (d3.event.keyCode == 38) {
+    mouseCharge += 100;
+    force.charge(function(d, i) {
+      return i ? 0 : -mouseCharge;
+    });
+    force.start();
+  }
+  if (d3.event.keyCode == 40) {
+    mouseCharge -= 100;
+    force.charge(function(d, i) {
+      return i ? 0 : -mouseCharge;
+    });
+    force.start();
+  }
+});
 var zoom = d3.behavior.zoom()
   .scale(function(d) {
     force.charge(function(d, i) {
@@ -115,7 +111,7 @@ function collide(node) {
         l = Math.sqrt(x * x + y * y),
         r = node.radius + quad.point.radius;
       if (l < r) {
-        l = (l - r) / l * .25; 
+        l = (l - r) / l * .25;
         node.x -= x *= l;
         node.y -= y *= l;
         quad.point.x += x;
@@ -128,6 +124,14 @@ function collide(node) {
 
 function zoomed() {
   mouseCharge = d3.event.scale;
+}
+
+// update the elements
+function update(sGravity) {
+
+  // adjust the text on the range slider
+  d3.select("#sGravity-value").text(sGravity);
+  d3.select("#sGravity").property("value", sGravity);
 }
 
 </script>
