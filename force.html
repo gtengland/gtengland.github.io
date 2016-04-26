@@ -5,7 +5,7 @@
     <label for="nRadius" style="display: inline-block; width: 240px; text-align: right">
       gravity = <span id="sGravity-value">…</span>
     </label>
-    <input type="range" min=".01" max=".5" id="sGravity" value=".05">
+    <input type="range" min="1" max="50" id="sGravity" value="5">
   </p>
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
@@ -75,7 +75,7 @@ d3.select("#sGravity").on("input", function() {
 });
 
 // Initial starting radius of the circle 
-update(.05);
+update(5);
 
 
 
@@ -136,7 +136,7 @@ function zoomed() {
 function update(sGravity) {
 
   // adjust the text on the range slider
-  d3.select("#sGravity-value").text(sGravity);
+  d3.select("#sGravity-value").text(sGravity/100);
   d3.select("#sGravity").property("value", sGravity);
 }
 
