@@ -71,7 +71,7 @@ canvas.on("mousemove", function() {
 });
 
 canvas.on("click", function() {
-  colorStyle = "rgb(" + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + ")";;
+  colorStyle = "rgba(" + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + ",.5)";;
   force.start();
   force.resume();
 });
