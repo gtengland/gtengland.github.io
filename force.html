@@ -70,11 +70,7 @@ canvas.on("mousemove", function() {
 });
 
 canvas.on("click", function() {
-  mouseCharge += 100;
-  force.charge(function(d, i) {
-    return i ? 0 : -mouseCharge;
-  });
-  colorStyle = "rgb(" + Math.round(Math.random*255) +","+ Math.round(Math.random*255) + "," + Math.round(Math.random*255) + ")";
+  colorStyle = "rgb(" + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + "," + Math.round(Math.random() * 255) + ")";;
   force.start();
   force.resume();
 });
