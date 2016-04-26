@@ -5,35 +5,41 @@
 <script>
 
 var width = 960,
-    height = 500;
+  height = 600;
 
-var nodes = d3.range(300).map(function() { return {radius: Math.random() * 15 + 3}; }),
-    root = nodes[0];
+var nodes = d3.range(600).map(function() {
+    return {
+      radius: Math.random() * 0 + 10
+    };
+  }),
+  root = nodes[0];
 
 root.radius = 0;
 root.fixed = true;
 
 mouseCharge = 1000;
-colorStyle = "pink";
+colorStyle = "steelblue";
 var force = d3.layout.force()
-    .gravity(0.05)
-    .charge(function(d, i) { return i ? 0 : -mouseCharge; })
-    .nodes(nodes)
-    .size([width, height]);
+  .gravity(0.05)
+  .charge(function(d, i) {
+    return i ? 0 : -mouseCharge;
+  })
+  .nodes(nodes)
+  .size([width, height]);
 
 force.start();
 
 var canvas = d3.select("body").append("canvas")
-    .attr("width", width)
-    .attr("height", height);
+  .attr("width", width)
+  .attr("height", height);
 
 var context = canvas.node().getContext("2d");
 
 force.on("tick", function(e) {
   var q = d3.geom.quadtree(nodes),
-      i,
-      d,
-      n = nodes.length;
+    i,
+    d,
+    n = nodes.length;
 
   for (i = 1; i < n; ++i) q.visit(collide(nodes[i]));
 
@@ -45,8 +51,15 @@ force.on("tick", function(e) {
     context.moveTo(d.x, d.y);
     context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
   }
-  context.fillRect(20,20,mouseCharge/100,mouseCharge/100);
   context.fill();
+  if (mouseCharge>0) {
+  	 context.fillRect(20, 20, mouseCharge / 100, mouseCharge / 100);
+  }
+  if (mouseCharge<0) {
+  	context.fillStyle = "green";
+  	 context.fillRect(20, 20, -mouseCharge / 100, -mouseCharge / 100);
+  }
+ 
 });
 
 canvas.on("mousemove", function() {
@@ -56,31 +69,54 @@ canvas.on("mousemove", function() {
   force.resume();
 });
 
-canvas.on("click", function() { 
-        mouseCharge += 100; 
-        force.charge(function(d, i) { return i ? 0 : -mouseCharge; }); 
-        colorStyle="red";
-        force.resume();
-        d3.select("body").append("span").text("click");
-    });
-        
+canvas.on("click", function() {
+  mouseCharge += 100;
+  force.charge(function(d, i) {
+    return i ? 0 : -mouseCharge;
+  });
+  colorStyle = "red";
+  force.start();
+  force.resume();
+});
+
+d3.select("body").on("keydown", function() {
+    if (d3.event.keyCode == 38) {
+      mouseCharge += 100;
+      force.charge(function(d, i) {
+        return i ? 0 : -mouseCharge;
+      });
+      force.start();
+    }
+    if (d3.event.keyCode == 40) {
+      mouseCharge -= 100;
+      force.charge(function(d, i) {
+        return i ? 0 : -mouseCharge;
+      });
+      force.start();
+    }
+  });
+
 var zoom = d3.behavior.zoom()
-    .scale(function(d) { force.charge(function(d, i) { return i ? 0 : -mouseCharge; }) })
-    .scaleExtent([100, 5000])
-    .on("zoom", zoomed);
-    
+  .scale(function(d) {
+    force.charge(function(d, i) {
+      return i ? 0 : -mouseCharge;
+    })
+  })
+  .scaleExtent([100, 5000])
+  .on("zoom", zoomed);
+
 function collide(node) {
   var r = node.radius + 16,
-      nx1 = node.x - r,
-      nx2 = node.x + r,
-      ny1 = node.y - r,
-      ny2 = node.y + r;
+    nx1 = node.x - r,
+    nx2 = node.x + r,
+    ny1 = node.y - r,
+    ny2 = node.y + r;
   return function(quad, x1, y1, x2, y2) {
     if (quad.point && (quad.point !== node)) {
       var x = node.x - quad.point.x,
-          y = node.y - quad.point.y,
-          l = Math.sqrt(x * x + y * y),
-          r = node.radius + quad.point.radius;
+        y = node.y - quad.point.y,
+        l = Math.sqrt(x * x + y * y),
+        r = node.radius + quad.point.radius;
       if (l < r) {
         l = (l - r) / l * .5;
         node.x -= x *= l;
@@ -92,6 +128,7 @@ function collide(node) {
     return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
   };
 }
+
 function zoomed() {
   mouseCharge = d3.event.scale;
 }
