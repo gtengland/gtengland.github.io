@@ -163,7 +163,7 @@ function updateBalls(nBalls) {
   root = nodes[0];
   root.radius = 0;
   root.fixed = true;
-  force.start();
+  force.nodes(nodes).start();
 }
 
 </script>
