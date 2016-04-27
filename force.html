@@ -7,6 +7,12 @@
     </label>
     <input type="range" min="1" max="50" id="sGravity" value="5">
   </p>
+  <p>
+    <label for="nBalls" style="display: inline-block; width: 240px; text-align: right">
+      gravity = <span id="sBalls-value">…</span>
+    </label>
+    <input type="range" min="10" max="1000" id="sBalls" value="200">
+  </p>
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 
@@ -72,6 +78,9 @@ canvas.on("click", function() {
 });
 d3.select("#sGravity").on("input", function() {
   update(+this.value);
+});
+d3.select("#sBalls").on("input", function() {
+  updateBalls(+this.value);
 });
 
 // Initial starting radius of the circle 
@@ -139,6 +148,21 @@ function update(sGravity) {
   d3.select("#sGravity-value").text(sGravity/100);
   d3.select("#sGravity").property("value", sGravity);
   force.gravity(sGravity/100);
+  force.start();
+}// update the elements
+function updateBalls(nBalls) {
+
+  // adjust the text on the range slider
+  d3.select("#sBalls-value").text(sBalls);
+  d3.select("#sBalls").property("value", sBalls);
+  nodes = d3.range(200).map(function() {
+    return {
+      radius: Math.random() * 0 + 10
+    };
+  }),
+  root = nodes[0];
+  root.radius = 0;
+  root.fixed = true;
   force.start();
 }
 
