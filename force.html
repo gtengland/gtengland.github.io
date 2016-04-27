@@ -153,8 +153,8 @@ function update(sGravity) {
 function updateBalls(nBalls) {
 
   // adjust the text on the range slider
-  d3.select("#sBalls-value").text(sBalls);
-  d3.select("#sBalls").property("value", sBalls);
+  d3.select("#sBalls-value").text(nBalls);
+  d3.select("#sBalls").property("value", nBalls);
   nodes = d3.range(nBalls).map(function() {
     return {
       radius: Math.random() * 0 + 10
