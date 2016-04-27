@@ -9,7 +9,7 @@
   </p>
   <p>
     <label for="nBalls" style="display: inline-block; width: 240px; text-align: right">
-      gravity = <span id="sBalls-value">…</span>
+      # of balls = <span id="sBalls-value">…</span>
     </label>
     <input type="range" min="10" max="1000" id="sBalls" value="200">
   </p>
@@ -155,7 +155,7 @@ function updateBalls(nBalls) {
   // adjust the text on the range slider
   d3.select("#sBalls-value").text(sBalls);
   d3.select("#sBalls").property("value", sBalls);
-  nodes = d3.range(200).map(function() {
+  nodes = d3.range(nBalls).map(function() {
     return {
       radius: Math.random() * 0 + 10
     };
