@@ -92,7 +92,11 @@ frame.append("g")
   .append("path")
     .attr("d", gear);
 
-
+frame.append("circle")
+			   .attr("cx", 0)
+			   .attr("cy", 0)
+			   .attr("r", 50);
+			   
 function gear(d) {
   var n = d.teeth,
       r2 = Math.abs(d.radius),
