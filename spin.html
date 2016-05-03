@@ -59,6 +59,11 @@ var svg = d3.select("body").append("svg")
 var frame = svg.append("g")
     .datum({radius: Infinity});
 
+frame.append("circle")
+	.attr("cx", 0)
+	.attr("cy", 0)
+	.attr("r", 50);
+	
 frame.append("g")
     .attr("class", "annulus")
     .datum({radius: -radius * 5})
@@ -92,10 +97,7 @@ frame.append("g")
   .append("path")
     .attr("d", gear);
 
-frame.append("circle")
-			   .attr("cx", 0)
-			   .attr("cy", 0)
-			   .attr("r", 50);
+
 			   
 function gear(d) {
   var n = d.teeth,
