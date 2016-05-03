@@ -104,7 +104,16 @@ frame.append("g")
   .append("path")
     .attr("d", gear);
 
+d3.selectAll("input[name=reference]")
+    .data([radius * 5, Infinity, -radius])
+    .on("change", function(radius1) {
+      var radius0 = frame.datum().radius, angle = (Date.now() - start) * speed;
+      frame.datum({radius: radius1});
+      svg.attr("transform", "rotate(" + (offset += angle / radius0 - angle / radius1) + ")");
+    });
 
+d3.selectAll("input[name=speed]")
+    .on("change", function() { speed = +this.value; });
 			   
 function gear(d) {
   var n = d.teeth,
