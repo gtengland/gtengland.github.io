@@ -106,7 +106,7 @@ d3.selectAll("input[name=speed]")
 function gear(d) {
   var n = d.teeth,
       r2 = Math.abs(d.radius),
-      a0 = Math.PI/3;
+      a0 = Math.PI/3,
       path = ["M", r2 * Math.sin(a0), ",", r2 * Math.cos(a0)];
       path.push("L", -r2*Math.sin(a0), ",", r2*Math.cos(a0),
                 "L0,",r2,"Z");
