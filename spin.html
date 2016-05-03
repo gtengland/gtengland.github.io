@@ -35,14 +35,7 @@ path {
 }
 
 </style>
-<form>
-  <input type="radio" name="reference" id="ref-annulus">
-  <label for="ref-annulus">Annulus</label><br>
-  <input type="radio" name="reference" id="ref-planet" checked>
-  <label for="ref-planet">Planets</label><br>
-  <input type="radio" name="reference" id="ref-sun">
-  <label for="ref-sun">Sun</label>
-</form>
+
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 
@@ -68,34 +61,34 @@ var frame = svg.append("g")
 
 frame.append("g")
     .attr("class", "annulus")
-    .datum({teeth: 100, radius: -radius * 5, annulus: true})
+    .datum({radius: -radius * 5})
   .append("path")
     .attr("d", gear);
 
 frame.append("g")
     .attr("class", "sun")
-    .datum({teeth: 16, radius: radius})
+    .datum({radius: radius})
   .append("path")
     .attr("d", gear);
 
 frame.append("g")
     .attr("class", "planet")
     .attr("transform", "translate(0,-" + radius * 3 + ")")
-    .datum({teeth: 32, radius: -radius * 2})
+    .datum({radius: -radius * 2})
   .append("path")
     .attr("d", gear);
 
 frame.append("g")
     .attr("class", "planet")
     .attr("transform", "translate(" + -radius * 3 * x + "," + -radius * 3 * y + ")")
-    .datum({teeth: 32, radius: -radius * 2})
+    .datum({radius: -radius * 2})
   .append("path")
     .attr("d", gear);
 
 frame.append("g")
     .attr("class", "planet")
     .attr("transform", "translate(" + radius * 3 * x + "," + -radius * 3 * y + ")")
-    .datum({teeth: 32, radius: -radius * 2})
+    .datum({radius: -radius * 2})
   .append("path")
     .attr("d", gear);
 
