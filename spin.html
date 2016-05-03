@@ -93,9 +93,6 @@ frame.append("g")
     .attr("d", gear);
 
 
-d3.selectAll("input[name=speed]")
-    .on("change", function() { speed = +this.value; });
-
 function gear(d) {
   var n = d.teeth,
       r2 = Math.abs(d.radius),
