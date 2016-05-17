@@ -60,6 +60,7 @@
 		var xMax = 800;
 		var xRange = xMax - xMin;	
 		var yRange = 100;
+		var t1=200,t2=100,n1=2,n2=1.33,nsub=1.54;
 		updateGraph(200,100,2,1.33,1.54);
 		//Create scale functions
 		var xScale = d3.scale.linear()
@@ -132,7 +133,9 @@
 			.attr("class", "axis")
 			.attr("transform", "translate(" + padding + ",0)")
 			.call(yAxis);
-		
+		d3.select("#t1").on("input", function() {
+		  updateGraph(+this.value,t2,n1,n2,nsub);
+		});
 		function updateTooltip()
 		{
 			var d = d3.select(this).attr("data").split(",");
@@ -244,8 +247,13 @@
 			g = math.round(255*g/mxVal);
 			return [r, g, b]
 		}
-		function updateGraph(t1, t2, n1, n2, nsub)
+		function updateGraph(t1p, t2p, n1p, n2p, nsubp)
 		{
+			t1 = t1p;
+			t2 = t2p;
+			n1 = n1p;
+			n2 = n2p;
+			nsub = nsubp;
 			dataset.length = 0;
 			wl.length = 0;
 			for (var i = 0; i < numDataPoints; i++) {	
