@@ -39,7 +39,6 @@
 			var newNumber2 = bragg(newNumber1, [100, 100], [1.5, 1.33], 1.54);	//New random integer
 			dataset.push([newNumber1, newNumber2]);					//Add new number to array
 		}
-		console.log(dataset);
 
 		//Create scale functions
 		var xScale = d3.scale.linear()
@@ -145,6 +144,7 @@
 				M = math.multiply(M,P);
 			}
 			M = math.multiply(M,trans(ncur,nsub));
+			console.log(M);
 			var r = Math.abs(M[1][0]/M[0][0]) ^ 2;
     			return 100*r;
 		}
