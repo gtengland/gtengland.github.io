@@ -87,14 +87,6 @@
 			.attr("width", w)
 			.attr("height", h);
 			
-		var xCur = dataset[0][0];
-		var yCur = dataset[0][1]
-		var curvePath = "M" + xScale(xCur) + "," + yScale(yCur);
-		for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
-			xCur = xScale(dataset[i][0]);
-			yCur = yScale(dataset[i][1]);
-			curvePath = curvePath + "L" + xCur + "," + yCur; 
-		}
 		
 		svg.append("g").append("path")
 			.attr("d", curvePath)
@@ -234,7 +226,7 @@
 		}
 		function updateGraph(t1p, t2p, n1p, n2p, nsubp)
 		{
-			console.log("t1p",t1p);
+			console.log("t1p",t1p,t1);
 			t1 = t1p;
 			t2 = t2p;
 			n1 = n1p;
@@ -268,6 +260,15 @@
 		   .attr("data", function(d) { return d; })
 		   .on("mouseover", updateTooltip)
 		   .on("mouseout", hideTooltip);
+		   
+		var xCur = dataset[0][0];
+		var yCur = dataset[0][1]
+		var curvePath = "M" + xScale(xCur) + "," + yScale(yCur);
+		for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
+			xCur = xScale(dataset[i][0]);
+			yCur = yScale(dataset[i][1]);
+			curvePath = curvePath + "L" + xCur + "," + yCur; 
+		}
 		}
 	</script>
 </body>
