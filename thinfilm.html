@@ -141,10 +141,10 @@
 				var T = trans(nprev,ncur),
 					P = prop(kx,tt[i]);
 				console.log(T);
-				M = math.multiply(M,trans(nprev,ncur));
-				M = math.multiply(M,prop(kx,tt[i]));
+				M = math.multiply(M,T);
+				M = math.multiply(M,P);
 			}
-			M = matMult(M,trans(ncur,nsub));
+			M = math.multiply(M,trans(ncur,nsub));
 			var r = Math.abs(M[2][1]/M[1][1]) ^ 2;
     
 		}
