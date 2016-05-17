@@ -125,6 +125,32 @@
 			tooltip.attr("fill","none");
 			d3.select(this).attr("fill","none");
 		}
+		function bragg(wl, tt, nn, nsub)
+		{
+			var M = math.matrix([[1, 0], [0, 1]]);
+			var nprev = 1;
+			var ncur = 1;
+			for (var i=0; i<tt.length(); i++)
+			{
+				nprev = ncur;
+				ncur = nn(i);
+				M = math.multiply(M,trans(nprev,ncur));
+				M = math.multiply(M,prop(kx,tt(i)));
+			}
+			M = math.multiply(M,trans(ncur,nsub));
+			var r = Math.abs(M[2][1]/M[1][1]) ^ 2;
+		}
+		function prop(kx, t)
+		{
+			var M = math.matrix([[Math.exp(Math.sqrt(-1)*kx*t), 0], [0, Math.exp(-Math.sqrt(-1)*kx*t)]]);
+			return M;
+		}
+		function trans(ni, nj)
+		{
+			var 	r = (ni - nj)/(ni+nj),
+				t = 1 + r;
+			var M = math.matrix([[1, r], [r, 1]]) / t;
+		}
 	</script>
 </body>
 </html>
