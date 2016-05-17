@@ -198,10 +198,9 @@
 					}
 					var curWL = cie[0][cie_i];
 					if (wl[i] > curWL)
-					{
-						var temp = (wl[i]-curWL);
-						var t2 = (cie[1][cie_i+1]-cie[1][cie_i]);
-						var t3 = cie[1][cie_i];
+					{	
+						var c1 = cie_i + 1;
+						var t2 = (cie[1][c1]-cie[1][cie_i]);
 						console.log(temp,t2,t3);
 						x = x + spectrum[i]*((wl[i]-curWL)*(cie[1][cie_i+1]-cie[1][cie_i])/5.0 + cie[1][cie_i]); 					
 						y = y + spectrum[i]*((wl[i]-curWL)*(cie[2][cie_i+1]-cie[2][cie_i])/5.0 + cie[2][cie_i]); 					
