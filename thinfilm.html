@@ -63,8 +63,8 @@
 			.attr("width", w)
 			.attr("height", h);
 			
-		var curvePath = "M" + xScale(dataset[0,0]) + "," + yScale(dataset[0,1]);
-		for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
+		var curvePath = "M" + xScale(dataset[1,0]) + "," + yScale(dataset[1,1]);
+		for (i = 2; i < numDataPoints-1; i++) {					//Loop numDataPoints times
 			var xCur = (dataset[i,0]);
 			var yCur = (dataset[i,1]);
 			curvePath = curvePath + "L" + xCur + "," + yCur; 
