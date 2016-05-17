@@ -140,11 +140,12 @@
 				kx = 2*Math.pi*(ncur) / wl;
 				var T = trans(nprev,ncur),
 					P = prop(kx,tt[i]);
-				console.log(T);
+				console.log("P",P);
 				M = math.multiply(M,T);
 				M = math.multiply(M,P);
 			}
 			M = math.multiply(M,trans(ncur,nsub));
+			console.log("M",M);
 			var r = Math.abs(M[1][0]/M[0][0]) ^ 2;
     			return 100*r;
 		}
