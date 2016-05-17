@@ -132,7 +132,7 @@
 			var nprev = 1;
 			var ncur = 1;
 			var kx = 1;
-			/*
+			
 			for (var i=0; i<tt.length; i++)
 			{
 				nprev = ncur;
@@ -140,13 +140,13 @@
 				kx = 2*Math.pi*(ncur) / wl;
 				var T = trans(nprev,ncur),
 					P = prop(kx,tt[i]);
-				console.log(T[0][0],T[0][1],T[1][0],T[1][1]);
+				console.log(T);
 				M = matMult(M,trans(nprev,ncur));
 				M = matMult(M,prop(kx,tt[i]));
 			}
 			M = matMult(M,trans(ncur,nsub));
 			var r = Math.abs(M[2][1]/M[1][1]) ^ 2;
-			*/
+			
 			    // functions and constants
     console.log(math.round(math.e, 3));            // 2.718
     console.log(math.atan2(3, -3) / math.pi);      // 0.75
@@ -155,7 +155,7 @@
     console.log(math.pow([[-1, 2], [3, 1]], 2));   // [[7, 0], [0, 7]]
     
 		}
-		/*
+		
 		function prop(kx, t)
 		{
 			var i = math.eval("sqrt(-1)");
@@ -166,14 +166,15 @@
 		{
 			var 	r = (ni - nj)/(ni+nj),
 				t = 1 + r;
-			var M = [[1, r], [r, 1]] / t;
+			var M = math.complex([[1, r], [r, 1]] / t);
+			return M;
 		}
+		
 		function matMult(A,B)
 		{
 			var M = [[A[0][0]*B[0][0]+A[0][1]*B[1][0], A[0][0]*B[0][1]+A[0][1]*B[1][1]], [A[1][0]*B[0][0]+A[1][1]*B[1][0], A[1][0]*B[0][1]+A[1][1]*B[1][1]]];
 			return M;
 		}
-		*/
 	</script>
 </body>
 </html>
