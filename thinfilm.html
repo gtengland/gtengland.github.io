@@ -118,10 +118,12 @@
 			   .attr("x", d3.select(this).attr("cx")+5)
 			   .attr("y", d3.select(this).attr("cy")-5)
 			   .attr("fill","red");
+			d3.select(this).attr("fill","black");
 		}
 		function hideTooltip()
 		{
 			tooltip.attr("fill","none");
+			d3.select(this).attr("fill","none");
 		}
 	</script>
 </body>
