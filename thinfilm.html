@@ -94,7 +94,8 @@
 		   .attr("pointer-events","visible")
 		   .attr("fill","none")
 		   .attr("data", function(d) { return d; })
-		   .on("mouseover", updateTooltip);
+		   .on("mouseover", updateTooltip)
+		   .on("mouseout", hideTooltip);
 		
 		
 		
@@ -117,6 +118,10 @@
 			   .attr("x", d3.select(this).attr("cx"))
 			   .attr("y", d3.select(this).attr("cy"))
 			   .attr("fill","red");
+		}
+		function hideTooltip()
+		{
+			tooltip.attr("fill","none");
 		}
 	</script>
 </body>
