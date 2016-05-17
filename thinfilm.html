@@ -22,27 +22,27 @@
 	</head>
 	<body>
 	  <label for="t1" 
-	         style="display: inline-block; width: 240px; text-align: right">
+	         style="display: inline-block; width: 40px; text-align: right">
 	         t1 <span id="t1-value"></span>
 	  </label>
 	  <input type="number" min="0" max="1000" step="10" value="200" id="t1">
 	  <label for="t2" 
-	         style="display: inline-block; width: 240px; text-align: right">
+	         style="display: inline-block; width: 40px; text-align: right">
 	          t2 <span id="t2-value"></span>
 	  </label>
 	  <input type="number" min="0" max="1000" step="10" value="100" id="t2">
 	  <label for="n1" 
-	         style="display: inline-block; width: 240px; text-align: right">
+	         style="display: inline-block; width: 40px; text-align: right">
 	         n1 <span id="n1-value"></span>
 	  </label>
 	  <input type="number" min="1" max="4" step="0.1" value="2" id="n1">
 	  <label for="n2" 
-	         style="display: inline-block; width: 240px; text-align: right">
+	         style="display: inline-block; width: 40px; text-align: right">
 	         n2 <span id="n2-value"></span>
 	  </label>
 	  <input type="number" min="1" max="4" step="0.1" value="1.33" id="n2">
 	  <label for="nsub" 
-	         style="display: inline-block; width: 240px; text-align: right">
+	         style="display: inline-block; width: 40px; text-align: right">
 	         nsub <span id="nsub-value"></span>
 	  </label>
 	  <input type="number" min="1" max="4" step="0.1" value="1.54" id="nsub">
@@ -110,6 +110,18 @@
 			.call(yAxis);
 		d3.select("#t1").on("input", function() {
 		  updateGraph(+this.value,t2,n1,n2,nsub);
+		});
+		d3.select("#t2").on("input", function() {
+		  updateGraph(t1,+this.value,n1,n2,nsub);
+		});
+		d3.select("#n1").on("input", function() {
+		  updateGraph(t1,t2,+this.value,n2,nsub);
+		});
+		d3.select("#n2").on("input", function() {
+		  updateGraph(t1,t2,n1,+this.value,nsub);
+		});
+		d3.select("#nsub").on("input", function() {
+		  updateGraph(t1,t2,n1,n2,+this.value);
 		});
 		function updateTooltip()
 		{
