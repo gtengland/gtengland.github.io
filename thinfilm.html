@@ -91,6 +91,7 @@
 		   		return yScale(d[1]);
 		   })
 		   .attr("r", 4)
+		   .attr("pointer-events","visible")
 		   .attr("fill","none")
 		   .attr("data", function(d) { return d; })
 		   .on("mouseover", updateTooltip);
