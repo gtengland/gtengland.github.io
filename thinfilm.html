@@ -61,6 +61,7 @@
 		var xRange = xMax - xMin;	
 		var yRange = 100;
 		var t1=200,t2=100,n1=2,n2=1.33,nsub=1.54;
+		var specColor = [0,0,0];
 		updateGraph(200,100,2,1.33,1.54);
 		//Create scale functions
 		var xScale = d3.scale.linear()
@@ -264,7 +265,7 @@
 				wl.push(v1);
 			}
 			
-			var specColor = colorFromSpectrum(wl, spectrum);
+			specColor = colorFromSpectrum(wl, spectrum);
 			console.log(specColor);
 		}
 	</script>
