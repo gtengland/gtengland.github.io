@@ -140,9 +140,8 @@
 				kx = 2*math.pi*(ncur) / wl;
 				var T = trans(nprev,ncur),
 					P = prop(kx*tt[i]);
-				console.log("T",T,"P",P);
+				console.log("P",P);
 				M = math.multiply(M,T);
-				console.log("M",M);
 				M = math.multiply(M,P);
 				console.log("M",M);
 			}
@@ -156,6 +155,7 @@
 		{
 			var i = math.sqrt(-1);
 			var M = [[math.exp(i*kxt), 0], [0, Math.exp(-i*kxt)]];
+			console.log("i",i,"kxt",kxt,"M",M);
 			return M;
 		}
 		function trans(ni, nj)
