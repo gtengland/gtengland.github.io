@@ -28,14 +28,14 @@
 			
 		//Dynamic, random dataset
 		var dataset = [];					//Initialize empty array
-		var numDataPoints = 15;				//Number of dummy data points to create
+		var numDataPoints = 200;				//Number of dummy data points to create
 		var xMin = 350;
 		var xMax = 800;
 		var xRange = xMax - xMin;	//Max range of new x values
 		var yRange = 100;	//Max range of new y values
 		for (var i = 0; i < numDataPoints; i++) {					//Loop numDataPoints times
 			var newNumber1 = xMin + i*(xRange/(numDataPoints-1));	//New random integer
-			var newNumber2 = Math.round(Math.random() * yRange);	//New random integer
+			var newNumber2 = Math.sin(newNumber1/100)*100;	//New random integer
 			dataset.push([newNumber1, newNumber2]);					//Add new number to array
 		}
 
