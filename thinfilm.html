@@ -91,6 +91,7 @@
 		   		return yScale(d[1]);
 		   })
 		   .attr("r", 3)
+		   .attr("data", d)
 		   .on("mouseover", updateTooltip);
 		
 		
@@ -110,6 +111,7 @@
 		function updateTooltip()
 		{
 			var circle = d3.select(this);
+			var d = circle.attr("data");
 			tooltip.text(function(d) {
 		   		return Math.round(d[0]) + "," + Math.round(d[1]);
 			   })
