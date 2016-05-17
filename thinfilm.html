@@ -35,7 +35,7 @@
 		var yRange = 100;	//Max range of new y values
 		for (var i = 0; i < numDataPoints; i++) {					//Loop numDataPoints times
 			var newNumber1 = xMin + i*(xRange/(numDataPoints-1));	//New random integer
-			var newNumber2 = bragg(newNumber1, [100 100], [1.5 1.33], 1.54);	//New random integer
+			var newNumber2 = bragg(newNumber1, [100, 100], [1.5, 1.33], 1.54);	//New random integer
 			dataset.push([newNumber1, newNumber2]);					//Add new number to array
 		}
 
