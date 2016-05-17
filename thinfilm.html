@@ -28,7 +28,7 @@
 			
 		//Dynamic, random dataset
 		var dataset = [];					//Initialize empty array
-		var numDataPoints = 5;				//Number of dummy data points to create
+		var numDataPoints = 15;				//Number of dummy data points to create
 		var xMin = 350;
 		var xMax = 800;
 		var xRange = xMax - xMin;	//Max range of new x values
@@ -72,7 +72,10 @@
 			curvePath = curvePath + "L" + xCur + "," + yCur; 
 		}
 		
-		svg.append("g").append("path").attr("d",curvePath);
+		svg.append("g").append("path").data(dataset).enter()
+			.attr("d", function(d) {
+				return this.attr("d") + "L" + d[0] + "," + d[1]
+				});
 		
 		//Create circles
 		svg.selectAll("circle")
