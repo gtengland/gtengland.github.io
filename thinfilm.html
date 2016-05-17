@@ -130,10 +130,12 @@
 			var M = [[1, 0], [0, 1]];
 			var nprev = 1;
 			var ncur = 1;
+			var kx = 1;
 			for (var i=0; i<tt.length; i++)
 			{
 				nprev = ncur;
 				ncur = nn[i];
+				kx = 2*Math.pi*(ncur) / wl;
 				var T = trans(nprev,ncur),
 					P = prop(kx,tt[i]);
 				console.log(T[0][0],T[0][1],T[1][0],T[1][1]);
