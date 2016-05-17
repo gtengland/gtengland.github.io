@@ -62,7 +62,26 @@
 			.append("svg")
 			.attr("width", w)
 			.attr("height", h);
-			//Create circles
+			
+		var curvePath = "M" + xScale(dataset[0,0]) + "," + yScale(dataset[0,1]);
+		for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
+			var xCur = xScale(dataset[i,1]);
+			var yCur = yScale(dataset[i,2]);
+			curvePath = curvePath + "L" + xCur + "," + yCur; 
+		}
+		
+		svg.append("g").append("path").attr("d",curvePath);
+		
+		var curvePath2 = "M" + (dataset[0,0]) + "," + (dataset[0,1]);
+		for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
+			var xCur = (dataset[i,1]);
+			var yCur = (dataset[i,2]);
+			curvePath2 = curvePath + "L" + xCur + "," + yCur; 
+		}
+		
+		svg.append("g").append("path").attr("d",curvePath2);
+		
+		//Create circles
 		svg.selectAll("circle")
 		   .data(dataset)
 		   .enter()
@@ -75,23 +94,6 @@
 		   })
 		   .attr("r", 3);
 		
-		var curvePath = "M" + xScale(dataset[0,0]) + "," + yScale(dataset[0,1]);
-		for (var i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
-			var xCur = xScale(dataset[i,1]);
-			var yCur = yScale(dataset[i,2]);
-			curvePath = curvePath + "L" + xCur + "," + yCur; 
-		}
-		
-		svg.append("g").append("path").attr("d",curvePath);
-		
-		var curvePath2 = "M" + (dataset[0,0]) + "," + (dataset[0,1]);
-		for (var i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
-			var xCur = (dataset[i,1]);
-			var yCur = (dataset[i,2]);
-			curvePath = curvePath + "L" + xCur + "," + yCur; 
-		}
-		
-		svg.append("g").append("path").attr("d",curvePath);
 		
 		//Create labels
 		svg.selectAll("text")
