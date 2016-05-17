@@ -204,7 +204,7 @@
 						y = y + spectrum[i]*((wl[i]-curWL)*(cie[cie_i+1][2]-cie[cie_i][2])/5.0 + cie[cie_i][2]); 					
 						z = z + spectrum[i]*((wl[i]-curWL)*(cie[cie_i+1][3]-cie[cie_i][3])/5.0 + cie[cie_i][3]); 								
 						n = n + ((wl[i]-curWL)*(cie[2][cie_i+1]-cie[2][cie_i])/5.0 + cie[2][cie_i]);
-						if (i<5){console.log("ixyzn",i,x,y,z,n,cie_i);}
+						if (i<500){console.log("ixyzn",i,x,y,z,n,cie_i);}
 					}
 					else if (wl[i] == curWL)
 					{
