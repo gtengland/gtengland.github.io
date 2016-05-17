@@ -63,12 +63,12 @@
 			.attr("width", w)
 			.attr("height", h);
 			
-		var xCur = dataset[1][0];
-		var yCur = dataset[1][1]
-		var curvePath = "M" + (xCur) + "," + (yCur);
-		for (i = 2; i < numDataPoints-1; i++) {					//Loop numDataPoints times
-			xCur = (dataset[i][0]);
-			yCur = (dataset[i][1]);
+		var xCur = dataset[0][0];
+		var yCur = dataset[0][1]
+		var curvePath = "M" + xScale(xCur) + "," + yScale(yCur);
+		for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
+			xCur = xScale(dataset[i][0]);
+			yCur = yScale(dataset[i][1]);
 			curvePath = curvePath + "L" + xCur + "," + yCur; 
 		}
 		
