@@ -143,8 +143,8 @@
 				M = math.multiply(M,T);
 				M = math.multiply(M,P);
 			}
-			M = math.multiply(M,trans(ncur,nsub));
 			console.log(M);
+			M = math.multiply(M,trans(ncur,nsub));
 			var r = Math.abs(M[1][0]/M[0][0]) ^ 2;
     			return 100*r;
 		}
