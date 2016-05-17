@@ -140,14 +140,13 @@
 				kx = 2*math.pi*(ncur) / wl;
 				var T = trans(nprev,ncur),
 					P = prop(kx*tt[i]);
-				console.log("P",P);
 				M = math.multiply(M,T);
 				M = math.multiply(M,P);
-				console.log("M",M);
 			}
 			T = trans(ncur,nsub);
 			M = math.multiply(M,T);
 			var r = Math.abs(M[1][0]/M[0][0]) ^ 2;
+			console.log("M",M,"r",r);
     			return 100*r;
 		}
 		
@@ -156,7 +155,6 @@
 			var 	a1 = math.complex(math.cos(kxt),math.sin(kxt)),
 				a2 = math.complex(math.cos(-kxt),math.sin(-kxt));
 			var M = [[a1, 0], [0, a2]];
-			console.log("a1",a1,"M",M);
 			return M;
 		}
 		function trans(ni, nj)
