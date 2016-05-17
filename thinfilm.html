@@ -134,7 +134,9 @@
 			{
 				nprev = ncur;
 				ncur = nn[i];
-				console.log(trans(nprev,ncur));
+				var T = trans(nprev,ncur),
+					P = prop(kx,tt[i]);
+				console.log(T[0][0],T[0][1],T[1][0],T[1][1]);
 				M = matMult(M,trans(nprev,ncur));
 				M = matMult(M,prop(kx,tt[i]));
 			}
