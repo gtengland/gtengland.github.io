@@ -154,8 +154,10 @@
 		function prop(kxt)
 		{
 			var i = math.sqrt(-1);
-			var M = [[math.exp(i*kxt), 0], [0, Math.exp(-i*kxt)]];
-			console.log("i",i,"kxt",kxt,"M",M);
+			var 	a1 = math.exp(i*kxt),
+				a2 = math.exp(-i*kxt);
+			var M = [[a1, 0], [0, a2]];
+			console.log("a1",a1,"M",M);
 			return M;
 		}
 		function trans(ni, nj)
