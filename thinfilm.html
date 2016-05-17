@@ -132,6 +132,7 @@
 			var nprev = 1;
 			var ncur = 1;
 			var kx = 1;
+			/*
 			for (var i=0; i<tt.length; i++)
 			{
 				nprev = ncur;
@@ -145,11 +146,24 @@
 			}
 			M = matMult(M,trans(ncur,nsub));
 			var r = Math.abs(M[2][1]/M[1][1]) ^ 2;
+			*/
+			    // functions and constants
+    print(math.round(math.e, 3));            // 2.718
+    print(math.atan2(3, -3) / math.pi);      // 0.75
+    print(math.log(1000, 10));               // 3
+    print(math.sqrt(-4));                    // 2i
+    print(math.pow([[-1, 2], [3, 1]], 2));   // [[7, 0], [0, 7]]
+    
+    // expressions
+    print(math.eval('12 / (2.3 + 0.7)'));    // 4
+    print(math.eval('5.08 cm to inch'));     // 2 inch
+    print(math.eval('9 / 3 + 2i'));          // 3 + 2i
+    print(math.eval('det([-1, 2; 3, 1])'));  // -7
 		}
 		function prop(kx, t)
 		{
-			var i = Math.complex(0,1);
-			var M = [[Math.exp(i*kx*t), 0], [0, Math.exp(-i*kx*t)]];
+			var i = math.eval("sqrt(-1)");
+			var M = [[math.eval("exp(i*kx*t), 0], [0, Math.exp(-i*kx*t)]];
 			return M;
 		}
 		function trans(ni, nj)
