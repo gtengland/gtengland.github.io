@@ -138,6 +138,7 @@
 				nprev = ncur;
 				ncur = nn[i];
 				kx = 2*Math.pi*(ncur) / wl;
+				console.log("kx",kx,"t",tt[i]);
 				var T = trans(nprev,ncur),
 					P = prop(kx*tt[i]);
 				M = math.multiply(M,T);
@@ -151,7 +152,6 @@
 		function prop(kxt)
 		{
 			var i = math.sqrt(-1);
-			console.log("i",i,"kxt",kxt,math.exp(i*kxt));
 			var M = [[math.exp(i*kxt), 0], [0, Math.exp(-i*kxt)]];
 			return M;
 		}
@@ -159,7 +159,6 @@
 		{
 			var 	r = (ni - nj)/(ni+nj),
 				t = 1 + r;
-			console.log(r,t);
 			var M = [[1/t, r/t], [r/t, 1/t]];
 			return M;
 		}
