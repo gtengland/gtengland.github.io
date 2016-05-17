@@ -223,9 +223,9 @@
 				g = temp[1][0],
 				b = temp[2][0],
 				mxVal = math.max(r, g, b);
-			r = r/mxVal;
-			b = b/mxVal;
-			g = g/mxVal;
+			r = math.round(255*r/mxVal);
+			b = math.round(255*b/mxVal);
+			g = math.round(255*g/mxVal);
 			return [r, g, b]
 		}
 	</script>
