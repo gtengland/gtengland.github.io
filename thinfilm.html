@@ -25,7 +25,7 @@
 	         style="display: inline-block; width: 240px; text-align: right">
 	         t1 <span id="t1-value"></span>
 	  </label>
-	  <input type="number" min="0" max="1000" step="10" value="100" id="t1">
+	  <input type="number" min="0" max="1000" step="10" value="200" id="t1">
 	  <label for="t2" 
 	         style="display: inline-block; width: 240px; text-align: right">
 	          t2 <span id="t2-value"></span>
@@ -173,7 +173,6 @@
 			var cie_i = 0, x = 0, y = 0, z = 0, n = 0;
 		    	var cie = cie_val();
 		    	var exitLoop = 0;
-		    	console.log(cie);
 			for (i=0; i<wl.length; i++)
 			{
 				if (wl[i] >= cie[0][0])
@@ -212,7 +211,6 @@
 			y = y/n;
 			z = z/n;
 			temp = math.multiply([[3.2404542, -1.5371385, -0.4985314],[-0.9692660,  1.8760108,  0.0415560],[0.0556434, -0.2040259,  1.0572252]],[[x],[y],[z]]);
-			console.log(temp);
 			var 	r = temp[0][0],
 				g = temp[1][0],
 				b = temp[2][0],
