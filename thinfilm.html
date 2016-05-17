@@ -203,7 +203,7 @@
 				                z = z + spectrum[i]*((wl[i]-cie[0][cie_i]) * (cie[3][cie_i+1]-cie[3][cie_i]) / 5.0 + cie[3][cie_i]); 								
 				                n = n + ((wl[i]-cie[0][cie_i]) * (cie[2][cie_i+1]-cie[2][cie_i]) / 5.0 + cie[2][cie_i]); 				
 				            }
-				            elseif (wl[i] == cie[0][cie_i])
+				            else if (wl[i] == cie[0][cie_i])
 				            {
 				                x = x + spectrum[i]*cie[1][cie_i];
 				                y = y + spectrum[i]*cie[2][cie_i];
