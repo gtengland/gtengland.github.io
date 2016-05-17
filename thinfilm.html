@@ -145,8 +145,8 @@
 				M = math.multiply(M,P);
 			}
 			M = math.multiply(M,trans(ncur,nsub));
-			var r = Math.abs(M[2][1]/M[1][1]) ^ 2;
-    
+			var r = Math.abs(M[1][0]/M[0][0]) ^ 2;
+    			return 100*r;
 		}
 		
 		function prop(kx, t)
