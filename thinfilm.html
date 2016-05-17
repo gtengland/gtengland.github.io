@@ -27,21 +27,24 @@
 		var h = 800;
 		var padding = 30;
 			
-		//Dynamic, random dataset
 		var dataset = [];
-		var spectrum = [];//Initialize empty array
-		var numDataPoints = 200;				//Number of dummy data points to create
+		var spectrum = [];
+		var wl = [];
+		var numDataPoints = 200;		
 		var xMin = 350;
 		var xMax = 800;
-		var xRange = xMax - xMin;	//Max range of new x values
-		var yRange = 100;	//Max range of new y values
+		var xRange = xMax - xMin;	
+		var yRange = 100;
 		for (var i = 0; i < numDataPoints; i++) {	
 			var v1 = xMin + i*(xRange/(numDataPoints-1));
 			var v2 = bragg(v1, [200, 100], [2, 1.33], 1.54);	
 			dataset.push([v1, v2]);
 			spectrum.push(v2);
+			wl.push(v1);
 		}
 		
+		var specColor = colorFromSpectrum(wl, spectrum);
+		console.log(specColor);
 		//Create scale functions
 		var xScale = d3.scale.linear()
 			.domain([xMin, xMax])
@@ -148,7 +151,6 @@
 			T = trans(ncur,nsub);
 			M = math.multiply(M,T);
 			var temp = math.divide(M[1][0],M[0][0]);
-			console.log("temp",temp.re,temp.im);
 			var r = math.abs(temp) * math.abs(temp);
     			return 100*r;
 		}
