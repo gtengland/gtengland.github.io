@@ -87,11 +87,6 @@
 			.attr("height", h);
 			
 		
-		svg.append("g").append("path")
-			.attr("d", curvePath)
-			.attr("stroke", "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")")
-			.attr("stroke-width",5)
-			.attr("fill","none");
 		
 		var tooltip = svg.append("g").append("text");
 		
@@ -269,6 +264,12 @@
 			yCur = yScale(dataset[i][1]);
 			curvePath = curvePath + "L" + xCur + "," + yCur; 
 		}
+		
+		svg.append("g").append("path")
+			.attr("d", curvePath)
+			.attr("stroke", "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")")
+			.attr("stroke-width",5)
+			.attr("fill","none");
 		}
 	</script>
 </body>
