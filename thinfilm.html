@@ -91,6 +91,7 @@
 		   		return yScale(d[1]);
 		   })
 		   .attr("r", 3)
+		   .attr("visibility","invisible")
 		   .attr("data", function(d) { return d; })
 		   .on("mouseover", updateTooltip);
 		
