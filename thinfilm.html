@@ -181,38 +181,39 @@
 		    	var exitLoop = 0;
 			for (i=0; i<wl.length; i++)
 			{
-			        if (wl[i] >= cie[0][0])
-			        {
-				            while (wl[i] >= cie[0][cie_i+1])
-				            {
-				                    cie_i = cie_i+1;
-				                    if (cie_i + 1 > 95) //length(cie))
-				                    {
-				                        exitLoop = 1;
-				                        break;
-				                    }
-				            }
-				            if (exitLoop == 1)
-				            {
-				                break;
-				            }
-				            var curWL = cie[0][cie_i];
-				            if (wl[i] > curWL)
-				            {
-				                x = x + spectrum[i]*((wl[i]-curWL)*(cie[1][cie_i+1]-cie[1][cie_i])/5.0 + cie[1][cie_i]); 					
-				                y = y + spectrum[i]*((wl[i]-curWL)*(cie[2][cie_i+1]-cie[2][cie_i])/5.0 + cie[2][cie_i]); 					
-				                z = z + spectrum[i]*((wl[i]-curWL)*(cie[3][cie_i+1]-cie[3][cie_i])/5.0 + cie[3][cie_i]); 								
-				                n = n + ((wl[i]-curWL)*(cie[2][cie_i+1]-cie[2][cie_i])/5.0 + cie[2][cie_i]);
-				                if (i<5){console.log("ixyznspec",i,x,y,z,n,spectrum[i]);}
-				            }
-				            else if (wl[i] == curWL)
-				            {
-				                x = x + spectrum[i]*cie[1][cie_i];
-				                y = y + spectrum[i]*cie[2][cie_i];
-				                z = z + spectrum[i]*cie[3][cie_i]; 
-				                n = n + cie[2][cie_i];
-				                if (i<5){console.log("ixyznspec",i,x,y,z,n,spectrum[i]);}
-				            }
+				if (wl[i] >= cie[0][0])
+				{
+					console.log(wl[i]);
+					while (wl[i] >= cie[0][cie_i+1])
+					{
+						cie_i = cie_i+1;
+						if (cie_i + 1 > 95) //length(cie))
+						{
+							exitLoop = 1;
+							break;
+						}
+					}
+					if (exitLoop == 1)
+					{
+						break;
+					}
+					var curWL = cie[0][cie_i];
+					if (wl[i] > curWL)
+					{
+						x = x + spectrum[i]*((wl[i]-curWL)*(cie[1][cie_i+1]-cie[1][cie_i])/5.0 + cie[1][cie_i]); 					
+						y = y + spectrum[i]*((wl[i]-curWL)*(cie[2][cie_i+1]-cie[2][cie_i])/5.0 + cie[2][cie_i]); 					
+						z = z + spectrum[i]*((wl[i]-curWL)*(cie[3][cie_i+1]-cie[3][cie_i])/5.0 + cie[3][cie_i]); 								
+						n = n + ((wl[i]-curWL)*(cie[2][cie_i+1]-cie[2][cie_i])/5.0 + cie[2][cie_i]);
+						if (i<5){console.log("ixyznspec",i,x,y,z,n,spectrum[i]);}
+					}
+					else if (wl[i] == curWL)
+					{
+						x = x + spectrum[i]*cie[1][cie_i];
+						y = y + spectrum[i]*cie[2][cie_i];
+						z = z + spectrum[i]*cie[3][cie_i]; 
+						n = n + cie[2][cie_i];
+						if (i<5){console.log("ixyznspec",i,x,y,z,n,spectrum[i]);}
+					}
 				}
 			}
 			x = x/n;
