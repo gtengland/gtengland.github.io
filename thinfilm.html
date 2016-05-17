@@ -63,19 +63,17 @@
 			.attr("width", w)
 			.attr("height", h);
 			
-		var xCur = dataset[1,0];
-		var yCur = dataset[1,1]
+		var xCur = dataset[1][0];
+		var yCur = dataset[1][1]
 		var curvePath = "M" + (xCur) + "," + (yCur);
 		for (i = 2; i < numDataPoints-1; i++) {					//Loop numDataPoints times
-			xCur = (dataset[i,0]);
-			yCur = (dataset[i,1]);
+			xCur = (dataset[i][0]);
+			yCur = (dataset[i][1]);
 			curvePath = curvePath + "L" + xCur + "," + yCur; 
 		}
 		
-		svg.append("g").append("path").data(dataset).enter()
-			.attr("d", function(d) {
-				return this.attr("d") + "L" + d[0] + "," + d[1]
-				});
+		svg.append("g").append("path")
+			.attr("d", curvePath);
 		
 		//Create circles
 		svg.selectAll("circle")
@@ -120,7 +118,7 @@
 			.attr("class", "axis")
 			.attr("transform", "translate(" + padding + ",0)")
 			.call(yAxis);
-		
+
 	</script>
 </body>
 </html>
