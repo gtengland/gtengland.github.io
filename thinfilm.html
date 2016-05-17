@@ -179,7 +179,6 @@
 			var cie_i = 0, x = 0, y = 0, z = 0, n = 0;
 		    	var cie = cie_val();
 		    	var exitLoop = 0;
-		    	console.log("wl",wl,"spectrum",spectrum,"cie",cie);
 			for (i=0; i<wl.length; i++)
 			{
 			        if (wl[i] >= cie[0][0])
@@ -211,9 +210,10 @@
 				                z = z + spectrum[i]*cie[3][cie_i]; 
 				                n = n + cie[2][cie_i];
 				            }
+				            
+						console.log("ixyzn",i,x,y,z,n);
 				}
 			}
-			console.log("xyzn",x,y,z,n);
 			x = x/n;
 			y = y/n;
 			z = z/n;
