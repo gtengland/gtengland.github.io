@@ -60,16 +60,7 @@
 		var xMax = 800;
 		var xRange = xMax - xMin;	
 		var yRange = 100;
-		for (var i = 0; i < numDataPoints; i++) {	
-			var v1 = xMin + i*(xRange/(numDataPoints-1));
-			var v2 = bragg(v1, [200, 100], [2, 1.33], 1.54);	
-			dataset.push([v1, v2]);
-			spectrum.push(v2);
-			wl.push(v1);
-		}
-		
-		var specColor = colorFromSpectrum(wl, spectrum);
-		console.log(specColor);
+		updateGraph(200,100,2,1.33,1.54);
 		//Create scale functions
 		var xScale = d3.scale.linear()
 			.domain([xMin, xMax])
@@ -252,6 +243,21 @@
 			b = math.round(255*b/mxVal);
 			g = math.round(255*g/mxVal);
 			return [r, g, b]
+		}
+		function updateGraph(t1, t2, n1, n2, nsub)
+		{
+			dataset.length = 0;
+			wl.length = 0;
+			for (var i = 0; i < numDataPoints; i++) {	
+				var v1 = xMin + i*(xRange/(numDataPoints-1));
+				var v2 = bragg(v1, [t1, t2], [n1, n2], nsub);	
+				dataset.push([v1, v2]);
+				spectrum.push(v2);
+				wl.push(v1);
+			}
+			
+			var specColor = colorFromSpectrum(wl, spectrum);
+			console.log(specColor);
 		}
 	</script>
 </body>
