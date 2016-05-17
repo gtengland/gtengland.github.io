@@ -153,9 +153,8 @@
 		
 		function prop(kxt)
 		{
-			var i = math.sqrt(-1);
-			var 	a1 = math.cos(kxt) + i*math.sin(kxt),
-				a2 = math.cos(-kxt) + i*math.sin(-kxt);
+			var 	a1 = math.complex(math.cos(kxt),math.sin(kxt)),
+				a2 = math.complex(math.cos(-kxt),math.sin(-kxt));
 			var M = [[a1, 0], [0, a2]];
 			console.log("a1",a1,"M",M);
 			return M;
