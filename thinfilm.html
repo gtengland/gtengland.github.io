@@ -143,7 +143,8 @@
 		}
 		function prop(kx, t)
 		{
-			var M = [[Math.exp(Math.sqrt(-1)*kx*t), 0], [0, Math.exp(-Math.sqrt(-1)*kx*t)]];
+			var i = Math.complex(0,1);
+			var M = [[Math.exp(i*kx*t), 0], [0, Math.exp(-i*kx*t)]];
 			return M;
 		}
 		function trans(ni, nj)
