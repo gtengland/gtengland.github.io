@@ -145,8 +145,9 @@
 			}
 			T = trans(ncur,nsub);
 			M = math.multiply(M,T);
-			var r = math.abs(math.divide(M[1][0],M[0][0])) ^ 2;
-			console.log("M",M,"r",r);
+			var temp = math.divide(M[1][0],M[0][0]);
+			console.log("temp",temp.re,temp.im);
+			var r = math.abs(temp) * math.abs(temp);
     			return 100*r;
 		}
 		
