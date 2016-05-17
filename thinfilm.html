@@ -28,7 +28,7 @@
 			
 		//Dynamic, random dataset
 		var dataset = [];					//Initialize empty array
-		var numDataPoints = 20;				//Number of dummy data points to create
+		var numDataPoints = 10;				//Number of dummy data points to create
 		var xMin = 350;
 		var xMax = 800;
 		var xRange = xMax - xMin;	//Max range of new x values
@@ -65,8 +65,8 @@
 			
 		var curvePath = "M" + xScale(dataset[1,0]) + "," + yScale(dataset[1,1]);
 		for (i = 2; i < numDataPoints-1; i++) {					//Loop numDataPoints times
-			var xCur = (dataset[i,0]);
-			var yCur = (dataset[i,1]);
+			var xCur = xScale(dataset[i,0]);
+			var yCur = yScale(dataset[i,1]);
 			curvePath = curvePath + "L" + xCur + "," + yCur; 
 		}
 		
