@@ -65,17 +65,17 @@
 			
 		var curvePath = "M" + xScale(dataset[0,0]) + "," + yScale(dataset[0,1]);
 		for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
-			var xCur = xScale(dataset[i,1]);
-			var yCur = yScale(dataset[i,2]);
+			var xCur = xScale(dataset[i,0]);
+			var yCur = yScale(dataset[i,1]);
 			curvePath = curvePath + "L" + xCur + "," + yCur; 
 		}
 		
 		svg.append("g").append("path").attr("d",curvePath);
 		
 		var curvePath2 = "M" + (dataset[0,0]) + "," + (dataset[0,1]);
-		for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
-			var xCur = (dataset[i,1]);
-			var yCur = (dataset[i,2]);
+		for (var pt in dataset) {					//Loop numDataPoints times
+			var xCur = pt[0];
+			var yCur = pt[1];
 			curvePath2 = curvePath + "L" + xCur + "," + yCur; 
 		}
 		
