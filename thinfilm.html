@@ -90,8 +90,8 @@
 		   .attr("cy", function(d) {
 		   		return yScale(d[1]);
 		   })
-		   .attr("r", 3)
-		   .attr("visibility","invisible")
+		   .attr("r", 4)
+		   .attr("style","fill:none;")
 		   .attr("data", function(d) { return d; })
 		   .on("mouseover", updateTooltip);
 		
