@@ -106,8 +106,9 @@
 			.call(xAxis)
 			.append("text")
 			.text("wl (nm)")
-			.attr("attr","text-anchor:middle")
-			.attr("font-size",16);
+			.attr("text-anchor", "middle")
+			.attr("font-size",16)
+			.attr("x",w/2-50);
 		
 		//Create Y axis
 		svg.append("g")
@@ -115,10 +116,12 @@
 			.attr("transform", "translate(" + padding + ",0)")
 			.call(yAxis)
 			.append("text")
-			.text("wl (nm)")
-			.attr("attr","text-anchor:middle")
+			.text("% Reflectance")
+			.attr("text-anchor","middle")
 			.attr("font-size",16)
-			.attr("transform","rotate(-90)");
+			.attr("transform","rotate(-90)")
+			.attr("y",-20)
+			.attr("x",-(w/2-50));
 		
 
 		d3.select("#t1").on("input", function() {
