@@ -103,25 +103,24 @@
 		svg.append("g")
 			.attr("class", "axis")
 			.attr("transform", "translate(0," + (h - padding) + ")")
-			.call(xAxis);
+			.call(xAxis)
+			.append("text")
+			.text("wl (nm)")
+			.attr("attr","text-anchor:middle")
+			.attr("font-size",16);
 		
 		//Create Y axis
 		svg.append("g")
 			.attr("class", "axis")
 			.attr("transform", "translate(" + padding + ",0)")
-			.call(yAxis);
-		
-		svg.append("text")
+			.call(yAxis)
+			.append("text")
 			.text("wl (nm)")
-			.attr("x", w/2 - 20)
-			.attr("y", h)
-			.attr("font-size",16);
-		svg.append("text")
-			.text("% Reflectance")
-			.attr("x", 20)
-			.attr("y", h/2)
+			.attr("attr","text-anchor:middle")
 			.attr("font-size",16)
 			.attr("transform","rotate(-90)");
+		
+
 		d3.select("#t1").on("input", function() {
 		  updateGraph(+this.value,t2,n1,n2,nsub);
 		});
