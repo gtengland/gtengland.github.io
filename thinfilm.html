@@ -118,10 +118,10 @@
 			.attr("font-size",16);
 		svg.append("text")
 			.text("% Reflectance")
-			.transform("rotate(-90)")
 			.attr("x", 20)
 			.attr("y", h/2)
-			.attr("font-size",16);
+			.attr("font-size",16)
+			.attr("transform","rotate(-90)");
 		d3.select("#t1").on("input", function() {
 		  updateGraph(+this.value,t2,n1,n2,nsub);
 		});
