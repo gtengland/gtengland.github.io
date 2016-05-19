@@ -91,12 +91,6 @@
 			.append("svg")
 			.attr("width", w)
 			.attr("height", h);
-			
-		
-		
-		var tooltip = svg.append("g");
-		tooltip.append("rect").attr("width","50").attr("height","25");
-		tooltip.append("text");
 		
 		var spectrum = svg.append("g").append("path")
 			.attr("stroke-width",5)
@@ -104,6 +98,9 @@
 			
 		updateGraph(200,100,2,1.33,1.54);
 		
+		var tooltip = svg.append("g");
+		tooltip.append("rect").attr("width","50").attr("height","25");
+		tooltip.append("text");
 		
 		//Create X axis
 		svg.append("g")
