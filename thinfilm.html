@@ -157,13 +157,14 @@
 			   .attr("fill","red");
 			tooltip.selectAll("rect").attr("fill","yellow")
 			   .style("fill-opacity","0.5")
-			   .attr("x", Number(d3.select(this).attr("cx"))+5)
-			   .attr("y", Number(d3.select(this).attr("cy"))-5);
+			   .attr("x", Number(d3.select(this).attr("cx"))-5)
+			   .attr("y", Number(d3.select(this).attr("cy"))-15);
 			d3.select(this).attr("fill","black");
 		}
 		function hideTooltip()
 		{
 			tooltip.selectAll("text").attr("fill","none");
+			tooltip.selectAll("rect").style("fill-opacity","0");
 			d3.select(this).attr("fill","none");
 		}
 		function bragg(wl, tt, nn, nsub)
