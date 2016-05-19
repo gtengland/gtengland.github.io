@@ -114,7 +114,7 @@
 			.attr("font-size",16)
 			.attr("x",w/2-50)
 			.attr("y",20)
-			.class("axis-label");
+			.attr("class","axis-label");
 		
 		//Create Y axis
 		svg.append("g")
@@ -128,7 +128,7 @@
 			.attr("transform","rotate(-90)")
 			.attr("y",-20)
 			.attr("x",-(h/2))
-			.class("axis-label");
+			.attr("class","axis-label");
 		
 
 		d3.select("#t1").on("input", function() {
