@@ -157,8 +157,8 @@
 			   .attr("fill","red");
 			tooltip.selectAll("rect").attr("fill","yellow")
 			   .style("fill-opacity","0.5")
-			   .attr("x", Number(d3.select(this).attr("cx"))-5)
-			   .attr("y", Number(d3.select(this).attr("cy"))-15);
+			   .attr("x", Number(d3.select(this).attr("cx")))
+			   .attr("y", Number(d3.select(this).attr("cy"))-10);
 			d3.select(this).attr("fill","black");
 		}
 		function hideTooltip()
