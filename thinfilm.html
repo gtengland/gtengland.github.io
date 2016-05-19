@@ -95,8 +95,7 @@
 		
 		
 		var tooltip = svg.append("g");
-		var tooltipBox = tooltip.append("rect");
-		toltip = tooltip.append("text");
+		tooltip.append("rect").append("text");
 		
 		var spectrum = svg.append("g").append("path")
 			.attr("stroke-width",5)
@@ -151,11 +150,11 @@
 		function updateTooltip()
 		{
 			var d = d3.select(this).attr("data").split(",");
-			tooltip.text(Math.round(d[0]) + "," + Math.round(d[1]))
+			tooltip.selectAll("text").text(Math.round(d[0]) + "," + Math.round(d[1]))
 			   .attr("x", Number(d3.select(this).attr("cx"))+5)
 			   .attr("y", Number(d3.select(this).attr("cy"))-5)
 			   .attr("fill","red");
-			tooltipBox.attr("fill","yellow")
+			tooltip.selectAll("rect").attr("fill","yellow")
 			   .style("fill-opacity","0.5")
 			   .attr("x", Number(d3.select(this).attr("cx"))+5)
 			   .attr("y", Number(d3.select(this).attr("cy"))-5);
@@ -163,7 +162,7 @@
 		}
 		function hideTooltip()
 		{
-			tooltip.attr("fill","none");
+			tooltip.selectAll("text").attr("fill","none");
 			d3.select(this).attr("fill","none");
 		}
 		function bragg(wl, tt, nn, nsub)
