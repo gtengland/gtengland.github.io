@@ -114,12 +114,14 @@
 		svg.append("text")
 			.text("wl (nm)")
 			.attr("x", w/2)
-			.attr("y", h-80);
+			.attr("y", h-20)
+			.attr("font-size",16);
 		svg.append("text")
 			.text("% Reflectance")
 			.transform("rotate(-90)")
 			.attr("x", 20)
-			.attr("y", h/2);
+			.attr("y", h/2)
+			.attr("font-size",16);
 		d3.select("#t1").on("input", function() {
 		  updateGraph(+this.value,t2,n1,n2,nsub);
 		});
