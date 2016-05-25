@@ -226,18 +226,20 @@
 			nEff = [];
 			for (ii = si; ii<sf; ii+=d)
 			{
-				if ii >= 1
+				if (ii >= 1)
+				{
 					s = ii - 1;
 					isEdgeLayer = 0; //assume top or bottom layer if s<1
+				}
 				else
+				{
 					s = ii;
 					isEdgeLayer = 1;
-				end
+				}
 				h = 2*math.sqrt(6)/3; //height for 2 layers of sqrt(6)/3 spacing
 				s = s*h; //scale to layer thickness for d=1 spheres
 
-				%central layer of 3 spheres
-
+				//central layer of 3 spheres
 				if ((s > (h-1)/2) && (s < h-(h-1)/2))
 				{
 					rs = real(sqrt(.5^2 - (s - .5*h)^2));
