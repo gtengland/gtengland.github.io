@@ -242,7 +242,7 @@
 				//central layer of 3 spheres
 				if ((s > (h-1)/2) && (s < h-(h-1)/2))
 				{
-					rs = math.real(math.sqrt(.5^2 - (s - .5*h)^2));
+					rs = math.re(math.sqrt(.5^2 - (s - .5*h)^2));
 				}
 				else
 				{
@@ -251,11 +251,11 @@
 				//7 spheres above and below central sphere
 				if (s <= .5 && isEdgeLayer==0)
 				{
-					r2 = math.real(math.sqrt(.5^2 - s^2));
+					r2 = math.re(math.sqrt(.5^2 - s^2));
 				}
 				else if (s > h-.5 && isEdgeLayer==0)
 				{
-					r2 = math.real(math.sqrt(.5^2 - (h-s)^2));
+					r2 = math.re(math.sqrt(.5^2 - (h-s)^2));
 				}
 				else
 				{
