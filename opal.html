@@ -169,9 +169,9 @@
 			var refl = [];
 			refl.length = wl.length;
 			var propDist = (2*rOpal)*2*(math.sqrt(6)/3)*d; //propagation distance is diameter of opal * unit cell size * step size				
-			var nEffTop = opalEffectiveIndex(n0,n1,0,0.5,d);
-			var nEffBot = opalEffectiveIndex(n0,n1,.5,1-d,d);
-			var nEff = opalEffectiveIndex(n0,n1,1.5,2,d);
+			var nEffTop = opalEffectiveIndex(n0,n1,0,0.5,d,1);
+			var nEffBot = opalEffectiveIndex(n0,n1,.5,1-d,d,1);
+			var nEff = opalEffectiveIndex(n0,n1,.5,1,d,0);
 			
 			console.log("M",nEffTop,nEffBot,nEff);
 			var ni=0;
@@ -231,26 +231,16 @@
 			var r = math.abs(temp) * math.abs(temp);
 			return r;
 		}
-		function opalEffectiveIndex(nMatrix,nPores,si,sf,d)
+		function opalEffectiveIndex(nMatrix,nPores,si,sf,d,isEdgeLayer)
 		{
 			var nEff = [];
-			for (ii = si; ii<sf; ii+=d)
+			for (var ii = si; ii<sf; ii+=d)
 			{
-				if (ii >= 1)
-				{
-					s = ii - 1;
-					isEdgeLayer = 0; //assume top or bottom layer if s<1
-				}
-				else
-				{
-					s = ii;
-					isEdgeLayer = 1;
-				}
 				h = 2*math.sqrt(6)/3; //height for 2 layers of sqrt(6)/3 spacing
-				s = s*h; //scale to layer thickness for d=1 spheres
+				s = ii*h; //scale to layer thickness for d=1 spheres
 
 				//central layer of 3 spheres
-				if ((s > (h-1)/2) && (s < h-(h-1)/2))
+				if ((s > (h-1)/2) && (s < (h+1)/2))
 				{
 					rs = math.re(math.sqrt(.5^2 - (s - .5*h)^2));
 				}
