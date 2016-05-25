@@ -263,8 +263,8 @@
 				}
 				//total volume of unit cell is sqrt(4/3)*2
 				var Vtot = 6*math.sqrt(3)/4; //the factor of 1/4 comes from the radius being 1/2
-				var Vn1 = 3*pi*rs^2; //volume of middle layer of 3 spheres
-				Vn1 = Vn1 + 3*pi*r2^2; //volume of 7 spheres above/below
+				var Vn1 = 3*math.pi*rs^2; //volume of middle layer of 3 spheres
+				Vn1 = Vn1 + 3*math.pi*r2^2; //volume of 7 spheres above/below
 				var Vn0 = Vtot - Vn1;
 				nEff.push(math.sqrt(nMatrix^2*(Vn0/Vtot) + nPores^2*(Vn1/Vtot)));
 			}
