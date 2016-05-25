@@ -164,15 +164,15 @@
 			tooltip.selectAll("rect").style("fill-opacity","0");
 			d3.select(this).attr("fill","none");
 		}
-		function opalMatrices(n0,n1,rOpal, d,wl)
+		function opalMatrices(nMatrix,nPores,rOpal, d,wl)
 		{
 			var refl = [];
 			refl.length = wl.length;
 			var propDist = (2*rOpal)*2*(math.sqrt(6)/3)*d; //propagation distance is diameter of opal * unit cell size * step size				
-			var nEffTop = opalEffectiveIndex(n0,n1,0,0.5,d,1);
-			var nEffBot = opalEffectiveIndex(n0,n1,.5,1-d,d,1);
-			var nEff = opalEffectiveIndex(n0,n1,.5,1,d,0);
-			console.log("nEFf",nEffTop,nEff,nEffBot);
+			var nEffTop = opalEffectiveIndex(nMatrix,nPores,0,0.5,d,1);
+			var nEffBot = opalEffectiveIndex(nMatrix,nPores,.5,1-d,d,1);
+			var nEff = opalEffectiveIndex(nMatrix,nPores,.5,1,d,0);
+			//console.log("nEFf",nEffTop,nEff,nEffBot);
 			var ni=0;
 			var nj=0;
 			var MTop = [];
@@ -181,8 +181,8 @@
 			for (wlIndex = 0; wlIndex<wl.length; wlIndex++)
 			{
 				var kx = 2*math.pi / wl[wlIndex] * propDist;
-				nj = n0;
-				var mm = math.multiply(trans(n0,nEffTop[0]), prop(kx * nEffTop[0]));
+				nj = nMatrix;
+				var mm = math.multiply(trans(nMatrix,nEffTop[0]), prop(kx * nEffTop[0]));
 				for (var i=1; i<nEffTop.length; i++)
 				{
 					ni = nj;
@@ -221,11 +221,14 @@
 		function opalSpectrum(MTop,M,MBot,layers)
 		{
 			var Mr = MTop;
+			console.log("opalspectrum",Mr);
 			for(var i=0; i<layers; i++)
 			{	
 				Mr = math.multiply(Mr,M);
+				console.log(Mr);
 			}
 			Mr = math.multiply(Mr,MBot);
+			console.log(Mr);
 			var temp = math.divide(Mr[1][0],Mr[0][0]);
 			var r = math.abs(temp) * math.abs(temp);
 			return r;
@@ -235,7 +238,7 @@
 			var nEff = [];
 			var rs=0, r2=0, s=0, Vtot=0, Vn1=0, Vn0=0;
 			var h = 2*math.sqrt(6)/3; //height for 2 layers of sqrt(6)/3 spacing
-			for (var ii = si; ii<sf; ii+=d)
+			for (var ii = si; ii<=sf; ii+=d)
 			{
 				s = ii*h; //scale to layer thickness for d=1 spheres
 
@@ -279,7 +282,7 @@
 		}
 		function trans(ni, nj)
 		{
-			var 	r = (ni - nj)/(ni+nj),
+			var r = (ni - nj)/(ni+nj),
 				t = 1 + r;
 			var M = [[1/t, r/t], [r/t, 1/t]];
 			return M;
@@ -298,12 +301,12 @@
 				var v1 = xMin + i*(xRange/(numDataPoints-1));
 				wl.push(v1);
 			}
-			var n0=1.5;
-			var n1=1.;
+			var nMatrix=1.5;
+			var nPores=1.;
 			var rOpal = 250;
 			var dd = 0.01;
 			var layers=10;
-			var Mall = opalMatrices(n0,n1,rOpal, dd,wl);
+			var Mall = opalMatrices(nMatrix,nPores,rOpal, dd,wl);
 			
 			for (var i = 0; i < numDataPoints; i++)
 			{
