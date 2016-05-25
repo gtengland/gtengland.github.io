@@ -204,9 +204,8 @@
 				mm = math.multiply(mm,trans(nj,nSubstrate));
 				MBot.push(mm);
 				nj = nEff[nEff.length-1];
-				console.log("M",nEff[0]);
+				console.log("M",nEff[0],nEff.length,nj);
 				mm = math.multiply(trans(nj,nEff[0]),prop(kx * nEff[0]));				
-				console.log(mm);
 				for (i=1; i<nEff.length; i++)
 				{
 					ni = nj;
@@ -214,7 +213,6 @@
 					mm = math.multiply(mm, trans(ni,nj));
 					mm = math.multiply(mm, prop(kx * nj));
 				}				
-				console.log(mm);
 				M.push(mm);
 			}
 			var Mall = [MTop,M,MBot];
