@@ -233,10 +233,10 @@
 		function opalEffectiveIndex(nMatrix,nPores,si,sf,d,isEdgeLayer)
 		{
 			var nEff = [];
-			var rs=0, r2=0;
+			var rs=0, r2=0, s=0, Vtot=0, Vn1=0, Vn0=0;
+			var h = 2*math.sqrt(6)/3; //height for 2 layers of sqrt(6)/3 spacing
 			for (var ii = si; ii<sf; ii+=d)
 			{
-				h = 2*math.sqrt(6)/3; //height for 2 layers of sqrt(6)/3 spacing
 				s = ii*h; //scale to layer thickness for d=1 spheres
 
 				//central layer of 3 spheres
@@ -263,10 +263,10 @@
 				}
 				console.log("nEff",isEdgeLayer,ii,rs,r2);
 				//total volume of unit cell is sqrt(4/3)*2
-				var Vtot = 6*math.sqrt(3)/4; //the factor of 1/4 comes from the radius being 1/2
-				var Vn1 = 3*math.pi*rs^2; //volume of middle layer of 3 spheres
+				Vtot = 6*math.sqrt(3)/4; //the factor of 1/4 comes from the radius being 1/2
+				Vn1 = 3*math.pi*rs^2; //volume of middle layer of 3 spheres
 				Vn1 = Vn1 + 3*math.pi*r2^2; //volume of 7 spheres above/below
-				var Vn0 = Vtot - Vn1;
+				Vn0 = Vtot - Vn1;
 				nEff.push(math.sqrt(nMatrix^2*(Vn0/Vtot) + nPores^2*(Vn1/Vtot)));
 			}
 			return nEff;
