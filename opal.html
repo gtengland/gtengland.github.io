@@ -61,7 +61,7 @@
 		var dataset = [];
 		var spectrum = [];
 		var wl = [];
-		var numDataPoints = 100;		
+		var numDataPoints = 200;		
 		var xMin = 350;
 		var xMax = 800;
 		var xRange = xMax - xMin;	
@@ -220,7 +220,6 @@
 		}
 		function opalSpectrum(MTop,M,MBot,layers)
 		{
-			console.log("opalspectrum",MTop,M,MBot,layers);
 			var Mr = MTop;
 			for(var i=0; i<layers; i++)
 			{
@@ -280,7 +279,7 @@
 		}
 		function prop(kxt)
 		{
-			var 	a1 = math.complex(math.cos(kxt),math.sin(kxt)),
+			var a1 = math.complex(math.cos(kxt),math.sin(kxt)),
 				a2 = math.complex(math.cos(-kxt),math.sin(-kxt));
 			var M = [[a1, 0], [0, a2]];
 			return M;
@@ -307,7 +306,7 @@
 				wl.push(v1);
 			}
 			var n0=1.5;
-			var n1=1;
+			var n1=1.;
 			var rOpal = 250;
 			var d = 0.01;
 			var layers=10;
