@@ -173,6 +173,7 @@
 			var nEffBot = opalEffectiveIndex(n0,n1,.5,1-d,d);
 			var nEff = opalEffectiveIndex(n0,n1,1.5,2,d);
 			
+			console.log("M",nEffTop,nEffBot,nEff);
 			var ni=0;
 			var nj=0;
 			var MTop = [];
@@ -204,7 +205,6 @@
 				mm = math.multiply(mm,trans(nj,nSubstrate));
 				MBot.push(mm);
 				nj = nEff[nEff.length-1];
-				console.log("M",nEff);
 				mm = math.multiply(trans(nj,nEff[0]),prop(kx * nEff[0]));				
 				for (i=1; i<nEff.length; i++)
 				{
