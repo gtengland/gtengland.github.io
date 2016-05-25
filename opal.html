@@ -208,7 +208,7 @@
 				for (i=1; i<nEff.length; i++)
 				{
 					ni = nj;
-					nj = nEff(i);
+					nj = nEff[i];
 					mm = math.multiply(mm, trans(ni,nj));
 					mm = math.multiply(mm, prop(kx * nj));
 				}
