@@ -218,8 +218,15 @@
 			console.log("Mall",Mall);
 			return Mall;
 		}
-		function opalSpectrum(wl,Mall)
+		function opalSpectrum(MTop,M,MBot,layers)
 		{
+			var Mr = MTop;
+			for(var i=0; i<layers; i++)
+			{
+				Mr = math.multiply(Mr,M);
+			}
+			Mr = math.multiply(Mr,MBot);
+			return 100*math.abs((M[1][0])/M[0][0])^2;
 		}
 		function opalEffectiveIndex(nMatrix,nPores,si,sf,d)
 		{
@@ -302,44 +309,47 @@
 			var n1=1.5;
 			var rOpal = 300;
 			var d = 0.01;
+			var layers=10;
 			var Mall = opalMatrices(n0,n1,rOpal, d,wl);
 			
-			/*	var v2 = bragg(v1, [t1, t2], [n1, n2], nsub);	
-				dataset.push([v1, v2]);
+			for (var i = 0; i < numDataPoints; i++)
+			{
+				var v2 = opalSpectrum(wl,Mall[0][i],Mall[1][i],Mall[2][i],layers);
+				dataset.push([wl[i],v2]);
 				spectrum.push(v2);
 			}
-			
+
 			specColor = colorFromSpectrum(wl, dataset);
 			console.log(specColor);//Create circles
 			svg.selectAll("circle").remove();
-		svg.selectAll("circle")
-		   .data(dataset)
-		   .enter()
-		   .append("circle")
-		   .attr("cx", function(d) {
-		   		return xScale(d[0]);
-		   })
-		   .attr("cy", function(d) {
-		   		return yScale(d[1]);
-		   })
-		   .attr("r", 5)
-		   .attr("pointer-events","visible")
-		   .attr("fill","none")
-		   .attr("data", function(d) { return d; })
-		   .on("mouseover", updateTooltip)
-		   .on("mouseout", hideTooltip);
+			svg.selectAll("circle")
+			   .data(dataset)
+			   .enter()
+			   .append("circle")
+			   .attr("cx", function(d) {
+					return xScale(d[0]);
+			   })
+			   .attr("cy", function(d) {
+					return yScale(d[1]);
+			   })
+			   .attr("r", 5)
+			   .attr("pointer-events","visible")
+			   .attr("fill","none")
+			   .attr("data", function(d) { return d; })
+			   .on("mouseover", updateTooltip)
+			   .on("mouseout", hideTooltip);
 		   
-		var xCur = dataset[0][0];
-		var yCur = dataset[0][1]
-		var curvePath = "M" + xScale(xCur) + "," + yScale(yCur);
-		for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
-			xCur = xScale(dataset[i][0]);
-			yCur = yScale(dataset[i][1]);
-			curvePath = curvePath + "L" + xCur + "," + yCur; 
-		}
-		
-		spectrum.attr("d", curvePath)
-			.attr("stroke", "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")"); */
+			var xCur = dataset[0][0];
+			var yCur = dataset[0][1]
+			var curvePath = "M" + xScale(xCur) + "," + yScale(yCur);
+			for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
+				xCur = xScale(dataset[i][0]);
+				yCur = yScale(dataset[i][1]);
+				curvePath = curvePath + "L" + xCur + "," + yCur; 
+			}
+			
+			spectrum.attr("d", curvePath)
+				.attr("stroke", "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")"); 
 		}
 	</script>
 </body>
