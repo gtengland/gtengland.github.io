@@ -61,7 +61,7 @@
 		var dataset = [];
 		var spectrum = [];
 		var wl = [];
-		var numDataPoints = 200;		
+		var numDataPoints = 100;		
 		var xMin = 350;
 		var xMax = 800;
 		var xRange = xMax - xMin;	
@@ -226,7 +226,9 @@
 				Mr = math.multiply(Mr,M);
 			}
 			Mr = math.multiply(Mr,MBot);
-			return 100*math.abs((M[1][0])/M[0][0])^2;
+			var temp = math.divide(Mr[1][0],Mr[0][0]);
+			var r = math.abs(temp) * math.abs(temp);
+			return r;
 		}
 		function opalEffectiveIndex(nMatrix,nPores,si,sf,d)
 		{
