@@ -182,13 +182,16 @@
 			{
 				var kx = 2*math.pi / wl[wlIndex] * propDist;
 				nj = nMatrix;
+				console.log("MTop");
 				var mm = math.multiply(trans(nMatrix,nEffTop[0]), prop(kx * nEffTop[0]));
+				console.log(mm);
 				for (var i=1; i<nEffTop.length; i++)
 				{
 					ni = nj;
 					nj = nEffTop[i];
 					mm = math.multiply(mm,trans(ni,nj));
 					mm = math.multiply(mm,prop(kx * nj));
+					console.log(mm);
 				}
 				MTop.push(mm);
 				nj = nEff[nEff.length-1];
@@ -224,14 +227,11 @@
 		function opalSpectrum(MTop,M,MBot,layers)
 		{
 			var Mr = MTop;
-			console.log("opalspectrum",Mr);
 			for(var i=0; i<layers; i++)
 			{	
 				Mr = math.multiply(Mr,M);
-				console.log(Mr);
 			}
 			Mr = math.multiply(Mr,MBot);
-			console.log(Mr);
 			var temp = math.divide(Mr[1][0],Mr[0][0]);
 			var r = math.abs(temp) * math.abs(temp);
 			return r;
