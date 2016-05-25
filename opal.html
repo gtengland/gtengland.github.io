@@ -315,7 +315,7 @@
 			
 			for (var i = 0; i < numDataPoints; i++)
 			{
-				var v2 = opalSpectrum(wl,Mall[0][i],Mall[1][i],Mall[2][i],layers);
+				var v2 = opalSpectrum(Mall[0][i],Mall[1][i],Mall[2][i],layers);
 				dataset.push([wl[i],v2]);
 				spectrum.push(v2);
 			}
