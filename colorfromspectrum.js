@@ -55,5 +55,4 @@
 			b = math.round(255*b/mxVal);
 			g = math.round(255*g/mxVal);
 			return [r, g, b]
-			}
 		}
