@@ -61,7 +61,7 @@
 		var dataset = [];
 		var spectrum = [];
 		var wl = [];
-		var numDataPoints = 200;		
+		var numDataPoints = 100;		
 		var xMin = 350;
 		var xMax = 800;
 		var xRange = xMax - xMin;	
@@ -306,9 +306,9 @@
 				var v1 = xMin + i*(xRange/(numDataPoints-1));
 				wl.push(v1);
 			}
-			var n0=1;
-			var n1=1.5;
-			var rOpal = 300;
+			var n0=1.5;
+			var n1=1;
+			var rOpal = 250;
 			var d = 0.01;
 			var layers=10;
 			var Mall = opalMatrices(n0,n1,rOpal, d,wl);
