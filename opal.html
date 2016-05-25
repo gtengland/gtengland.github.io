@@ -222,13 +222,13 @@
 		{
 			var Mr = MTop;
 			for(var i=0; i<layers; i++)
-			{
+			{	
+				console.log(i,Mr);
 				Mr = math.multiply(Mr,M);
 			}
 			Mr = math.multiply(Mr,MBot);
 			var temp = math.divide(Mr[1][0],Mr[0][0]);
 			var r = math.abs(temp) * math.abs(temp);
-			console.log("opalspectrum",Mr,temp,r);
 			return r;
 		}
 		function opalEffectiveIndex(nMatrix,nPores,si,sf,d)
