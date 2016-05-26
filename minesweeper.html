@@ -76,12 +76,14 @@
 		for(j=0;j<gameSize[1];j++)
 		{
 			var y = j*hR;
-			svg.append("rect")
+			var curRect = svg.append("rect")
 			.attr("width",wR)
 			.attr("height",hR)
 			.attr("x",x)
 			.attr("y",y)
 			.attr("data", [i,j]);
+			if (mineGrid[i][j]<0) { curRect.style("fill:red"); }
+			else { curRect.style("fill:blue"); }
 		}
 	}
 
