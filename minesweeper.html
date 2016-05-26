@@ -6,70 +6,69 @@
 	</head>
 	<body>
 	
-		<script type="text/javascript">
-
-			//Width and height
-			var w = 1000;
-			var h = 800;
-			var padding = 100;
-			var rectPadding = 5;
-			var gameSize = [10, 10];
-			
-			//setup grid
-			var i=0, j=0;
-			var temp = [];
-			var mineGrid = [];
-			for (i=0; i<gameSize[0]; i++)
+	<script type="text/javascript">
+	//Width and height
+	var w = 1000;
+	var h = 800;
+	var padding = 100;
+	var rectPadding = 5;
+	var gameSize = [10, 10];
+	
+	//setup grid
+	var i=0, j=0;
+	var temp = [];
+	var mineGrid = [];
+	for (i=0; i<gameSize[0]; i++)
+	{
+		temp.push(0);
+	}
+	console.log("temp",temp);
+	for (i=0; i<gameSize[1]; i++)
+	{
+		mineGrid.push(temp);
+	}
+	console.log("grid",mineGrid);
+	
+	var numMines = 12;
+	var tx = 0, ty = 0;
+	i = 0;
+	console.log("add mines");
+	while (i < numMines)
+	{
+		tx = Math.round(Math.random()*gameSize[0]);
+		ty = Math.round(Math.random()*gameSize[1]);
+		if (mineGrid[tx][ty] >= 0)
+		{
+			console.log("addMine at:",tx,ty);
+			mineGrid[tx][ty] = -100;
+			if (tx > 0)
 			{
-			  temp.push(0);
+				mineGrid[tx-1][ty]++;
+				if (ty > 0) {mineGrid[tx-1][ty-1]++;}
+				if (ty < gameSize[1]-1) {mineGrid[tx-1][ty+1]++;}
 			}
-			console.log("temp",temp);
-			for (i=0; i<gameSize[1]; i++)
+			if (tx < gameSize[0]-1)
 			{
-			  mineGrid.push(temp);
+				mineGrid[tx+1][ty]++;
+				if (ty > 0) {mineGrid[tx+1][ty-1]++;}
+				if (ty < gameSize[1]-1) {mineGrid[tx+1][ty+1]++;}
 			}
-			console.log("grid",mineGrid);
-			
-			var numMines = 12;
-			var tx = 0, ty = 0;
-			i = 0;
-			console.log("add mines");
-			while (i < numMines)
-			{
-			  tx = Math.round(Math.random()*gameSize[0]);
-			  ty = Math.round(Math.random()*gameSize[1]);
-			  if (mineGrid[tx][ty] >= 0)
-			  {
-			  	console.log("addMine at:",tx,ty);
-			    mineGrid[tx][ty] = -100;
-			    if (tx > 0)
-			    {
-			      mineGrid[tx-1][ty]++;
-			      if (ty > 0) {mineGrid[tx-1][ty-1]++;}
-			      if (ty < gameSize[1]-1) {mineGrid[tx-1][ty+1]++;}
-			     }
-			     if (tx < gameSize[0]-1)
-			     {
-			      mineGrid[tx+1][ty]++;
-			      if (ty > 0) {mineGrid[tx+1][ty-1]++;}
-			      if (ty < gameSize[1]-1) {mineGrid[tx+1][ty+1]++;}
-			     }
-			     if (ty > 0) {mineGrid[tx][ty-1]++;}
-			     if (ty < gameSize[1]-1) {mineGrid[tx][ty+1]++;}
-			   }
-			   i++;
-			 }
-			console.log("grid",mineGrid);    
-			  
-			 wR = (w - padding) / gameSize[0] - rectPadding;
-			 hR = (h - padding) / gameSize[1] - rectPadding;
-			
+			if (ty > 0) {mineGrid[tx][ty-1]++;}
+			if (ty < gameSize[1]-1) {mineGrid[tx][ty+1]++;}
+			i++;
+		}
+	}
+	console.log("grid",mineGrid);    
+	  
+	 wR = (w - padding) / gameSize[0] - rectPadding;
+	 hR = (h - padding) / gameSize[1] - rectPadding;
+	
 
-			//Create SVG element
-			var svg = d3.select("body")
-						.append("svg")
-						.attr("width", w)
-						.attr("height", h);
+	//Create SVG element
+	var svg = d3.select("body")
+				.append("svg")
+				.attr("width", w)
+				.attr("height", h);
 
 	for(i=0; i<gameSize[0]; i++)
 	{
@@ -87,11 +86,6 @@
 			else { curRect.style("fill:blue"); }
 		}
 	}
-
-
-		
-				
-
-		</script>
+	</script>
 	</body>
 </html>
