@@ -38,6 +38,7 @@
 		tx = Math.round(Math.random()*(gameSize[0]-1));
 		ty = Math.round(Math.random()*(gameSize[1]-1));
 		console.log("addMine at:",tx,ty ,"(",i,")");
+		i++;
 		if (mineGrid[tx][ty] >= 0)
 		{
 			console.log("no current mine at",tx,ty);
