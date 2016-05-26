@@ -11,7 +11,8 @@
 			//Width and height
 			var w = 1000;
 			var h = 800;
-			var padding = 10;
+			var padding = 100;
+			var rectPadding = 5;
 			var gameSize = [10, 10];
 			
 			//setup grid
@@ -60,8 +61,8 @@
 			 }
 			console.log("grid",mineGrid);    
 			  
-			 wR = (w - padding) / gameSize[0];
-			 hR = (h - padding) / gameSize[1];
+			 wR = (w - padding) / gameSize[0] - rectPadding;
+			 hR = (h - padding) / gameSize[1] - rectPadding;
 			
 
 			//Create SVG element
