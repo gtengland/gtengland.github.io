@@ -69,12 +69,21 @@
 						.attr("width", w)
 						.attr("height", h);
 
-      svg.selectAll("rect")
-        .data(mineGrid)
-			   .enter()
-			   .append("rect")
-			   .attr("width", wR)
-			   .attr("height",hR);
+	for(i=0; i<gameSize[0]; i++)
+	{
+		var x = i*wR;
+		for(j=0;j<gameSize[1];j++)
+		{
+			var y = j*hR;
+			svg.append("rect")
+			.attr("width",wR)
+			.attr("height",hR)
+			.attr("x",x)
+			.attr("y",y)
+			.attr("data", [i,j]);
+		}
+	}
+
 
 		
 				
