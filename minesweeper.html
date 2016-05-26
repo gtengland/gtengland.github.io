@@ -8,26 +8,15 @@
 	
 	<script type="text/javascript">
 	//Width and height
-	var w = 1000;
-	var h = 800;
+	var w = 800;
+	var h = 600;
 	var padding = 100;
 	var rectPadding = 5;
 	var gameSize = [10, 10];
 	
 	//setup grid
 	var i=0, j=0;
-	var temp = [];
-	var mineGrid = [];
-	for (i=0; i<gameSize[0]; i++)
-	{
-		temp.push(0);
-	}
-	console.log("temp",temp);
-	for (i=0; i<gameSize[1]; i++)
-	{
-		mineGrid.push(temp);
-	}
-	console.log("grid",mineGrid);
+	var mineGrid = zero2D(gameSize[0],gameSize[1]);
 	
 	var numMines = 12;
 	var tx = 0, ty = 0;
@@ -38,29 +27,27 @@
 		tx = Math.round(Math.random()*(gameSize[0]-1));
 		ty = Math.round(Math.random()*(gameSize[1]-1));
 		console.log("addMine at:",tx,ty ,"(",i,")");
-		i++;
 		if (mineGrid[tx][ty] >= 0)
 		{
 			console.log("no current mine at",tx,ty);
-			mineGrid[tx][ty] = -100;
+			mineGrid[tx][ty] = -9;
 			if (tx > 0)
 			{
-				mineGrid[tx-1][ty]++;
-				if (ty > 0) {mineGrid[tx-1][ty-1]++;}
-				if (ty < gameSize[1]-1) {mineGrid[tx-1][ty+1]++;}
+				mineGrid[tx-1][ty]=mineGrid[tx-1][ty]+1;
+				if (ty > 0) {mineGrid[tx-1][ty-1]=mineGrid[tx-1][ty-1]+1;}
+				if (ty < gameSize[1]-1) {mineGrid[tx-1][ty+1]=mineGrid[tx-1][ty+1]+1;}
 			}
 			if (tx < gameSize[0]-1)
 			{
-				mineGrid[tx+1][ty]++;
-				if (ty > 0) {mineGrid[tx+1][ty-1]++;}
-				if (ty < gameSize[1]-1) {mineGrid[tx+1][ty+1]++;}
+				mineGrid[tx+1][ty]=mineGrid[tx+1][ty]+1;
+				if (ty > 0) {mineGrid[tx+1][ty-1]=mineGrid[tx+1][ty-1]+1;}
+				if (ty < gameSize[1]-1) {mineGrid[tx+1][ty+1]=mineGrid[tx+1][ty+1]+1;}
 			}
-			if (ty > 0) {mineGrid[tx][ty-1]++;}
-			if (ty < gameSize[1]-1) {mineGrid[tx][ty+1]++;}
+			if (ty > 0) {mineGrid[tx][ty-1]=mineGrid[tx][ty-1]+1;}
+			if (ty < gameSize[1]-1) {mineGrid[tx][ty+1]=mineGrid[tx][ty+1]+1;}
 			i++;
 		}
-	}
-	console.log("grid",mineGrid);    
+	} 
 	  
 	 wR = (w - padding) / gameSize[0] - rectPadding;
 	 hR = (h - padding) / gameSize[1] - rectPadding;
@@ -74,19 +61,87 @@
 
 	for(i=0; i<gameSize[0]; i++)
 	{
-		var x = i*wR;
+		var x = i*(wR + rectPadding);
 		for(j=0;j<gameSize[1];j++)
 		{
-			var y = j*hR;
+			var y = j*(hR + rectPadding);
 			var curRect = svg.append("rect")
 			.attr("width",wR)
 			.attr("height",hR)
 			.attr("x",x)
 			.attr("y",y)
 			.attr("data", [i,j]);
-			if (mineGrid[i][j]<0) { curRect.style("fill:red"); }
-			else { curRect.style("fill:blue"); }
+			if (mineGrid[i][j]<0) { curRect.attr("style","fill:red"); }
+			else { curRect.attr("style","fill:blue"); }
+			var curText = svg.append("text")
+			.text(mineGrid[i][j])
+			.attr("x",x+wR/2)
+			.attr("y",y+hR/2)
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","middle")
+			.attr("fill","black");
+			svg.append("rect")
+			.attr("width",wR)
+			.attr("height",hR)
+			.attr("x",x)
+			.attr("y",y)
+			.attr("id","c"+i+j)
+			.attr("data",[i,j])
+			.attr("style","fill:gray")
+			.on("dblclick", function() {
+				var d = d3.select(this).attr("data").split(",");
+				gameDblClick((d[0]),(d[1]));
+				})
+			.on("click", function() {
+				var d = d3.select(this).attr("data").split(",");
+				gameClick((d[0]),(d[1]));
+				});
 		}
+	}
+	function gameDblClick(i,j) {
+		console.log("dblclick",i,j,gameSize[0],gameSize[1]);
+		d3.select("#c"+i+j).attr("style","fill:red");
+	}
+	function gameClick(i,j) {
+		console.log("click",i,j,gameSize[0],gameSize[1]);
+		var ii = Number(i);
+		var jj = Number(j);
+		if (mineGrid[ii][jj]<99){
+		d3.select("#c"+i+j).remove();
+		if (mineGrid[ii][jj] < 0) { loseGame(); }
+		if (mineGrid[ii][jj] == 0) {	
+			mineGrid[i][j]=99;
+			if (ii>0) {
+				console.log("click left",ii-1,jj);
+				gameClick(ii-1,jj);
+			};
+			if (ii<gameSize[0]-1) {
+				console.log("click right",ii+1,jj);
+				gameClick(ii+1,jj);
+			};
+			if (jj>0) {
+				console.log("click up",ii,jj-1);
+				gameClick(ii,jj-1);
+			};
+			if (jj<gameSize[1]-1) {
+				console.log("click down",ii,jj+1);
+				gameClick(ii,jj+1);
+			};
+			
+		}
+		}
+		
+	}
+	
+	function loseGame(){
+		alert('you lose!');
+	}
+	
+	function zero2D(rows, cols) {
+		var array = [], row = [];
+		while (cols--) row.push(0);
+		while (rows--) array.push(row.slice());
+		return array;
 	}
 	</script>
 	</body>
