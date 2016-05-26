@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Snow Test</title>
+    <title>Minesweeper</title>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js" charset="utf-8"></script>
 	</head>
 	<body>
@@ -22,6 +22,7 @@
 			{
 			  temp.push(0);
 			}
+			console.log("temp",temp);
 			for (i=0; i<gameSize[1]; i++)
 			{
 			  mineGrid.push(temp);
@@ -30,6 +31,7 @@
 			
 			var numMines = 12;
 			var tx = 0, ty = 0;
+			console.log("add mines");
 			while (i < numMines)
 			{
 			  tx = Math.round(Math.random()*gameSize[0]);
@@ -52,6 +54,7 @@
 			     if (ty > 0) {mineGrid[tx][ty-1]++;}
 			     if (ty < gameSize[1]-1) {mineGrid[tx][ty+1]++;}
 			   }
+			   i++;
 			 }
 			console.log("grid",mineGrid);    
 			  
