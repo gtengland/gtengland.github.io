@@ -25,6 +25,8 @@
 	if (urlVars["w"] > 0)
 	{
 		gameSize = [urlVars["w"], urlVars["h"]];
+		if (w < gameSize[0]*(20+rectPadding)) {w = gameSize[0]*(20+rectPadding);}
+		if (h < gameSize[1]*(20+rectPadding)) {h = gameSize[1]*(20+rectPadding);}
 	}
 	if (urlVars["numMines"] > 0)
 	{
