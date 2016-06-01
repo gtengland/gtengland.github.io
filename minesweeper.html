@@ -13,14 +13,26 @@
 	var padding = 10;
 	var rectPadding = 5;
 	var gameSize = [10, 10];
-	 
+	
 	 //global variables
-	 var mineGrid = zero2D(gameSize[0],gameSize[1]);
-	 var userMineGrid = zero2D(gameSize[0],gameSize[1]);
 	 
 	 var numCleared = 0;
 	 var numMines = 12;
+	
+	var urlVars = getUrlVars();
+	console.log(urlVars);
+	
+	if (urlVars["w"] > 0)
+	{
+		gameSize = [urlVars["w"], urlVars["h"]];
+	}
+	if (urlVars["numMines"] > 0)
+	{
+		numMines = urlVars["numMines"];
+	}
 	 
+	 var mineGrid = zero2D(gameSize[0],gameSize[1]);
+	 var userMineGrid = zero2D(gameSize[0],gameSize[1]);
 	 
 	 wR = (w - padding) / gameSize[0] - rectPadding;
 	 hR = (h - padding) / gameSize[1] - rectPadding;
@@ -34,6 +46,18 @@
 
 	newGame(numMines);
 	
+	function getUrlVars()
+	{
+		var vars = [], hash;
+		var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+		for(var i = 0; i < hashes.length; i++)
+		{
+			hash = hashes[i].split('=');
+			vars.push(hash[0]);
+			vars[hash[0]] = hash[1];
+		}
+		return vars;
+	}
 	function gameClick(i,j) {
 		//console.log("click",i,j,gameSize[0],gameSize[1]);
 		var ii = Number(i);
