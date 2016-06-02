@@ -45,7 +45,7 @@
 	         style="display: inline-block; width: 60px; text-align: right">
 	         layers <span id="layers-value"></span>
 	  </label>
-	  <input type="number" min="1" max="4" step="0.1" value="10" id="layers" style="width:40px;">
+	  <input type="number" min="1" max="100" step="1" value="10" id="layers" style="width:40px;">
 	  <br>
 	  <script type="text/javascript" src="colorfromspectrum.js"></script>
 	<script type="text/javascript">
@@ -58,7 +58,7 @@
 		var spectrum = [];
 		var wl = [];
 		var gMall = [];
-		var numDataPoints = 400;		
+		var numDataPoints = 100;		
 		var xMin = 350;
 		var xMax = 800;
 		var xRange = xMax - xMin;	
@@ -93,6 +93,7 @@
 			.attr("stroke-width",5)
 			.attr("fill","none");
 		
+		var line = d3.svg.line();
 		for (var i = 0; i < numDataPoints; i++) {	
 				var v1 = xMin + i*(xRange/(numDataPoints-1));
 				wl.push(v1);
@@ -335,7 +336,7 @@
 			   .on("mouseout", hideTooltip);
 		   
 			var xCur = dataset[0][0];
-			var yCur = dataset[0][1]
+			var yCur = dataset[0][1];
 			var curvePath = "M" + xScale(xCur) + "," + yScale(yCur);
 			for (i = 1; i < numDataPoints; i++) {					//Loop numDataPoints times
 				xCur = xScale(dataset[i][0]);
