@@ -100,9 +100,9 @@
 			}
 		updateGraph(dOpal,n1,n2,layers,0);
 		
-		var tooltip = svg.append("g");
-		tooltip.append("rect").attr("width","50").attr("height","25");
-		tooltip.append("text");
+		//var tooltip = svg.append("g");
+		//tooltip.append("rect").attr("width","50").attr("height","25");
+		//tooltip.append("text");
 		
 		//Create X axis
 		svg.append("g")
@@ -144,6 +144,7 @@
 		d3.select("#layers").on("input", function() {
 		  updateGraph(dOpal,n1,n2,+this.value,1);
 		});
+		/*
 		function updateTooltip()
 		{
 			var d = d3.select(this).attr("data").split(",");
@@ -163,6 +164,7 @@
 			tooltip.selectAll("rect").style("fill-opacity","0");
 			d3.select(this).attr("fill","none");
 		}
+		*/
 		function opalMatrices(nMatrix,nPores,rOpal, d,wl)
 		{
 			var refl = [];
