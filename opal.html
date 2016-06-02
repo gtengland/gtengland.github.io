@@ -316,25 +316,12 @@
 			}
 
 			specColor = colorFromSpectrum(wl, dataset);
-			console.log(specColor);//Create circles
-			svg.selectAll("circle").remove();
-			svg.selectAll("circle")
-			   .data(dataset)
-			   .enter()
-			   .append("circle")
-			   .attr("cx", function(d) {
-					return xScale(d[0]);
-			   })
-			   .attr("cy", function(d) {
-					return yScale(d[1]);
-			   })
-			   .attr("r", 5)
-			   .attr("pointer-events","visible")
-			   .attr("fill","none")
-			   .attr("data", function(d) { return d; })
-			   .on("mouseover", updateTooltip)
-			   .on("mouseout", hideTooltip);
 		   
+			var lineFunction = d3.svg.line()
+				.x(function(d) { return xScale(d[0]); })
+				.y(function(d) { return yScale(d[1]); })
+				.interpolate("cardinal");
+/*
 			var xCur = dataset[0][0];
 			var yCur = dataset[0][1];
 			var curvePath = "M" + xScale(xCur) + "," + yScale(yCur);
@@ -343,9 +330,13 @@
 				yCur = yScale(dataset[i][1]);
 				curvePath = curvePath + "L" + xCur + "," + yCur; 
 			}
-			
 			spectrum.attr("d", curvePath)
-				.attr("stroke", "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")"); 
+				.attr("stroke", "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")");
+			*/
+			console.log("lineFunction",lineFunction(dataset));
+			spectrum.attr("d", lineFunction(dataset))
+				.attr("stroke", "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")");
+			
 		}
 	</script>
 </body>
