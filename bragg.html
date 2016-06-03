@@ -57,8 +57,8 @@
 		var w = 800;
 		var h = 600;
 		var padding = 40;
-		var t = [100, 50 , 22, 200];
-		var n = [1.54, 1.85, 3, 1.2];
+		var t = [100, 100];
+		var n = [1.95, 1.54];
 		var nsub = 1.54;
 		var wR = 100;
 		var xR = 40;
@@ -89,7 +89,6 @@
 		var xMax = 800;
 		var xRange = xMax - xMin;	
 		var yRange = 100;
-		var t1=200,t2=100,n1=2,n2=1.33,nsub=1.54;
 		var specColor = [0,0,0];
 		//Create scale functions
 		var xScale = d3.scale.linear()
@@ -414,6 +413,7 @@
 			console.log("mod layer",n,t);
 			n[curLayer] = Number(document.getElementById("modN").value);
 			t[curLayer] = Number(document.getElementById("modT").value);
+			if (t[curLayer]==0) {n.splice(curLayer,1); t.splice(curLayer,1);}
 			redraw();
 			updateReps(repUnits, repLength, nsub);
 			return false;
