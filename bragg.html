@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Opal Structural Color</title>
+    <title>Bragg Stack Structural Color</title>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.1.4/math.min.js"></script>
 	<script src="colorfromspectrum.js"></script>
@@ -57,8 +57,8 @@
 		var w = 800;
 		var h = 600;
 		var padding = 40;
-		var t = [100, 100];
-		var n = [1.95, 1.54];
+		var t = [200, 200];
+		var n = [1.5, 2];
 		var nsub = 1.54;
 		var wR = 100;
 		var xR = 40;
@@ -161,6 +161,7 @@
 		d3.select("#repLength").on("input", function() {
 		  updateReps(repUnits, +this.value, nsub);
 		});
+		hideTooltip();
 
 		function updateTooltip()
 		{
@@ -187,33 +188,37 @@
 			var nprev = 1;
 			var ncur = 1;
 			var kx = 1;
-			var MRep = [[1, 0], [0, 1]];
-			for (var i=0; i<(t.length - repLength); i++)
+			var i = 0, j=0;
+			var T=0, P=0;
+			if (wl==350) {console.log("MRepIn T",1,ncur);}
+			for (j=0; j<repUnits; j++)
+			{
+				for (i=t.length-1; i>=t.length-repLength; i--)
+				{
+					nprev = ncur;
+					ncur = n[i];
+					T = trans(nprev,ncur);
+					kx = 2*math.pi*(ncur) / wl;
+					P = prop(kx*t[i]);
+					M = math.multiply(M,T);
+					M = math.multiply(M,P);
+					if (wl==350) {console.log("T",nprev,",",ncur,",P",t[i]);}
+				}
+			}
+			for (i=t.length-repLength-1; i>=0; i--)
 			{
 				nprev = ncur;
 				ncur = n[i];
+				T = trans(nprev,ncur);
 				kx = 2*math.pi*(ncur) / wl;
-				var T = trans(nprev,ncur),
-					P = prop(kx*t[i]);
+				P = prop(kx*t[i]);
 				M = math.multiply(M,T);
 				M = math.multiply(M,P);
+				if (wl==350) {console.log("T",nprev,",",ncur,",P",t[i]);}
 			}
-			for (var i=t.length-repLength; i<t.length; i++)
-			{
-				nprev = ncur;
-				ncur = n[i];
-				kx = 2*math.pi*(ncur) / wl;
-				var T = trans(nprev,ncur),
-					P = prop(kx*t[i]);
-				MRep = math.multiply(M,T);
-				MRep = math.multiply(M,P);
-			}
-			for (var i=0; i<repUnits; i++)
-			{
-				M = math.multiply(M, MRep);
-			}
-			T = trans(ncur,nsub);
-			M = math.multiply(M,T);
+			M = math.multiply(M,trans(ncur,nsub));
+			if (wl==350) {console.log("T",ncur,",",nsub);}
+			
 			var temp = math.divide(M[1][0],M[0][0]);
 			var r = math.abs(temp) * math.abs(temp);
     			return 100*r;
@@ -356,7 +361,7 @@
 			repUnits = Number(grepUnits);
 			repLength = Number(grepLength);
 			nsub = Number(gnsub);
-			if (repUnits > 1 && repLength > 1)
+			if (repUnits > 1 || repLength > 1)
 			{
 				var cP = drawArcPath(xR+wR+5, 15, t.length-repLength, t.length-1).split("|");
 				repLayerPath.attr("d",cP[0])
