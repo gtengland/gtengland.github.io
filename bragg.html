@@ -252,7 +252,9 @@
 			}
 			
 			specColor = colorFromSpectrum(wl, dataset);
-			console.log(specColor);//Create circles
+			console.log("color",specColor);//Create circles
+			console.log("wl",wl);
+			console.log("spec",dataset);
 			svg.selectAll("circle").remove();
 			svg.selectAll("circle")
 			   .data(dataset)
