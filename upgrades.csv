@@ -1,0 +1,5 @@
+"elemIndex","factor","cost","name","description"
+"0","2","1","Electron pairs","Double mass gained from electrons"
+"0","2","3","Electron quads","Double mass gained from electrons"
+"0","2","10","Electron octets","Double mass gained from electrons"
+"0","1000","1","Electron guns","Use an old CRT to gain electrons 1000x faster"
