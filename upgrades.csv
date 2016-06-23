@@ -2,4 +2,5 @@
 "0","2","1","Electron pairs","Double mass gained from electrons","pew"
 "0","2","3","Electron quads","Double mass gained from electrons","pew pew"
 "0","2","10","Electron octets","Double mass gained from electrons","pew ^ 4"
-"0","1000","1","Electron guns","Use an old CRT to gain","electrons 1000x faster"
+"0","1000","100","Electron guns","Use an old CRT to gain","electrons 1000x faster"
+"0","1000","10000","Electron beams","Get a whole stack of CRTs from the","junkyard to gain electrons 1000x faster"
