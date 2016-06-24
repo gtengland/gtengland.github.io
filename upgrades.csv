@@ -11,4 +11,5 @@
 "2","2","5000","Alpha particles(n)","Double mass gained from neutrons","."
 "3","3","5000","Tritium","Triple mass gained from Hydrogen", "2n + p"
 "2","10","10000","Neutron Beam","Fire streams of neutrons into your pile","increasing mass gained by 10x"
+"4","3","10000","He-3","Use Helium-3 to increase mass gained for He by 3x","."
 "0","1000","1000000","Electron beams","Get a whole stack of CRTs from the","junkyard to gain electrons 1000x faster"
