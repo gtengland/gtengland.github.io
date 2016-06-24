@@ -24,14 +24,27 @@
 			}
 			input {border: 1px dotted #ccc; background: white; font-family: monospace; padding: 10px 10px; font-size: 14px; margin: 10px 0px 10px 0; color: red; text-align: center;}
 			input:focus { background-color:yellow; outline: none;}
+			table, td {
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
     </style>
 </head>
 	<body>
 	<div style="height:60px;">
-	<form style="border:1px dashed grey; padding: 0px 5px 0px 5px; float: left;">
-	  &nbsp;nsub:<input type="number" min="1" max="4" step="0.1" value="1.54" id="nsub" style="width:60px" placeholder="nsub">
-	  &nbsp;repUnits:<input type="number" min="1" max="50" step="1" value="1" id="repUnits" style="width:60px" placeHolder="repUnits">
-	  &nbsp;repLength:<input type="number" min="1" max="50" step="1" value="1" id="repLength" style="width:60px" placeHolder="repLength">
+		<form style="border:1px dashed grey; padding: 0px 5px 0px 5px; float: left;">
+		  &nbsp;nsub:<input type="submit" min="1" max="4" step="0.1" value="1.54" id="nsub" style="width:60px" placeholder="nsub">
+		  &nbsp;repUnits:<input type="number" min="1" max="50" step="1" value="1" id="repUnits" style="width:60px" placeHolder="repUnits">
+		  &nbsp;repLength:<input type="number" min="1" max="50" step="1" value="1" id="repLength" style="width:60px" placeHolder="repLength">
+		</form>
+	<div style="width:30px; height:60px; float: left;">&nbsp;</div>
+	<form style="border:1px dashed grey; padding: 0px 5px 0px 5px; float: left;" onSubmit="return savSpectrum()">
+		<input name="btnSaveSpec" type="submit" value="Save Spectrum" >
+		&nbsp;
+		<div id="dataDiv" style="height:60px; font-size:10px; float: right;">
+			<b>Spec Data</b><br>
+			<textarea id='datTxt' style="font-size:10px; width:100px; resize:none; margin: 10px;" onClick='this.select()'></textarea>
+		</div>
 	</form>
 	</div><br>
 	<div style="height:60px;">
@@ -49,7 +62,9 @@
 	</div><br>
 	<div id="braggStack" style="border: 1px solid black; float: left;"></div>
 	<div id="graph" style="border: 1px solid black; float: left;"></div>
-	  <script type="text/javascript" src="colorfromspectrum.js"></script>
+	<br>
+	<div style="width:30px; height:60px; float: left;">&nbsp;</div>
+	<script type="text/javascript" src="colorfromspectrum.js"></script>
 	<script type="text/javascript">
 		//Width and height
 		var wCartoon = 200;
@@ -117,7 +132,12 @@
 		var spectrum = svg.append("g").append("path")
 			.attr("stroke-width",5)
 			.attr("fill","none");
+		
+		var datTable = d3.select('#dataDiv')
+			.append("table");
 			
+		var dt2 = d3.select('#datTxt');
+		
 		updateGraph(200,100,2,1.33,1.54);
 		
 		var tooltip = svg.append("g");
@@ -247,7 +267,7 @@
 				var v1 = xMin + i*(xRange/(numDataPoints-1));
 				var v2 = bragg(v1);	
 				dataset.push([v1, v2]);
-				spectrum.push(v2);
+				//spectrum.push(v2);
 				wl.push(v1);
 			}
 			
@@ -427,14 +447,33 @@
 		}
 		
 		function addLayer(event){
-				if (Number(document.getElementById("txtN").value) > 0 && Number(document.getElementById("txtT").value) > 0) {
-					n.push(Number(document.getElementById("txtN").value));
-					t.push(Number(document.getElementById("txtT").value));
-					redraw();
-					updateReps(repUnits, repLength, nsub);
-				}
-                return false;
-            }
+			if (Number(document.getElementById("txtN").value) > 0 && Number(document.getElementById("txtT").value) > 0) {
+				n.push(Number(document.getElementById("txtN").value));
+				t.push(Number(document.getElementById("txtT").value));
+				redraw();
+				updateReps(repUnits, repLength, nsub);
+			}
+			return false;
+		}
+		
+		function savSpectrum() {
+			//console.log('saving');
+			//datTable.selectAll("tr").remove();
+			//datTable.selectAll("td").remove();
+			
+			var savString = "";
+			for (var i=0; i<numDataPoints; i++)
+			{
+				//var curRow = datTable.append("tr");
+				//curRow.append("td").text(dataset[i][0]);
+				//curRow.append("td").text(dataset[i][1]);
+				savString = savString + dataset[i][0] + "\t" + dataset[i][1] + "\n";
+			}
+			//console.log(dt2[0][0]);
+			dt2.text(savString);
+			console.log(dt2);
+			return false;
+		}
 		
 	</script>
 </body>
