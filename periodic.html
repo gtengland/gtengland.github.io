@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Black Hole Tycoon</title>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js" charset="utf-8"></script>
+	<style type="text/css">
+		.unselectable {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			pointer-events: none;
+		}
+	</style>
+	</head>
+	<body>
+	
+	<script type="text/javascript">
+	//Width and height
+	var w = 1100;
+	var h = 700;
+	var padding = 20;
+	var rPadding = 5;
+	var totalMass = 0;
+	var mps = 0;
+	var totalMassLong = new longNo(0,0);
+	var prev_time = 0;
+	var wR=45, hR=50;
+	var periodicTable = [];
+	var ptData = [];
+	var elemCts = [];
+	var elemMults = [];
+	//Create SVG element
+	var svg = d3.select("body")
+				.append("svg")
+				.attr("width", w)
+				.attr("height", h);
+	
+	var txtMass = null;
+	var txtMPS = null;
+	var toolTipG = null;
+	var toolTipT1 = null;
+	var toolTipT2 = null;
+	var timer = null;
+	var txtBlackHole = null;
+	var picBlackHole = null;
+	var ugData = [];
+	var ugPurchases = [];
+	var txtUG = [];
+	var txtUG2 = [];
+	var rectUG = [];
+	d3.text("http://gtengland.github.io/upgrades.csv", function(data) {
+		ugData = d3.csv.parse(data);
+		for (var i=0; i<ugData.length; i++) {
+			ugPurchases.push(0);
+		}
+	});
+	d3.text("http://gtengland.github.io/periodicTable.csv", function(data) {
+		ptData = d3.csv.parse(data);
+		for (var i=0; i<ptData.length; i++)
+		{
+			var elem = svg.append("g");
+			elem.append("rect")
+				.attr("width",wR)
+				.attr("height",hR)
+				.attr("style","fill: none; stroke: black;")
+				.attr("data",i)
+				.on("click", function() { clickElem(Number(d3.select(this).attr("data"))); })
+				.on("mouseover", function() {d3.select(this).attr("style","fill:rgb(0,200,200); stroke: black;");
+					toolTip(Number(d3.select(this).attr("data")));})
+				.on("mouseout", function() {d3.select(this).attr("style","fill:white; stroke: black;");
+					toolTipOut();});
+			elem.append("text")
+				.text(ptData[i].Symbol)
+				.attr("alignment-baseline","middle")
+				.attr("text-anchor","middle")
+				.attr("fill","black")
+				.attr("font-size","20")
+				.attr("x", wR/2)
+				.attr("y", hR/2)
+				.attr("class","unselectable");
+			elem.append("text")
+				.text(ptData[i]['At#'])
+				.attr("text-anchor","left")
+				.attr("fill","grey")
+				.attr("font-size","12")
+				.attr("x", 2)
+				.attr("y", 11)
+				.attr("class","unselectable");
+			elem.append("text")
+				.text(numFormat(ptData[i].Mass))
+				.attr("text-anchor","middle")
+				.attr("fill","grey")
+				.attr("font-size","12")
+				.attr("x", wR/2)
+				.attr("y", hR-3)
+				.attr("class","unselectable")
+				.attr("id","mass");
+			elem.attr("transform", "translate(" + (padding + (wR+rPadding)*ptData[i].group) + "," + (hR+rPadding)*ptData[i].row + ")");
+			periodicTable.push(elem);
+			elemCts.push(0);
+			elemMults.push(1);
+		}
+		main();
+	});
+	
+function main() {
+	txtMass = svg.append("text")
+			.attr("x",padding + 6*(wR + rPadding))
+			.attr("y",2*(hR+rPadding))
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("font-size","24")
+			.attr("class","unselectable");
+	svg.append("text")
+			.attr("x",padding + 6*(wR + rPadding) - 120)
+			.attr("y",2*(hR+rPadding))
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("font-size","24")
+			.attr("class","unselectable")
+			.text("Total Mass:");
+	svg.append("text")
+			.attr("x",padding + 6*(wR + rPadding) - 120)
+			.attr("y",2*(hR+rPadding)+30)
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("font-size","24")
+			.attr("class","unselectable")
+			.text("Mass / Sec:");
+			
+	txtMPS = svg.append("text")
+			.attr("x",padding + 6*(wR + rPadding))
+			.attr("y",2*(hR+rPadding)+30)
+			.text("1")
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("fill","grey")
+			.attr("font-size","24")
+			.attr("class","unselectable");
+	
+	
+	toolTipG = svg.append("g");
+	toolTipG.append("rect")
+		.attr("width", 100)
+		.attr("height", 50)
+		.attr("style", "fill: rgb(100, 255, 100);");
+	toolTipT1 = toolTipG.append("text")
+			.attr("x",1)
+			.attr("y",10)
+			.text("Total Owned: 0")
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("fill","grey")
+			.attr("font-size","14")
+			.attr("class","unselectable");
+	toolTipT2 = toolTipG.append("text")
+			.attr("x",1)
+			.attr("y",28)
+			.text("Cost: 0")
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("fill","grey")
+			.attr("font-size","14")
+			.attr("class","unselectable");
+	toolTipT3 = toolTipG.append("text")
+			.attr("x",1)
+			.attr("y",46)
+			.text("MPS: 0")
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("fill","grey")
+			.attr("font-size","14")
+			.attr("class","unselectable");
+	toolTipOut();
+	
+	txtBlackHole = svg.append("text")
+			.attr("x",padding + 8*(wR + rPadding))
+			.attr("y",(hR+rPadding)+30)
+			.text("1")
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("fill","grey")
+			.attr("font-size","24")
+			.attr("class","unselectable");
+	svg.append("rect")
+		.attr("width", 100)
+		.attr("height", 20)
+		.attr("x", 10*(wR+rPadding))
+		.attr("y", 3*hR)
+		.attr("style", "fill:red;")
+		.on("click", function() {
+			totalMass = totalMass + mps + 1;
+			updateUpgradeList();
+		});
+	
+	for(var j=0; j<3; j++) {
+		rectUG[j] = svg.append("rect")
+			.attr("x",padding + wR/2)
+			.attr("y",(8+j)*(hR+rPadding))
+			.attr("width", 220)
+			.attr("height", hR)
+			.attr("fill","green")
+			.attr("data", j)
+			.on("mouseover", function() {
+				d3.select(this).attr("style","fill:rgb(0,200,200); stroke: black;");
+				})
+			.on("mouseout", function() {
+				d3.select(this).attr("style","fill:green; stroke: black;");
+				})
+			.on("click", function() {
+					buyUpgrade(Number(d3.select(this).attr("data")));
+					d3.select(this).attr("style","fill:yellow;");
+				});;	
+		txtUG[j] = svg.append("text")
+			.attr("x",padding + wR/2+5)
+			.attr("y",(8+j)*(hR+rPadding)+12)
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("fill","white")
+			.attr("font-size","20")
+			.attr("font-weight","bold")
+			.attr("class","unselectable");
+		txtUG2[j] = svg.append("text")
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("fill","white")
+			.attr("font-size","12")
+			.attr("class","unselectable");
+		txtUG2[j].append("tspan")
+			.attr("x",padding + wR/2 + 5)
+			.attr("y",(8+j)*(hR+rPadding)+30)
+			.attr("data","0");
+		txtUG2[j].append("tspan")
+			.attr("x",padding + wR/2 + 5)
+			.attr("y",(8+j)*(hR+rPadding)+46);
+	}
+	
+	timer = d3.timer(function(elapsed) {
+		update(elapsed);
+		return false;
+	});
+}
+	
+	function update(elapsed) {
+		totalMass = totalMass + mps * ((elapsed-prev_time)/1000);
+		totalMassLong.add(new longNo(mps * ((elapsed-prev_time)/1000),0));
+		//console.log(totalMassLong);
+		prev_time = elapsed;
+		txtMass.text(numFormat(totalMass));
+		txtMPS.text(numFormat(mps));
+		drawBlackHole();
+	}	
+	
+	function clickElem(i) {
+		var tmpCost = elemCost(i);
+		if (totalMass > tmpCost.toFloat()) {
+			mps = mps + Number(ptData[i].Mass)*elemMults[i];
+			if (totalMass > 100*tmpCost.toFloat()) {
+				elemCts[i] = elemCts[i]+10;
+				totalMass = totalMass - 17.5*tmpCost.toFloat(); //assuming increase rate of 1.1x
+			}
+			else {
+				elemCts[i] = elemCts[i]+1;
+				totalMass = totalMass - tmpCost.toFloat();
+			}
+			toolTip(i);
+		}
+	}
+
+	function toolTip(i) {
+		var xTrans = padding + (wR+rPadding)*(ptData[i].group) + (wR + rPadding);
+		toolTipG.attr("transform", "translate(" + (xTrans) + "," + (hR+rPadding)*ptData[i].row + ")");
+		toolTipT1.text("Total Owned:" + elemCts[i]);
+		toolTipT2.text("Cost:" + numFormatLong(elemCost(i)));
+		toolTipT3.text("MPS:" + numFormat(ptData[i].Mass * elemCts[i] * elemMults[i]));
+	}
+	
+	function toolTipOut() {
+		toolTipG.attr("transform", "translate(-1000)");
+	}
+	
+	function elemCost(i) {
+		var m = Number(ptData[i].Mass);
+		var numOwnedNext = elemCts[i]+1;
+		var ccLong = new longNo(1,0);
+		ccLong.mult(Math.pow(1.1,numOwnedNext) * Math.pow(m+1, 4));
+		ccLong.mult(Math.pow((i+1)/4,i));
+		//console.log(ccLong);
+		var curCost = Math.pow(1.1,numOwnedNext) * Math.pow(m+1, 4) * Math.pow((i+1)/4,i);
+		if (i==0) {ccLong.mult(0.01);}
+		return ccLong;
+	}
+	
+	function drawBlackHole() {
+		var SIprefixes = ["microyocto", "milliyocto", "yocto", "zepto", "atto", "femto", "pico", "nano", "micro", "milli", "", "kilo", "mega", "giga"];
+		var massG = totalMass * 1.66054e-30;
+		for (var i=0; i<SIprefixes.length; i++)
+		{
+			if (massG < Math.pow(10, -30 + 3*i) || i == SIprefixes.length)
+			{
+				massG = massG / Math.pow(10,-33 + 3*i);
+				txtBlackHole.text(Math.round(massG*1000)/1000 + " " + SIprefixes[i] + "grams");
+				return;
+			}
+		}
+	}
+	
+	function updateUpgradeList() {
+		var ugCount = 0;
+		var tmp = [0, 1];
+		for (var i=0; i<ugData.length; i++)
+		{
+			if (ugPurchases[i]==0) {
+				txtUG[ugCount].text(ugData[i]["name"] + "(" + numFormat(ugData[i]["cost"]) + "):");
+				txtUG2[ugCount].selectAll("tspan")
+					.each(function(d,j) {
+						d3.select(this).text(function(j) {
+						if (d3.select(this).attr("data")=="0") {return ugData[i]["desc1"];}
+						else {return ugData[i]["desc2"];}
+						});
+					});
+				rectUG[ugCount].attr("data",i);
+				ugCount = ugCount+1;
+				if (ugCount ==3){break;}
+			}
+		}
+		if (ugCount < 3) {
+			//console.log("delete", ugCount);
+			for (var i=ugCount; i<3; i++)
+			{
+				txtUG[ugCount].text("");
+				txtUG2[ugCount].text("");
+				rectUG[ugCount].style("fill: white; stroke: white;");
+			}
+		}
+	}
+	
+	function buyUpgrade(i) {
+		if (totalMass > Number(ugData[i]["cost"]) && ugPurchases[i]==0) {
+			var f = Number(ugData[i]["factor"]);
+			var j = Number(ugData[i]["elemIndex"]);
+			totalMass = totalMass - Number(ugData[i]["cost"]);
+			elemMults[j] = elemMults[j]*f;
+			ugPurchases[i] = 1;
+			updateMPS();
+			updateUpgradeList();
+			periodicTable[j].selectAll('#mass').text(numFormat(elemMults[j]*Number(ptData[j]["Mass"])));
+		}
+	}
+	
+	function updateMPS() {
+		mps = 0;
+		for (var i=0; i<elemMults.length; i++)
+		{
+			mps = mps + elemCts[i]*elemMults[i]*Number(ptData[i]["Mass"]);
+			if (elemCts[i]>0) {console.log(Number(ptData[i]["Mass"]));}
+		}
+	}
+	function numFormatLong(num) {
+		var preFixes = ["", "K", "M", "B", "T", "q", "Q", "s", "S", "O", "N", "D", "Ud", "Dd", "Td", "qd", "Qd", "sd", "SD","OD","ND","V","Uv"];
+		var retVal = 0;
+		if (num.exp<0) {return numFormat(num.val) + "e" + num.exp;}
+		if (Number(num.exp) == 0) {
+			return numFormat(num.val);
+		}
+		var j=0;
+		if (num.exp/3 < preFixes.length)
+		{
+			j = num.exp/3;
+			return Math.round((100*Number(num.val)))/100 + preFixes[j];
+		}
+		else {return numFormat(num.val) + 'e' + num.exp}
+	}
+	
+	function numFormat(num) {
+
+		var preFixes = ["", "K", "M", "B", "T", "q", "Q", "s", "S", "O", "N", "D", "Ud", "Dd"];
+		var retVal = 0;
+		if (num==0) {return num;}
+		if (num < 1) {
+			for (var i=-12; i<=0; i+=3) {
+				if (num < Math.pow(10,i)) {
+					var tmp = 3-i;
+					return Math.round(num*Math.pow(10,3-i)) + "e-" + tmp;
+				}
+			}
+			return num;
+		}
+		for (var i=0; i<preFixes.length; i++)
+		{
+			if (num < Math.pow(10,3*(i+1)))
+			{
+				if (num < Math.pow(10,3*(i+1)-2)) 
+					{retVal = Math.round(100*num/Math.pow(10,3*i))/100 + preFixes[i];}
+				else if (num < Math.pow(10,3*(i+1)-1)) 
+					{retVal = Math.round(10*num/Math.pow(10,3*i))/10 + preFixes[i];}
+				else {retVal = Math.round(num/Math.pow(10,3*i)) + preFixes[i];}
+				return retVal;
+			}
+		}
+		retVal = Math.round(num/Math.pow(10,3*i)) + preFixes[i];
+		return retVal;
+	}
+	
+	function longNo(value, exponent) {
+		this.val = value;
+		this.exp = exponent;
+		this.mult = function(x) {
+			this.val = this.val*x;
+			while(this.val>1000)
+			{
+				this.val = this.val / 1000;
+				this.exp = this.exp + 3;
+			}
+			while(this.val<1)
+			{
+				this.val = this.val * 1000;
+				this.exp = this.exp - 3;
+			}
+		};
+		//can only add other longNos
+		this.add = function(x) {
+			this.val = this.val + x.val * Math.pow(x.exp - this.exp);
+			while(this.val>1000)
+			{
+				this.val = this.val / 1000;
+				this.exp = this.exp + 3;
+			}
+			while(this.val<1)
+			{
+				this.val = this.val * 1000;
+				this.exp = this.exp - 3;
+			}
+		};
+		this.gte = function(x) {
+			if (this.exp > x.exp) {return true;}
+			else if (this.exp < x.exp) {return false;}
+			else if (this.val >= x.val) {return true;}
+			else {return false;}
+		};
+		this.lte = function(x) {
+			if (this.exp < x.exp) {return true;}
+			else if (this.exp > x.exp) {return false;}
+			else if (this.val <= x.val) {return true;}
+			else {return false;}
+		};
+		this.toFloat = function() {return this.val*Math.pow(10,this.exp);}
+		this.vv = function() {return this.val;}
+		this.ee = function() {return this.exp;}
+	}
+	</script>
+	</body>
+</html>
+
