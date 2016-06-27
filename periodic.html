@@ -272,10 +272,11 @@ function main() {
 
 	function toolTip(i) {
 		var xTrans = padding + (wR+rPadding)*(ptData[i].group) + (wR + rPadding);
+		var xMPS = ptData[i].Mass * elemCts[i] * elemMults[i];
 		toolTipG.attr("transform", "translate(" + (xTrans) + "," + (hR+rPadding)*ptData[i].row + ")");
 		toolTipT1.text("Total Owned:" + elemCts[i]);
 		toolTipT2.text("Cost:" + numFormatLong(elemCost(i)));
-		toolTipT3.text("MPS:" + numFormat(ptData[i].Mass * elemCts[i] * elemMults[i]));
+		toolTipT3.text("MPS:" + numFormat(xMPS) + "(" + numFormat(100*xMPS / mps) + "%)");
 	}
 	
 	function toolTipOut() {
