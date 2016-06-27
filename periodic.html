@@ -32,6 +32,7 @@
 	var ptData = [];
 	var elemCts = [];
 	var elemMults = [];
+	var allMult = 1;
 	//Create SVG element
 	var svg = d3.select("body")
 				.append("svg")
@@ -257,7 +258,7 @@ function main() {
 	function clickElem(i) {
 		var tmpCost = elemCost(i);
 		if (totalMass > tmpCost.toFloat()) {
-			mps = mps + Number(ptData[i].Mass)*elemMults[i];
+			mps = mps + allMult*Number(ptData[i].Mass)*elemMults[i];
 			if (totalMass > 100*tmpCost.toFloat()) {
 				elemCts[i] = elemCts[i]+10;
 				totalMass = totalMass - 17.5*tmpCost.toFloat(); //assuming increase rate of 1.1x
@@ -272,7 +273,7 @@ function main() {
 
 	function toolTip(i) {
 		var xTrans = padding + (wR+rPadding)*(ptData[i].group) + (wR + rPadding);
-		var xMPS = ptData[i].Mass * elemCts[i] * elemMults[i];
+		var xMPS = allMult * ptData[i].Mass * elemCts[i] * elemMults[i];
 		toolTipG.attr("transform", "translate(" + (xTrans) + "," + (hR+rPadding)*ptData[i].row + ")");
 		toolTipT1.text("Total Owned:" + elemCts[i]);
 		toolTipT2.text("Cost:" + numFormatLong(elemCost(i)));
@@ -344,12 +345,20 @@ function main() {
 		if (totalMass > Number(ugData[i]["cost"]) && ugPurchases[i]==0) {
 			var f = Number(ugData[i]["factor"]);
 			var j = Number(ugData[i]["elemIndex"]);
-			totalMass = totalMass - Number(ugData[i]["cost"]);
-			elemMults[j] = elemMults[j]*f;
-			ugPurchases[i] = 1;
+			if (j==-1) {
+				allMult = allMult * f;
+				for (var k=0; k<periodicTable.length; k++) {
+					periodicTable[k].selectAll('#mass').text(numFormat(allMult*elemMults[k]*Number(ptData[k]["Mass"])));
+				}
+			}
+			else {
+				totalMass = totalMass - Number(ugData[i]["cost"]);
+				elemMults[j] = elemMults[j]*f;
+				ugPurchases[i] = 1;
+				periodicTable[j].selectAll('#mass').text(numFormat(allMult*elemMults[j]*Number(ptData[j]["Mass"])));
+			}
 			updateMPS();
 			updateUpgradeList();
-			periodicTable[j].selectAll('#mass').text(numFormat(elemMults[j]*Number(ptData[j]["Mass"])));
 		}
 	}
 	
@@ -358,6 +367,7 @@ function main() {
 		for (var i=0; i<elemMults.length; i++)
 		{
 			mps = mps + elemCts[i]*elemMults[i]*Number(ptData[i]["Mass"]);
+			mps = mps * allMult;
 			if (elemCts[i]>0) {console.log(Number(ptData[i]["Mass"]));}
 		}
 	}
