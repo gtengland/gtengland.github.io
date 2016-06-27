@@ -145,7 +145,7 @@ function main() {
 	
 	toolTipG = svg.append("g");
 	toolTipG.append("rect")
-		.attr("width", 100)
+		.attr("width", 120)
 		.attr("height", 50)
 		.attr("style", "fill: rgb(100, 255, 100);");
 	toolTipT1 = toolTipG.append("text")
@@ -347,6 +347,7 @@ function main() {
 			var j = Number(ugData[i]["elemIndex"]);
 			if (j==-1) {
 				allMult = allMult * f;
+				console.log('allMult',allMult);
 				for (var k=0; k<periodicTable.length; k++) {
 					periodicTable[k].selectAll('#mass').text(numFormat(allMult*elemMults[k]*Number(ptData[k]["Mass"])));
 				}
@@ -367,9 +368,9 @@ function main() {
 		for (var i=0; i<elemMults.length; i++)
 		{
 			mps = mps + elemCts[i]*elemMults[i]*Number(ptData[i]["Mass"]);
-			mps = mps * allMult;
 			if (elemCts[i]>0) {console.log(Number(ptData[i]["Mass"]));}
 		}
+		mps = mps * allMult;
 	}
 	function numFormatLong(num) {
 		var preFixes = ["", "K", "M", "B", "T", "q", "Q", "s", "S", "O", "N", "D", "Ud", "Dd", "Td", "qd", "Qd", "sd", "SD","OD","ND","V","Uv"];
