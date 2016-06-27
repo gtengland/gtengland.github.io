@@ -186,6 +186,15 @@ function main() {
 			.attr("fill","grey")
 			.attr("font-size","24")
 			.attr("class","unselectable");
+	txtBlackHole2 = svg.append("text")
+			.attr("x",padding + 8*(wR + rPadding))
+			.attr("y",(hR+rPadding)+10)
+			.text("1")
+			.attr("alignment-baseline","middle")
+			.attr("text-anchor","left")
+			.attr("fill","grey")
+			.attr("font-size","24")
+			.attr("class","unselectable");
 	svg.append("rect")
 		.attr("width", 100)
 		.attr("height", 20)
@@ -199,9 +208,9 @@ function main() {
 	
 	for(var j=0; j<3; j++) {
 		rectUG[j] = svg.append("rect")
-			.attr("x",padding + wR/2)
+			.attr("x",padding)
 			.attr("y",(8+j)*(hR+rPadding))
-			.attr("width", 220)
+			.attr("width", 240)
 			.attr("height", hR)
 			.attr("fill","green")
 			.attr("data", j)
@@ -216,7 +225,7 @@ function main() {
 					d3.select(this).attr("style","fill:yellow;");
 				});;	
 		txtUG[j] = svg.append("text")
-			.attr("x",padding + wR/2+5)
+			.attr("x",padding +5)
 			.attr("y",(8+j)*(hR+rPadding)+12)
 			.attr("alignment-baseline","middle")
 			.attr("text-anchor","left")
@@ -231,12 +240,12 @@ function main() {
 			.attr("font-size","12")
 			.attr("class","unselectable");
 		txtUG2[j].append("tspan")
-			.attr("x",padding + wR/2 + 5)
-			.attr("y",(8+j)*(hR+rPadding)+30)
+			.attr("x",padding + 5)
+			.attr("y",(8+j)*(hR+rPadding)+29)
 			.attr("data","0");
 		txtUG2[j].append("tspan")
-			.attr("x",padding + wR/2 + 5)
-			.attr("y",(8+j)*(hR+rPadding)+46);
+			.attr("x",padding + 5)
+			.attr("y",(8+j)*(hR+rPadding)+45);
 	}
 	
 	timer = d3.timer(function(elapsed) {
@@ -298,6 +307,7 @@ function main() {
 	
 	function drawBlackHole() {
 		var SIprefixes = ["microyocto", "milliyocto", "yocto", "zepto", "atto", "femto", "pico", "nano", "micro", "milli", "", "kilo", "mega", "giga"];
+		var descriptions = ["Cloud of subatomic particles","Cloud of subatomic particles", "Cloud of atomic particles","Pile of atoms","Heap of atoms","Cloud of gas","Mass of a Bacterial Cell","","","","","","",""];
 		var massG = totalMass * 1.66054e-30;
 		for (var i=0; i<SIprefixes.length; i++)
 		{
@@ -305,6 +315,7 @@ function main() {
 			{
 				massG = massG / Math.pow(10,-33 + 3*i);
 				txtBlackHole.text(Math.round(massG*1000)/1000 + " " + SIprefixes[i] + "grams");
+				txtBlackHole2.text(descriptions[i]);
 				return;
 			}
 		}
@@ -345,6 +356,7 @@ function main() {
 		if (totalMass > Number(ugData[i]["cost"]) && ugPurchases[i]==0) {
 			var f = Number(ugData[i]["factor"]);
 			var j = Number(ugData[i]["elemIndex"]);
+			ugPurchases[i] = 1;
 			if (j==-1) {
 				allMult = allMult * f;
 				console.log('allMult',allMult);
@@ -355,7 +367,6 @@ function main() {
 			else {
 				totalMass = totalMass - Number(ugData[i]["cost"]);
 				elemMults[j] = elemMults[j]*f;
-				ugPurchases[i] = 1;
 				periodicTable[j].selectAll('#mass').text(numFormat(allMult*elemMults[j]*Number(ptData[j]["Mass"])));
 			}
 			updateMPS();
@@ -372,6 +383,7 @@ function main() {
 		}
 		mps = mps * allMult;
 	}
+	
 	function numFormatLong(num) {
 		var preFixes = ["", "K", "M", "B", "T", "q", "Q", "s", "S", "O", "N", "D", "Ud", "Dd", "Td", "qd", "Qd", "sd", "SD","OD","ND","V","Uv"];
 		var retVal = 0;
@@ -389,7 +401,6 @@ function main() {
 	}
 	
 	function numFormat(num) {
-
 		var preFixes = ["", "K", "M", "B", "T", "q", "Q", "s", "S", "O", "N", "D", "Ud", "Dd"];
 		var retVal = 0;
 		if (num==0) {return num;}
