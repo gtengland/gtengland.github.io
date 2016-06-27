@@ -12,6 +12,7 @@
 "3","3","5000","Tritium","Triple mass gained from Hydrogen","2n + p"
 "2","10","10000","Neutron Beam","Fire streams of neutrons into your pile","increasing mass gained by 10x"
 "4","3","10000","He-3","Use lighter Helium to add it to your cloud faster","and increase mass gained for He by 3x"
+"-1","2","10000","Beginner","After adding so many particles to the pile","figure out how to do it twice as fast!"
 "3","8","50000","Fission","Split some extra atoms you had lying","around to get 8x more Hydrogen"
 "1","5","50000","Positivity","Increase proton mass gain by 5x","."
 "4","6","100000","He-6","Heavier Helium to increase mass","gained from He by 6x"
