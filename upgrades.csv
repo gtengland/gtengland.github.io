@@ -22,6 +22,7 @@
 "1","20","5000000","Proton Pistol","Proton gun fires protons into your cloud","20x faster!"
 "4","10","10000000","He Tanks","Find some Helium tanks left over from a birthday","party to increase He by 10x!"
 "6","9","10000000","Be-9","The most common isotope, Be-9","Increase Be x9!"
+"-2","2","50000000","Squared","Increase the mass output of each element","by the square of its atomic number!"
 "5","20","100000000","Old Tesla","Find a junked electric car with busted batteries","luckily they're still full of Li (Lix20)"
 "7","11","100000000","B-11","80% of Boron you find has 6 neutrons","Increase Boron mass rate by 11x"
 "6","100","150000000","Old Rock","Find a Beryl stone on a walk through the woods","it's full of Beryllium! (Bex100)"
@@ -38,4 +39,4 @@
 "11","1000","7000000000","Toothpaste","Now with extra Fluoride!","Who needs healthy teeth? Fx1000!"
 "9","10","20000000000","Fertilizer","There are just PILES of this stuff lying","around--great source of some Nitrogen. Nx10!"
 "12","1010","20000000000","Ne-20","10 protons + 10 neutrons","How noble. Nex1010!"
-"-1","10","50000000000","Getting good at this.","Use what you've learned to increase your mass gain","from ALL investments by a factor of 10!"
+"-1","10","500000000000","Getting good at this.","Use what you've learned to increase your mass","gain from ALL investments by a factor of 10!"
