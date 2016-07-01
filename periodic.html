@@ -46,7 +46,8 @@
 	var toolTipT2 = null;
 	var timer = null;
 	var txtBlackHole = null;
-	var picBlackHole = null;
+	var barBlackHole = null;
+	var blackHoleSize = 20;
 	var ugData = [];
 	var ugPurchases = [];
 	var txtUG = [];
@@ -177,6 +178,13 @@ function main() {
 			.attr("class","unselectable");
 	toolTipOut();
 	
+	blackHole = svg.append("circle")
+			.attr("cx",padding + 8.5*(wR + rPadding))
+			.attr("cy",padding + 2.5*(hR+rPadding))
+			.attr("r",0)
+			.attr("style","fill:rgba(0,0,0,0.05);")
+			.attr("class","unselectable");
+		
 	txtBlackHole = svg.append("text")
 			.attr("x",padding + 8*(wR + rPadding))
 			.attr("y",(hR+rPadding)+30)
@@ -202,7 +210,7 @@ function main() {
 		.attr("y", 3*hR)
 		.attr("style", "fill:red;")
 		.on("click", function() {
-			totalMass = totalMass + mps + 1;
+			totalMass = totalMass + 1*mps + 1;
 			updateUpgradeList();
 		});
 	
@@ -267,13 +275,14 @@ function main() {
 	function clickElem(i) {
 		var tmpCost = elemCost(i);
 		if (totalMass > tmpCost.toFloat()) {
-			mps = mps + allMult*Number(ptData[i].Mass)*elemMults[i];
 			if (totalMass > 100*tmpCost.toFloat()) {
 				elemCts[i] = elemCts[i]+10;
+				mps = mps + 10*allMult*Number(ptData[i].Mass)*elemMults[i];
 				totalMass = totalMass - 17.5*tmpCost.toFloat(); //assuming increase rate of 1.1x
 			}
 			else {
 				elemCts[i] = elemCts[i]+1;
+				mps = mps + allMult*Number(ptData[i].Mass)*elemMults[i];
 				totalMass = totalMass - tmpCost.toFloat();
 			}
 			toolTip(i);
@@ -297,25 +306,30 @@ function main() {
 		var m = Number(ptData[i].Mass);
 		var numOwnedNext = elemCts[i]+1;
 		var ccLong = new longNo(1,0);
-		ccLong.mult(Math.pow(1.1,numOwnedNext) * Math.pow(m+1, 4));
+		var rate = 1.1;
+		rate = rate + i*0.01;
+		ccLong.mult(Math.pow(rate,numOwnedNext) * Math.pow(m+1, 2) * (10+i));
 		ccLong.mult(Math.pow((i+1)/4,i));
 		//console.log(ccLong);
-		var curCost = Math.pow(1.1,numOwnedNext) * Math.pow(m+1, 4) * Math.pow((i+1)/4,i);
 		if (i==0) {ccLong.mult(0.01);}
 		return ccLong;
 	}
 	
 	function drawBlackHole() {
 		var SIprefixes = ["microyocto", "milliyocto", "yocto", "zepto", "atto", "femto", "pico", "nano", "micro", "milli", "", "kilo", "mega", "giga"];
-		var descriptions = ["Cloud of subatomic particles","Cloud of subatomic particles", "Cloud of atomic particles","Pile of atoms","Heap of atoms","Cloud of gas","Mass of a Bacterial Cell","","","","","","",""];
+		var descriptions = ["","A few subatomic particles","Cloud of subatomic particles", "A few atoms","Pile of atoms","Heap of atoms","Cloud of gas","Mass of a Bacterial Cell","","","","","",""];
 		var massG = totalMass * 1.66054e-30;
+		var barLength = 0;
 		for (var i=0; i<SIprefixes.length; i++)
 		{
 			if (massG < Math.pow(10, -30 + 3*i) || i == SIprefixes.length)
 			{
 				massG = massG / Math.pow(10,-33 + 3*i);
+				if (massG>0) {barLength = (5*i + blackHoleSize) * Math.log10(massG)/3;}
 				txtBlackHole.text(Math.round(massG*1000)/1000 + " " + SIprefixes[i] + "grams");
 				txtBlackHole2.text(descriptions[i]);
+				blackHole.attr("r",barLength);
+				blackHole.attr("style","fill:rgba(0,0,0," + 0.05*(i+1) + ");");
 				return;
 			}
 		}
@@ -361,6 +375,13 @@ function main() {
 				allMult = allMult * f;
 				console.log('allMult',allMult);
 				for (var k=0; k<periodicTable.length; k++) {
+					periodicTable[k].selectAll('#mass').text(numFormat(allMult*elemMults[k]*Number(ptData[k]["Mass"])));
+				}
+			}
+			else if (j==-2) {				
+				for (var k=0; k<periodicTable.length; k++) {
+					console.log(ptData[k].Symbol);
+					elemMults[k] = elemMults[k]*Math.pow(ptData[k]['At#']+1,f);
 					periodicTable[k].selectAll('#mass').text(numFormat(allMult*elemMults[k]*Number(ptData[k]["Mass"])));
 				}
 			}
@@ -478,4 +499,3 @@ function main() {
 	</script>
 	</body>
 </html>
-
