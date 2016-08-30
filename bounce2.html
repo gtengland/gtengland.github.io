@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <body>
+Click to add more balls.<br>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js" charset="utf-8"></script>
 <script>
 
@@ -28,7 +29,7 @@ var grid = zero2D(numRows, numCols);
 var bStart = {x: -1, y: 0};
 var bEnd = {x: 0, y:0};
 
-var n = 0;
+var n = 1;
 var nr = 10;
 for (var i=0; i<n; i++)
 {
@@ -200,7 +201,7 @@ function moveBall(i,t) {
 	}
 	//borders collisions
 	if (nxX + r > width) {cx++;}
-	if (nxY + r > height) {cy++;}
+	if (nxY + r > height - 10) {cy++;}
 	if (nxX - r < 0) {cx++;}
 	if (nxY - r < 0) {cy++;}
 	if (cx > 0) {d.vx = -d.vx;}
