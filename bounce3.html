@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<body>
+Click to add more balls.<br>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js" charset="utf-8"></script>
+<script>
+
+var width = 800,
+  height = 600;
+var prev_time = 0;
+var timer_ret_val = false;
+var canvas = d3.select("body").append("canvas")
+  .attr("width", width)
+  .attr("height", height);
+
+var r = 10;
+var maxSpeed = 1000/1000;
+var balls = [];
+var rects = [];
+var vR = -50/1000;
+var gameState = 0; //0 - wait for input, 1 - animate balls, 2 - animate rects, 3 - pause
+var roundNo = 1;
+var roundNoIncrease = 0.5;
+var numRows = 10;
+var numCols = 10;
+var wR = width / numCols;
+var hR = height / numRows;
+var grid = zero2D(numRows, numCols);
+var nDone = 0;
+var bStart = {x: width/2, y: height-10-r};
+var bEnd = {x: 0, y:0};
+var score = 0;
+var n = 0;
+var nr = 10;
+
+var b1 = {};
+b1.x = bStart.x;
+b1.y = bStart.y;
+b1.vx = 0;
+b1.vy = 0;
+b1.radius = r;
+balls.push(b1);
+
+initRects();
+var colorStyle = "green";
+var rectColor = "red";
+
+var context = canvas.node().getContext("2d");
+context.textAlign = "center";
+context.textBaseline="middle"; 
+d3.timer(function(elapsed) {
+		update(elapsed);
+		return timer_ret_val;
+	});
+canvas.on("click", function() {
+  var p1 = d3.mouse(this);
+  //console.log("click",p1);
+  if (gameState == 0) {
+	bEnd.x = p1[0]; 
+	bEnd.y = p1[1];
+	var b1 = {};
+	b1.x = bStart.x;
+	b1.y = bStart.y;
+	b1.vx = 0;
+	b1.vy = 0;
+	b1.radius = r;
+	b1.delay = 0;
+	balls.push(b1);
+	n = n+1;
+	for(var i=0; i<n; i++){
+		balls[i].delay = i;
+		var th = Math.atan(Math.abs((bEnd.y-bStart.y)/(bEnd.x-bStart.x)));
+		balls[i].vx = (maxSpeed*Math.cos(th));
+		balls[i].vy = -(maxSpeed*Math.sin(th));
+		if (bEnd.x < bStart.x) {balls[i].vx *= -1;}
+		console.log(th, balls[i].vx, balls[i].vy);
+	}
+	nDone = 0;
+	gameState = 1;
+  }
+  else if (gameState == 3) {
+		gameState = 0; //0 - wait for input, 1 - animate balls, 2 - animate rects, 3 - pause
+		roundNo = 1;
+		nDone = 0;
+		score = 0;
+		rects.length = 0;
+		initRects();
+  }
+});
+canvas.on("mousemove" , function() {
+	var p1 = d3.mouse(this);
+	bEnd.x = p1[0]; 
+	bEnd.y = p1[1];
+});
+
+//Draw the game
+function update(elapsed) {
+	var t = elapsed - prev_time;
+	prev_time = elapsed;
+	context.clearRect(0, 0, width, height);
+	context.beginPath();
+	if (gameState == 3){ //you lose
+		context.strokeText("You Lose!",width/2,height/2 - 15);
+		context.strokeText("Score:" + score.toString(),width/2,height/2 + 15);
+	}
+	else {
+		if (gameState == 0) {
+			context.moveTo(bStart.x,bStart.y);
+			context.lineTo(bEnd.x,bEnd.y);
+			context.setLineDash([5]);
+			context.stroke();
+			context.setLineDash([0]);
+		}
+		context.moveTo(0,height-10);
+		context.lineTo(width,height-10);
+		context.stroke();
+		if (nr > 0)
+		{
+			for (i = 0; i < nr; ++i)
+			{
+				var d = rects[i];
+				if (rects[i].ct > 0) {
+					context.beginPath();
+					context.moveTo(d.x, d.y);
+					context.rect(d.x,d.y,d.w,d.h);
+					context.fillStyle = rectColor;
+					context.fill();
+					context.strokeStyle = "white";
+					context.lineWidth = 1.5;
+					context.strokeText(d.ct,d.x+d.w/2,d.y+d.h/2);
+				}
+			}
+			context.strokeStyle = "black";
+		}
+		context.font = "16px sans-serif";
+		context.strokeText(score,20,20);
+		context.font = "36px sans-serif";
+		
+		moveRects(t);
+		context.beginPath();
+		for (i = 0; i < n; ++i)
+		{
+			if (gameState==1) {moveBall(i,t);}
+			var d = balls[i];
+			context.moveTo(d.x, d.y);
+			context.arc(d.x, d.y, d.radius, 0, 2 * Math.PI);
+			if (i==n-2) {context.fillStyle="blue"; context.fill(); context.beginPath();}
+		}
+		context.fillStyle = colorStyle;
+		context.fill();
+	}
+}
+
+function moveRects(t) {
+	for (var i=0; i<nr; i++) {
+		var d = rects[i];
+		rects[i].y = d.y -vR*t;	
+		if (rects[i].y > height - 10 && rects[i].ct > 0) { 
+			gameState = 3;
+			console.log("You lose!");
+		}
+		//rects[i].y = -hR;}
+	}
+}
+	
+function moveBall(i,t) {
+	var d = balls[i];
+	var curX = d.x;
+	var nxX = d.x + d.vx*t;
+	var curY = d.y;
+	var nxY = d.y + d.vy*t;
+	var cx = 0, cy = 0, xxx=0;
+	var sx=1, sy=1;
+	if (d.delay <= 0){
+		//blocks collisions
+		if (nr > 0){
+			for (var ii=0; ii<nr; ii++)
+			{
+				var rct = rects[ii];
+				if (rct.ct > 0) {
+					if (curY + r > rct.y && curY - r < rct.y + rct.h) {
+						if (curX - r < rct.x && nxX + r > rct.x)
+						{
+							cx++;
+							xxx=1;
+						}
+						if (curX + r > rct.x + rct.w && nxX - r < rct.x + rct.w)
+						{
+							cx++;
+							xxx=1;
+						}
+					}
+					if (curX + r > rct.x && curX - r < rct.x + rct.w) {
+						if (curY - r < rct.y && nxY + r > rct.y)
+						{
+							//sy = .9;
+							cy++;
+							xxx=1;
+						}
+						if (curY + r > rct.y + rct.h && nxY - r < rct.y + rct.h)
+						{
+							//sy = 1.1;
+							cy++;
+							xxx=1;
+						}
+					}
+					if (xxx * (cx + cy) > 0) {
+						xxx = 0;
+						rects[ii].ct--;
+						score++;
+						if (rects[ii].ct <= 0) {
+							var cc = Math.round(Math.random() * (numCols-1));
+							rects[ii].x = cc*wR;
+							rects[ii].y -= height;
+							rects[ii].ct = Math.floor(roundNo);
+						}
+						//if (rects[ii].ct == 0) {rects[ii].ct = Math.round(Math.random()*10)+1;}
+					}
+				}
+			}
+		}
+		//borders collisions
+		if (nxX + r > width) {cx++;}
+		if (nxY + r > height - 10 && (d.vx != 0 || d.vy != 0)) {
+			cy++;
+			sx = 0;
+			sy = 0;
+			nDone++;
+			balls[i].x = width/2;
+			balls[i].y = height-10-r;
+			if (nDone >= n) {console.log(nDone); gameState = 0; roundNo+=roundNoIncrease;}
+		}
+		if (nxX - r < 0) {cx++;}
+		if (nxY - r < 0) {cy++;}
+		if (cx > 0) {d.vx = -d.vx;}
+		if (cy > 0) {d.vy = -d.vy;}
+		balls[i].x = d.x + sx*d.vx*t;
+		balls[i].y = d.y + sy*d.vy*t;
+		balls[i].vx = sx*d.vx;
+		balls[i].vy = sy*d.vy;
+		if (balls[i].vy > maxSpeed) {balls[i].vy = maxSpeed;}
+		if (balls[i].vx > maxSpeed) {balls[i].vx = maxSpeed;}
+	}
+	else {
+		balls[i].delay -= t/50;
+	}
+}
+function zero2D(rows, cols) {
+		var array = [], row = [];
+		while (cols--) row.push(0);
+		while (rows--) array.push(row.slice());
+		return array;
+}
+function initRects() {
+	var rr = Math.round(Math.random() * (numRows-2));
+	var cc = Math.round(Math.random() * (numCols-1));
+	for (var i=0; i<nr; i++)
+	{
+		while (grid[rr][cc] > 0)
+		{
+			rr = Math.round(Math.random() * (numRows-2));
+			cc = Math.round(Math.random() * (numCols-1));
+			console.log(rr,cc);
+		}
+		var r1 = {};
+		r1.x = cc*wR;
+		r1.y = (rr - numRows)*hR;
+		r1.w = wR;
+		r1.h = hR;
+		r1.r = rr;
+		r1.c = cc;
+		r1.ct = Math.floor(Math.random()*roundNo)+1;
+		rects.push(r1);
+		grid[rr][cc] = 1;//Math.round(Math.random()*10)+1;
+	}
+}
+</script>
