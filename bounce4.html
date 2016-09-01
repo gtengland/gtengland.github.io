@@ -31,9 +31,9 @@ var nDone = 1;
 var bStart = {x: width/2, y: height-botPad-r};
 var bEnd = {x: 0, y:0};
 var score = 0;
-var nextBall = 2;
+var nextBall = 5;
 var n = 1;
-var nr = 10;
+var nr = 15;
 
 
 initBalls();
@@ -130,6 +130,8 @@ function update(elapsed) {
 		context.textAlign = "left";
 		context.strokeText(score,2,20);
 		context.strokeText("Next:" + Math.ceil(nextBall).toString(),2,35);
+		context.textAlign = "right";
+		context.strokeText(n,width-20,height-7);
 		context.textAlign = "center";
 		context.strokeText(nDone,width/2,height-7);
 		context.font = "36px sans-serif";
@@ -208,14 +210,14 @@ function moveBall(i,t) {
 						xxx = 0;
 						rects[ii].ct--;
 						score++;
-						if (score > nextBall){addBall(); n++; nDone++; nextBall *= 1.5;}
+						if (score > nextBall){addBall(); n++; nDone++; nextBall *= 1.4;}
 						if (rects[ii].ct <= 0) {
 							var cc = Math.round(Math.random() * (numCols-1));
 							rects[ii].x = cc*wR;
 							rects[ii].y -= height;
-							rects[ii].ct = Math.floor(roundNo);
+							rects[ii].ct = Math.floor(Math.random() * roundNo) + 1;
 							roundNo += roundNoIncrease;
-							roundNoIncrease *= 0.9;
+							if (roundNoIncrease > 0.1) {roundNoIncrease *= 0.99;}
 						}
 						//if (rects[ii].ct == 0) {rects[ii].ct = Math.round(Math.random()*10)+1;}
 					}
