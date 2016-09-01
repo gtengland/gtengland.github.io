@@ -214,6 +214,8 @@ function moveBall(i,t) {
 							rects[ii].x = cc*wR;
 							rects[ii].y -= height;
 							rects[ii].ct = Math.floor(roundNo);
+							roundNo += roundNoIncrease;
+							roundNoIncrease *= 0.9;
 						}
 						//if (rects[ii].ct == 0) {rects[ii].ct = Math.round(Math.random()*10)+1;}
 					}
@@ -229,7 +231,6 @@ function moveBall(i,t) {
 			nDone++;
 			balls[i].x = width/2;
 			balls[i].y = height-botPad-r;
-			if (nDone >= n) {console.log(nDone); gameState = 0; roundNo+=roundNoIncrease;}
 		}
 		if (nxX - r < 0) {cx++;}
 		if (nxY - r < 0) {cy++;}
