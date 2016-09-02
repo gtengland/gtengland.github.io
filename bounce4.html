@@ -20,8 +20,6 @@ var balls = [];
 var rects = [];
 var vR = -50/1000;
 var gameState = 0; //0 - wait for input, 1 - animate balls, 2 - animate rects, 3 - pause
-var roundNo = 1;
-var roundNoIncrease = 0.5;
 var numRows = 10;
 var numCols = 10;
 var wR = width / numCols;
@@ -30,14 +28,13 @@ var grid = zero2D(numRows, numCols);
 var nDone = 1;
 var bStart = {x: width/2, y: height-botPad-r};
 var bEnd = {x: 0, y:0};
-var score = 0;
-var nextBall = 5;
+var score=0, nextBall=0, nextIncrease=1, roundNo=1, roundNoIncrease=0.4;
 var n = 1;
 var nr = 15;
 
+//initialize state
+newGame();
 
-initBalls();
-initRects();
 var colorStyle = "green";
 var rectColor = "red";
 
@@ -71,14 +68,7 @@ canvas.on("click", function() {
 	gameState = 1;
   }
   else if (gameState == 3) {
-		gameState = 0; //0 - wait for input, 1 - animate balls, 2 - animate rects, 3 - pause
-		roundNo = 1;
-		nDone = 1;
-		score = 0;
-		n = 1;
-		rects.length = 0;
-		initRects();
-		initBalls();
+		newGame();
   }
 });
 canvas.on("mousemove" , function() {
@@ -132,6 +122,7 @@ function update(elapsed) {
 		context.strokeText("Next:" + Math.ceil(nextBall).toString(),2,35);
 		context.textAlign = "right";
 		context.strokeText(n,width-20,height-7);
+		context.strokeText(Math.floor(roundNo),width-20,7);
 		context.textAlign = "center";
 		context.strokeText(nDone,width/2,height-7);
 		context.font = "36px sans-serif";
@@ -210,14 +201,20 @@ function moveBall(i,t) {
 						xxx = 0;
 						rects[ii].ct--;
 						score++;
-						if (score > nextBall){addBall(); n++; nDone++; nextBall *= 1.4;}
+						if (score > nextBall){
+							addBall(); 
+							n++; 
+							nDone++; 
+							nextBall *= (1 + nextIncrease); 
+							if (nextIncrease > .1) {nextIncrease *= 0.9;}
+						}
 						if (rects[ii].ct <= 0) {
 							var cc = Math.round(Math.random() * (numCols-1));
 							rects[ii].x = cc*wR;
 							rects[ii].y -= height;
 							rects[ii].ct = Math.floor(Math.random() * roundNo) + 1;
 							roundNo += roundNoIncrease;
-							if (roundNoIncrease > 0.1) {roundNoIncrease *= 0.99;}
+							if (roundNoIncrease > 0.1) {roundNoIncrease *= 0.97;}
 						}
 						//if (rects[ii].ct == 0) {rects[ii].ct = Math.round(Math.random()*10)+1;}
 					}
@@ -291,6 +288,18 @@ function addBall() {
 	b1.radius = r;
 	balls.push(b1);
 	console.log(balls);
+}
+function newGame() {
+	gameState = 0; //0 - wait for input, 1 - animate balls, 2 - animate rects, 3 - pause
+	roundNo = 1;
+	nDone = 1;
+	score = 0;
+	n = 1;
+	rects.length = 0;
+	nextBall = 5;
+	nextIncrease = 1;
+	initRects();
+	initBalls();
 }
 </script>
 </body>
