@@ -59,7 +59,7 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 55,132.9054519,Cesium,Cs,1,metals,Alkali_metals,6,1
 56,137.327,Barium,Ba,2,metals,Alkaline_earth_metals,6,1
 57,138.90547,Lanthanum,La,3,metals,Transition_metals,6,1
-58,157.1721021,Lanthanides,Ce-Lu,6,metals,Transition_metals2,9,4
+58,157.1721021,Lanthanides,Ce-Lu,6,metals,Transition_metals2,9,14
 72,178.49,Hafnium,Hf,4,metals,Transition_metals,6,1
 73,180.94788,Tantalum,Ta,5,metals,Transition_metals,6,1
 74,183.84,Tungsten,W,6,metals,Transition_metals,6,1
@@ -78,7 +78,7 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 87,223,Francium,Fr,1,metals,Alkali_metals,7,1
 88,226,Radium,Ra,2,metals,Alkaline_earth_metals,7,1
 89,227,Actinium,Ac,3,metals,Transition_metals,7,1
-90,247.007,Actinides,Th-Lr,6,metals,Transition_metals2,10,4
+90,247.007,Actinides,Th-Lr,6,metals,Transition_metals2,10,14
 104,261,Rutherfordium,Rf,4,metals,Transition_metals,7,1
 105,262,Dubnium,Db,5,metals,Transition_metals,7,1
 106,266,Seaborgium,Sg,6,metals,Transition_metals,7,1
