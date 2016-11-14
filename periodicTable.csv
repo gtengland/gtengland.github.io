@@ -56,6 +56,5 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 86,220,Radon,Rn,18,nonmetals,Noble_gas,6,1
 87,223,Francium,Fr,1,metals,Alkali_metals,7,1
 88,226,Radium,Ra,2,metals,Alkaline_earth_metals,7,1
-89,227,Actinium,Ac,3,metals,Transition_metals,7,1
+89,276.6,Rutherfordium,Heavy Radioactive Elements: Ac Rf Db Sg Bh Hs Mt Ds Rg Cn Uut Fl Uup Lv Uus Uuo,3,metals,Transition_metals,7,16
 90,247.007,Actinides,Actinides: Th Th Pa U  Np Pu Am Cm Bk Cf Es Fm Md No Lr,6,metals,Transition_metals2,10,12
-104,276.6,Rutherfordium,Heavy Radioactive Elements: Rf Db Sg Bh Hs Mt Ds Rg Cn Uut Fl Uup Lv Uus Uuo,4,metals,Transition_metals,7,15
