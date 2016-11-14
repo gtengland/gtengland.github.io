@@ -28,10 +28,7 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 28,58.6934,Nickel,Ni,10,metals,Transition_metals,4,1
 29,63.546,Copper,Cu,11,metals,Transition_metals,4,1
 30,65.38,Zinc,Zn,12,metals,Transition_metals,4,1
-31,69.723,Gallium,Ga,13,metals,Other_metals,4,1
-32,72.64,Germanium,Ge,14,metaloids,Semiconductors,4,1
-33,74.9216,Arsenic,As,15,metaloids,Semiconductors,4,1
-34,78.96,Selenium,Se,16,nonmetals,Other_nonmetals,4,1
+31,74.1,Gallium,Ga Ge As Se,13,metals,Other_metals,4,4
 35,79.904,Bromine,Br,17,nonmetals,Halogens,4,1
 36,83.798,Krypton,Kr,18,nonmetals,Noble_gas,4,1
 37,85.4678,Rubidium,Rb,1,metals,Alkali_metals,5,1
