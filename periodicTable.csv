@@ -12,22 +12,17 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 8,15.9994,Oxygen,O,16,nonmetals,Other_nonmetals,2,1
 9,18.9994,Fluorine,F,17,nonmetals,Halogens,2,1
 10,20.1797,Neon,Ne,18,nonmetals,Noble_gas,2,1
-11,22.98976928,Sodium,Na,1,metals,Alkali_metals,3,1
-12,24.305,Magnesium,Mg,2,metals,Alkaline_earth_metals,3,1
+11,23.5,Sodium,Na Mg,1,metals,Alkali_metals,3,2
 13,26.9815386,Aluminium,Al,13,metals,Other_metals,3,1
 14,28.0855,Silicon,Si,14,metaloids,Semiconductors,3,1
 15,30.973762,Phosphorus,P,15,nonmetals,Other_nonmetals,3,1
 16,32.065,Sulphur,S,16,nonmetals,Other_nonmetals,3,1
 17,35.453,Chlorine,Cl,17,nonmetals,Halogens,3,1
 18,39.948,Argon,Ar,18,nonmetals,Noble_gas,3,1
-19,39.0983,Potassium,K,1,metals,Alkali_metals,4,1
-20,40.078,Calcium,Ca,2,metals,Alkaline_earth_metals,4,1
+19,39.6,Potassium,K Ca,1,metals,Alkali_metals,4,2
 21,50.1,Scandium,Sc Ti V Cr Mn,3,metals,Transition_metals,4,5
-26,55.845,Iron,Fe,8,metals,Transition_metals,4,1
-27,58.933195,Cobalt,Co,9,metals,Transition_metals,4,1
-28,58.6934,Nickel,Ni,10,metals,Transition_metals,4,1
-29,63.546,Copper,Cu,11,metals,Transition_metals,4,1
-30,65.38,Zinc,Zn,12,metals,Transition_metals,4,1
+26,58,Iron,Fe Co Ni,8,metals,Transition_metals,4,3
+29,64.3,Copper,Cu Zn,11,metals,Transition_metals,4,2
 31,74.1,Gallium,Ga Ge As Se,13,metals,Other_metals,4,4
 35,79.904,Bromine,Br,17,nonmetals,Halogens,4,1
 36,83.798,Krypton,Kr,18,nonmetals,Noble_gas,4,1
