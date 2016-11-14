@@ -36,14 +36,14 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 36,83.798,Krypton,Kr,18,nonmetals,Noble_gas,4,1
 37,85.4678,Rubidium,Rb,1,metals,Alkali_metals,5,1
 38,87.62,Strontium,Sr,2,metals,Alkaline_earth_metals,5,1
-39,97.2,P5Trans,P5 Transition Metals: Y Zr Nb Mo Tc Ru Rh Pd,3,metals,Transition_metals,5,8
+39,97.2,P5Trans,P5 Trans Metals: Y Zr Nb Mo Tc Ru Rh Pd,3,metals,Transition_metals,5,8
 47,107.8682,Silver,Ag,11,metals,Transition_metals,5,1
 49,120.7,P5MetaloidSemi,Cd In Sn Sb Te,12,metals,Other_metals,5,5
 53,126.90447,Iodine,I,17,nonmetals,Halogens,5,1
 54,131.293,Xenon,Xe,18,nonmetals,Noble_gas,5,1
 55,132.9054519,Cesium,Cs,1,metals,Alkali_metals,6,1
 56,137.327,Barium,Ba,2,metals,Alkaline_earth_metals,6,1
-57,185.3,P6Trans,P6 Transition Metals: La Hf Ta W Re Os Ir,3,metals,Transition_metals,6,7
+57,185.3,P6Trans,P6 Trans Metals: La Hf Ta W Re Os Ir,3,metals,Transition_metals,6,7
 58,157.1721021,Lanthanides,Lanthanides: Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu,6,metals,Transition_metals2,9,12
 78,192.084,Platinum,Pt,10,metals,Transition_metals,6,1
 79,196.966569,Gold,Au,11,metals,Transition_metals,6,1
