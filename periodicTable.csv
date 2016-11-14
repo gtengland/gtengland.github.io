@@ -40,14 +40,7 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 36,83.798,Krypton,Kr,18,nonmetals,Noble_gas,4,1
 37,85.4678,Rubidium,Rb,1,metals,Alkali_metals,5,1
 38,87.62,Strontium,Sr,2,metals,Alkaline_earth_metals,5,1
-39,88.90585,Yttrium,Y,3,metals,Transition_metals,5,1
-40,91.224,Zirconium,Zr,4,metals,Transition_metals,5,1
-41,92.90638,Niobium,Nb,5,metals,Transition_metals,5,1
-42,95.96,Molybdenum,Mo,6,metals,Transition_metals,5,1
-43,98,Technetium,Tc,7,metals,Transition_metals,5,1
-44,101.07,Ruthenium,Ru,8,metals,Transition_metals,5,1
-45,102.9055,Rhodium,Rh,9,metals,Transition_metals,5,1
-46,106.42,Palladium,Pd,10,metals,Transition_metals,5,1
+39,88.90585,P5Trans,P5 Transition Metals: Y Zr Nb Mo Tc Ru Rh Pd,3,metals,Transition_metals,5,8
 47,107.8682,Silver,Ag,11,metals,Transition_metals,5,1
 48,112.411,Cadmium,Cd,12,metals,Transition_metals,5,1
 49,114.818,Indium,In,13,metals,Other_metals,5,1
@@ -59,7 +52,7 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 55,132.9054519,Cesium,Cs,1,metals,Alkali_metals,6,1
 56,137.327,Barium,Ba,2,metals,Alkaline_earth_metals,6,1
 57,138.90547,Lanthanum,La,3,metals,Transition_metals,6,1
-58,157.1721021,Lanthanides,Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu,6,metals,Transition_metals2,9,12
+58,157.1721021,Lanthanides,Lanthanides: Ce Pr Nd Pm Sm Eu Gd Tb Dy Ho Er Tm Yb Lu,6,metals,Transition_metals2,9,12
 72,178.49,Hafnium,Hf,4,metals,Transition_metals,6,1
 73,180.94788,Tantalum,Ta,5,metals,Transition_metals,6,1
 74,183.84,Tungsten,W,6,metals,Transition_metals,6,1
@@ -78,19 +71,5 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 87,223,Francium,Fr,1,metals,Alkali_metals,7,1
 88,226,Radium,Ra,2,metals,Alkaline_earth_metals,7,1
 89,227,Actinium,Ac,3,metals,Transition_metals,7,1
-90,247.007,Actinides,Th Th Pa U  Np Pu Am Cm Bk Cf Es Fm Md No Lr,6,metals,Transition_metals2,10,12
-104,261,Rutherfordium,Rf,4,metals,Transition_metals,7,1
-105,262,Dubnium,Db,5,metals,Transition_metals,7,1
-106,266,Seaborgium,Sg,6,metals,Transition_metals,7,1
-107,264,Bohrium,Bh,7,metals,Transition_metals,7,1
-108,277,Hassium,Hs,8,metals,Transition_metals,7,1
-109,268,Meitnerium,Mt,9,metals,Transition_metals,7,1
-110,271,Darmstadtium,Ds,10,metals,Transition_metals,7,1
-111,272,Roentgenium,Rg,11,metals,Transition_metals,7,1
-112,285,Ununbium,Uub,12,future,vague,7,1
-113,284,Ununtrium,Uut,13,future,vague,7,1
-114,289,Flerovium,Uuq,14,future,vague,7,1
-115,288,Ununpentium,Uup,15,future,vague,7,1
-116,292,Livermorium,Uuh,16,future,vague,7,1
-117,294,Ununseptium,Uus,17,future,vague,7,1
-118,294,Ununoctium,Uuo,18,future,vague,7,1
+90,247.007,Actinides,Actinides: Th Th Pa U  Np Pu Am Cm Bk Cf Es Fm Md No Lr,6,metals,Transition_metals2,10,12
+104,261,Rutherfordium,Heavy Radioactive Elements: Rf Db Sg Bh Hs Mt Ds Rg Cn Uut Fl Uup Lv Uus Uuo,4,metals,Transition_metals,7,15
