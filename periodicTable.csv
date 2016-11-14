@@ -89,7 +89,8 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 111,272,Roentgenium,Rg,11,metals,Transition_metals,7,1
 112,285,Ununbium,Uub,12,future,vague,7,1
 113,284,Ununtrium,Uut,13,future,vague,7,1
-114,289,Ununquadium,Uuq,14,future,vague,7,1
+114,289,Flerovium,Uuq,14,future,vague,7,1
 115,288,Ununpentium,Uup,15,future,vague,7,1
-116,292,Ununhexium,Uuh,16,future,vague,7,1
-118,294,Ununoctium,Uuo,17,future,vague,7,1
+116,292,Livermorium,Uuh,16,future,vague,7,1
+117,294,Ununseptium,Uus,17,future,vague,7,1
+118,294,Ununoctium,Uuo,18,future,vague,7,1
