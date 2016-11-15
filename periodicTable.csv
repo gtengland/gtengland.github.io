@@ -5,17 +5,14 @@ At#,Mass,Name,Symbol,group,type,named_type,row,width
 1,1.00794,Hydrogen,H,1,Hydrogen,Hydrogen,1,1
 2,4.002602,Helium,He,18,nonmetals,Noble_gas,1,1
 3,7.98,Lithium,Li Be,1,metals,Alkali_metals,2,2
-5,10.811,Boron,B,13,metaloids,Semiconductors,2,1
-6,12.0107,Carbon,C,14,nonmetals,Other_nonmetals,2,1
+5,11.4,Boron,B C,13,metaloids,Semiconductors,2,2
 7,14.0067,Nitrogen,N,15,nonmetals,Other_nonmetals,2,1
 8,15.9994,Oxygen,O,16,nonmetals,Other_nonmetals,2,1
 9,18.9994,Fluorine,F,17,nonmetals,Halogens,2,1
 10,20.1797,Neon,Ne,18,nonmetals,Noble_gas,2,1
 11,23.5,Sodium,Na Mg,1,metals,Alkali_metals,3,2
-13,26.9815386,Aluminium,Al,13,metals,Other_metals,3,1
-14,28.0855,Silicon,Si,14,metaloids,Semiconductors,3,1
-15,30.973762,Phosphorus,P,15,nonmetals,Other_nonmetals,3,1
-16,32.065,Sulphur,S,16,nonmetals,Other_nonmetals,3,1
+13,27.5,Aluminium,Al Si,13,metals,Other_metals,3,2
+15,31.5,Phosphorus,P S,15,nonmetals,Other_nonmetals,3,2
 17,35.453,Chlorine,Cl,17,nonmetals,Halogens,3,1
 18,39.948,Argon,Ar,18,nonmetals,Noble_gas,3,1
 19,39.6,Potassium,K Ca,1,metals,Alkali_metals,4,2
