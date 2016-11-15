@@ -32,7 +32,9 @@
 	var ptData = [];
 	var elemCts = [];
 	var elemMults = [];
+	var elemPcts = [];
 	var allMult = 1;
+	var devMult = 1; //1 for normal game, higher multiple to increase click value
 	//Create SVG element
 	var svg = d3.select("body")
 				.append("svg")
@@ -70,10 +72,11 @@
 				.attr("height",hR)
 				.attr("style","fill: none; stroke: black;")
 				.attr("data",i)
+				.attr("pct",0)
 				.on("click", function() { clickElem(Number(d3.select(this).attr("data"))); })
 				.on("mouseover", function() {d3.select(this).attr("style","fill:rgb(0,200,200); stroke: black;");
 					toolTip(Number(d3.select(this).attr("data")));})
-				.on("mouseout", function() {d3.select(this).attr("style","fill:white; stroke: black;");
+				.on("mouseout", function() {d3.select(this).attr("style","fill:rgba(255,0,0," + d3.select(this).attr("pct") + "); stroke: black;");
 					toolTipOut();});
 			elem.append("text")
 				.text(ptData[i].Symbol)
@@ -104,6 +107,7 @@
 			elem.attr("transform", "translate(" + (padding + (wR+rPadding)*ptData[i].group) + "," + (hR+rPadding)*ptData[i].row + ")");
 			periodicTable.push(elem);
 			elemCts.push(0);
+			elemPcts.push(0);
 			elemMults.push(1);
 		}
 		main();
@@ -211,14 +215,14 @@ function main() {
 		.attr("y", 3*hR)
 		.attr("style", "fill:red;")
 		.on("click", function() {
-			totalMass = totalMass + 1*mps + 1;
+			totalMass = totalMass + devMult*mps + 1;
 			updateUpgradeList();
 		});
 	
 	txtClickVal = svg.append("text")
 			.attr("x",10*(wR+rPadding)+50)
 			.attr("y",3*hR+10)
-			.text(numFormat(1*mps + 1))
+			.text(numFormat(devMult*mps + 1))
 			.attr("alignment-baseline","middle")
 			.attr("text-anchor","middle")
 			.attr("fill","white")
@@ -280,7 +284,7 @@ function main() {
 		prev_time = elapsed;
 		txtMass.text(numFormat(totalMass));
 		txtMPS.text(numFormat(mps));
-		txtClickVal.text(numFormat(1*mps+1));
+		txtClickVal.text(numFormat(devMult*mps+1));
 		drawBlackHole();
 	}	
 	
@@ -289,14 +293,15 @@ function main() {
 		if (totalMass > tmpCost.toFloat()) {
 			if (totalMass > 100*tmpCost.toFloat()) {
 				elemCts[i] = elemCts[i]+10;
-				mps = mps + 10*allMult*Number(ptData[i].Mass)*elemMults[i];
+				//mps = mps + 10*allMult*Number(ptData[i].Mass)*elemMults[i];
 				totalMass = totalMass - 17.5*tmpCost.toFloat(); //assuming increase rate of 1.1x
 			}
 			else {
 				elemCts[i] = elemCts[i]+1;
-				mps = mps + allMult*Number(ptData[i].Mass)*elemMults[i];
+				//mps = mps + allMult*Number(ptData[i].Mass)*elemMults[i];
 				totalMass = totalMass - tmpCost.toFloat();
 			}
+			updateMPS();
 			toolTip(i);
 		}
 	}
@@ -329,7 +334,7 @@ function main() {
 	
 	function drawBlackHole() {
 		var SIprefixes = ["microyocto", "milliyocto", "yocto", "zepto", "atto", "femto", "pico", "nano", "micro", "milli", "", "kilo", "mega", "giga"];
-		var descriptions = ["Nothing","A few subatomic particles","Cloud of subatomic particles", "A few atoms","Pile of atoms","Mass of a virus","Cloud of gas","Mass of a Bacterial Cell","Mass of a grain of sand","Mass of a snowflake","Mass of an ant","Mass of a newborn puppy","",""];
+		var descriptions = ["Nothing","A few subatomic particles","Cloud of subatomic particles", "A few atoms","Pile of atoms","Mass of a virus","Cloud of gas","Mass of a Bacterial Cell","","Mass of a grain of sand","Mass of a snowflake","Mass of an ant","Mass of a newborn puppy","",""];
 		var massG = totalMass * 1.66054e-30;
 		var barLength = 0;
 		for (var i=0; i<SIprefixes.length; i++)
@@ -415,7 +420,14 @@ function main() {
 			if (elemCts[i]>0) {console.log(Number(ptData[i]["Mass"]));}
 		}
 		mps = mps * allMult;
+		for (var i=0; i<elemMults.length; i++)
+		{
+			elemPcts[i] = xMPS = allMult * ptData[i].Mass * elemCts[i] * elemMults[i] / mps;
+			periodicTable[i].selectAll("rect").attr("style","stroke: black; fill:rgba(255,0,0," + elemPcts[i] + ")")
+				.attr("pct",elemPcts[i]);
+		}
 	}
+
 	
 	function numFormatLong(num) {
 		var preFixes = ["", "K", "M", "B", "T", "q", "Q", "s", "S", "O", "N", "D", "Ud", "Dd", "Td", "qd", "Qd", "sd", "SD","OD","ND","V","Uv"];
