@@ -52,5 +52,6 @@
 "3|6|7|8|13","100|100|100|100|10000","50000000000000000","Roadkill", "Add some road-kill to the pile", "Made of the stuff of life. CHNOPS x 100"
 "14","1000","50000000000000000","Pool Cleaner", "Take some chlorine from the local public pool","They won't miss it (Clx1000)"
 "4|10|15|22|28|35","1000|1000|1000|1000|1000|1000|1000","150000000000000000","Nobility","Increase the eficiency of noble gases by 1000x","How regal!"
-"1","-0.01","150000000000000000","Proton Plasma","Gain an addtional 1% increase in proton efficiency","per proton owned"
+"1","-0.02","150000000000000000","Proton Plasma","Gain an addtional 2% increase in proton efficiency","per proton owned"
+"2","-0.02","150000000000000000","Neutron Plasma","Gain an addtional 2% increase in neutron efficiency","per neutron owned"
 "-2","3","500000000000000000000","Cubed","Multiply mass production for each element","by the cube of its atomic number (+1)!"
