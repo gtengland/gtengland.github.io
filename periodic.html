@@ -33,8 +33,9 @@
 	var elemCts = [];
 	var elemMults = [];
 	var elemPcts = [];
+	var elemExpts = [];
 	var allMult = 1;
-	var devMult = 1; //1 for normal game, higher multiple to increase click value
+	var devMult = 1;//500000000;
 	//Create SVG element
 	var svg = d3.select("body")
 				.append("svg")
@@ -49,7 +50,7 @@
 	var timer = null;
 	var txtBlackHole = null;
 	var barBlackHole = null;
-	var blackHoleSize = 20;
+	var blackHoleSize = 10;
 	var ugData = [];
 	var ugPurchases = [];
 	var txtUG = [];
@@ -109,6 +110,7 @@
 			elemCts.push(0);
 			elemPcts.push(0);
 			elemMults.push(1);
+			elemExpts.push(0);
 		}
 		main();
 	});
@@ -317,6 +319,7 @@ function main() {
 	
 	function toolTipOut() {
 		toolTipG.attr("transform", "translate(-1000)");
+		updateMPS();
 	}
 	
 	function elemCost(i) {
@@ -333,20 +336,25 @@ function main() {
 	}
 	
 	function drawBlackHole() {
-		var SIprefixes = ["microyocto", "milliyocto", "yocto", "zepto", "atto", "femto", "pico", "nano", "micro", "milli", "", "kilo", "mega", "giga"];
-		var descriptions = ["Nothing","A few subatomic particles","Cloud of subatomic particles", "A few atoms","Pile of atoms","Mass of a virus","Cloud of gas","Mass of a Bacterial Cell","","Mass of a grain of sand","Mass of a snowflake","Mass of an ant","Mass of a newborn puppy","",""];
+		var tenPows = [-33,-30,-27,-24,-21,-18,-15,-12,-9,-6,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11];
+		var SIprefixes = ["nanoyocto","microyocto", "milliyocto", "yocto", "zepto", "atto", "femto", "pico", "nano", "micro", "milli","milli","milli", "", "", "", "kilo", "kilo", "kilo", "mega", "mega", "mega", "giga", "giga", "giga"];
+		var descriptions = ["Nothing","Nothing","A few subatomic particles","Cloud of subatomic particles", "A few atoms","Pile of atoms","Mass of a virus","Cloud of gas","Mass of a Bacterial Cell","Mass of a grain of sand","Mass of a snowflake","Mass of an ant","Mass of a bumblebee","Mass of a piece of paper","10g","Mass of a newborn puppy","Mass of a small dog","Mass of a human","","Mass of a car"];
 		var massG = totalMass * 1.66054e-30;
 		var barLength = 0;
 		for (var i=0; i<SIprefixes.length; i++)
 		{
-			if (massG < Math.pow(10, -30 + 3*i) || i == SIprefixes.length)
+			if (massG < Math.pow(10, tenPows[i]) || i == SIprefixes.length)
 			{
-				massG = massG / Math.pow(10,-33 + 3*i);
-				if (massG>0) {barLength = (5*i + blackHoleSize) * Math.log10(massG)/3;}
-				txtBlackHole.text(Math.round(massG*1000)/1000 + " " + SIprefixes[i] + "grams");
-				txtBlackHole2.text(descriptions[i]);
+				//console.log(i,tenPows[i],massG);				
+				if (tenPows[i]%3 == 0) {var pOff = 3;}
+				else {var pOff = (tenPows[i]+6)%3;}
+				massG = massG / Math.pow(10,tenPows[i]-pOff);
+				if (massG>0) {barLength = (2*(tenPows[i]+30) + blackHoleSize) * Math.log10(massG)/3;}
+				txtBlackHole.text(Math.round(massG*1000)/1000 + " " + SIprefixes[i-1] + "grams");
+				txtBlackHole2.text(descriptions[i-1]);
 				blackHole.attr("r",barLength);
-				blackHole.attr("style","fill:rgba(0,0,0," + 0.05*(i+1) + ");");
+				var transparencyVal = 0.03*(i+1);
+				blackHole.attr("style","fill:rgba(0,0,0," + transparencyVal + ");");
 				return;
 			}
 		}
@@ -385,8 +393,16 @@ function main() {
 	
 	function buyUpgrade(i) {
 		if (totalMass > Number(ugData[i]["cost"]) && ugPurchases[i]==0) {
-			var f = Number(ugData[i]["factor"]);
-			var j = Number(ugData[i]["elemIndex"]);
+			var f = (ugData[i]["factor"].split("|"));
+			var j = (ugData[i]["elemIndex"].split("|"));
+			if (j.length==1){j = Number(j); f = Number(f)}
+			else {
+				for(var kk=0; kk<j.length; kk++) {
+					j[kk] = Number(j[kk]);
+					f[kk] = Number(f[kk]);
+				}
+			}
+			console.log(ugData[i]["elemIndex"],ugData[i]["elemIndex"].split("|"),j);
 			ugPurchases[i] = 1;
 			if (j==-1) {
 				allMult = allMult * f;
@@ -399,13 +415,26 @@ function main() {
 				for (var k=0; k<periodicTable.length; k++) {
 					console.log(ptData[k].Symbol);
 					elemMults[k] = elemMults[k]*Math.pow(ptData[k]['At#']+1,f);
-					periodicTable[k].selectAll('#mass').text(numFormat(allMult*elemMults[k]*Number(ptData[k]["Mass"])));
+					periodicTable[k].selectAll('#mass').text(numFormat(Math.pow(1+elemExpts[k],elemCts[k])*allMult*elemMults[k]*Number(ptData[k]["Mass"])));
 				}
+			}
+			else if (f<0) {				
+				elemExpts[j] = elemExpts[j]-f;
+				periodicTable[j].selectAll('#mass').text(numFormat(Math.pow(1+elemExpts[j],elemCts[j])*allMult*elemMults[j]*Number(ptData[j]["Mass"])));
 			}
 			else {
 				totalMass = totalMass - Number(ugData[i]["cost"]);
-				elemMults[j] = elemMults[j]*f;
-				periodicTable[j].selectAll('#mass').text(numFormat(allMult*elemMults[j]*Number(ptData[j]["Mass"])));
+				console.log(j);
+				if (j.length > 1) {
+					for(var kk=0; kk<j.length; kk++) {
+						elemMults[j[kk]] = elemMults[j[kk]]*f[kk];
+						periodicTable[j[kk]].selectAll('#mass')
+							.text(numFormat(Math.pow(1+elemExpts[j[kk]],elemCts[j[kk]])*allMult*elemMults[j[kk]]*Number(ptData[j[kk]]["Mass"])));
+					}
+				}
+				else {elemMults[j] = elemMults[j]*f;
+					periodicTable[j].selectAll('#mass')
+						.text(numFormat(Math.pow(1+elemExpts[j],elemCts[j])*allMult*elemMults[j]*Number(ptData[j]["Mass"])));}
 			}
 			updateMPS();
 			updateUpgradeList();
@@ -416,15 +445,27 @@ function main() {
 		mps = 0;
 		for (var i=0; i<elemMults.length; i++)
 		{
-			mps = mps + elemCts[i]*elemMults[i]*Number(ptData[i]["Mass"]);
+			mps = mps + Math.pow(1+elemExpts[i],elemCts[i])*elemCts[i]*elemMults[i]*Number(ptData[i]["Mass"]);
 			if (elemCts[i]>0) {console.log(Number(ptData[i]["Mass"]));}
 		}
 		mps = mps * allMult;
 		for (var i=0; i<elemMults.length; i++)
 		{
-			elemPcts[i] = xMPS = allMult * ptData[i].Mass * elemCts[i] * elemMults[i] / mps;
-			periodicTable[i].selectAll("rect").attr("style","stroke: black; fill:rgba(255,0,0," + elemPcts[i] + ")")
-				.attr("pct",elemPcts[i]);
+			
+			elemPcts[i] = xMPS = Math.pow(1+elemExpts[i],elemCts[i])*allMult * ptData[i].Mass * elemCts[i] * elemMults[i] / mps;
+			periodicTable[i].selectAll('#mass')
+				.text(numFormat(Math.pow(1+elemExpts[i],elemCts[i])*allMult*elemMults[i]*Number(ptData[i]["Mass"])));
+			if (elemPcts[i] > 0.02) {
+				var fillAlpha = 0.5 + elemPcts[i];
+				if (fillAlpha > 1){fillAlpha = 1;}
+				periodicTable[i].selectAll("rect").attr("style","stroke: black; fill:rgba(255,0,0," + fillAlpha + ")")
+				.attr("pct",elemPcts[i]);}
+			else {periodicTable[i].selectAll("rect").attr("style","stroke: black; fill:rgba(0,0,255," + elemPcts[i]*50 + ")")
+				.attr("pct",elemPcts[i]);}
+			if (mps == 0) {
+				periodicTable[i].selectAll("rect").attr("style","stroke: black; fill:rgb(255,255,255)")
+				.attr("pct",0);}
+			
 		}
 	}
 
@@ -523,4 +564,3 @@ function main() {
 	</script>
 	</body>
 </html>
-
