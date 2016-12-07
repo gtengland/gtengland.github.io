@@ -1,0 +1,96 @@
+<script type="text/javascript" src="tabletop.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.4.13/d3.min.js" charset="utf-8"></script>
+<div id="graph" style="border: 1px solid black; float: left;"></div>
+<script type="text/javascript">
+  window.onload = function() { init() };
+
+  function init() {
+    Tabletop.init( { key: '1xzKQuxBFom3hGKDJ4C2odr3L3s3QrxPpARVGvYtBXYE',
+                     callback: showInfo,
+                     simpleSheet: true } )
+  }
+
+  function showInfo(data, tabletop) {
+	updateGraph(data);
+  }
+  
+		//Width and height
+		var w=800, h=500;
+		var subGraphs = [2,1];
+		//Create SVG element
+		var svg = d3.select("#graph")
+			.append("svg")
+			.attr("width", w)
+			.attr("height", h);
+			
+		
+		function updateGraph(data) {
+			var keys = (Object.keys(data[0]));
+			var graphData = {};
+			//var wG = (w) / (keys.length-1);
+			var wG = w / subGraphs[1];
+			var hG = h / subGraphs[0];
+			var r=0,c=0;
+			for (jj=1; jj<keys.length; jj++) {
+				var xG = c*wG;
+				var yG = h-r*hG;
+				c++;
+				if (c>=subGraphs[1]) {c=0; r++;}
+				graphData = {};
+				for (var i=0; i<data.length; i++)
+				{
+					var v = Object.values(data[i]);
+					v = v[jj];
+					if (!(v in graphData)) {graphData[v] = 1; console.log(v)}
+					else {graphData[v]= Number(graphData[v]) + 1;}
+				}
+				var maxData = 0;
+				var lengthData = 0;
+				for (var v in graphData) {
+					if (graphData[v] > maxData) {maxData = graphData[v];}
+					lengthData++;
+				}
+				var x = 20 + xG;
+				if (jj>1){svg.append("rect").attr("width",2).attr("height",h).attr("x",x-20).attr("y",0);}
+				for (var v in graphData) {
+					var curH = (hG-50)*graphData[v]/maxData;
+					var curY = yG-curH-20;
+					var curW = (wG-40) / lengthData - 10;
+					var curRect = svg.append("rect")
+						.attr("width",curW)
+						.attr("height", 0)
+						.attr("height", curH)
+						.attr("x",x)
+						.attr("y",curY)
+						.attr("style","fill:grey")
+						.attr("data",v)
+						.on("mouseout", function() {
+							var d = d3.select(this).transition().duration(1000).style("fill","grey");
+							});
+					if (jj==2) {
+						curRect.attr("data",v)
+						.on("mouseover", function() {
+							var t = d3.select(this);
+							t.transition()
+								.style("fill",t.attr("blue")).style("fill",t.attr("data"));
+							});}
+					else {
+						curRect.on("mouseover", function() {
+							var t = d3.select(this);
+							t.transition().duration(10)
+								.style("fill","blue");
+							});}
+					svg.append("text")
+						.text(v)
+						.attr("x",x+curW/2)
+						.attr("y",yG-10)
+						.attr("alignment-baseline","middle")
+						.attr("text-anchor","middle")
+						.attr("fill","black")
+						.attr("font-size","12");
+					x+=curW+10;
+				}
+				console.log(maxData);
+			}
+		}
+</script>
