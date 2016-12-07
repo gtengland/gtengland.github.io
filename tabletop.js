@@ -1,5 +1,5 @@
 (function() {
-  "use strict";
+  "use strict"; 
 
   var inNodeJS = false;
   if (typeof process !== 'undefined' && !process.browser) {
