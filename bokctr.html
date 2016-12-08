@@ -90,15 +90,25 @@
 		}
 		
 		function convertTo(subG, type) {
+			var dur = 500;
 			var i = Number(subG.split(",")[0]);
 			var j = Number(subG.split(",")[1]);
 			console.log("clear:",i,j);
-			clearG(i,j);
+			clearG(i,j, dur);
+			setTimeout(function(){convertTo2(i,j,type);},dur);
+		}
+		function convertTo2(i,j,type) {
 			if (type == "bar") {plotBarGraph(i,j);}
 			if (type == "pie") {plotPieGraph(i,j);}
 		}
 		
-		function clearG(i,j) {
+		function clearG(i,j, dur) {
+			subGraphGs[i][j].selectAll("rect").transition().duration(dur).attr("fill","white");
+			subGraphGs[i][j].selectAll("path").transition().duration(dur).attr("fill","white").attr("stroke","white");
+			subGraphGs[i][j].selectAll("text").transition().duration(dur).attr("fill","white");
+			setTimeout(function(){clear2(i,j);},dur);
+		}
+		function clear2(i,j) {
 			subGraphGs[i][j].selectAll("rect").remove();
 			subGraphGs[i][j].selectAll("path").remove();
 			subGraphGs[i][j].selectAll("text").remove();
