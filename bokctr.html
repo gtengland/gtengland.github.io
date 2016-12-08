@@ -6,17 +6,18 @@
 
   function init() {
     Tabletop.init( { key: '1xzKQuxBFom3hGKDJ4C2odr3L3s3QrxPpARVGvYtBXYE',
-                     callback: showInfo,
+                     callback: updateGraph,
                      simpleSheet: true } )
-  }
-
-  function showInfo(data, tabletop) {
-	updateGraph(data);
   }
   
 		//Width and height
-		var w=800, h=500;
-		var subGraphs = [2,1];
+		var w=1000, h=800;
+		var subGraphs = [2,2];
+			var wG = w / subGraphs[1];
+			var hG = h / subGraphs[0];
+		var subGraphGs = [];
+		var myData = [];
+		var graphTypes = ['pie','pie'];
 		//Create SVG element
 		var svg = d3.select("#graph")
 			.append("svg")
@@ -24,73 +25,223 @@
 			.attr("height", h);
 			
 		
-		function updateGraph(data) {
+		function updateGraph(data, tabletop) {
+			myData = data;
 			var keys = (Object.keys(data[0]));
-			var graphData = {};
 			//var wG = (w) / (keys.length-1);
-			var wG = w / subGraphs[1];
-			var hG = h / subGraphs[0];
-			var r=0,c=0;
-			for (jj=1; jj<keys.length; jj++) {
-				var xG = c*wG;
-				var yG = h-r*hG;
-				c++;
-				if (c>=subGraphs[1]) {c=0; r++;}
-				graphData = {};
-				for (var i=0; i<data.length; i++)
-				{
-					var v = Object.values(data[i]);
-					v = v[jj];
-					if (!(v in graphData)) {graphData[v] = 1; console.log(v)}
-					else {graphData[v]= Number(graphData[v]) + 1;}
-				}
-				var maxData = 0;
-				var lengthData = 0;
-				for (var v in graphData) {
-					if (graphData[v] > maxData) {maxData = graphData[v];}
-					lengthData++;
-				}
-				var x = 20 + xG;
-				if (jj>1){svg.append("rect").attr("width",2).attr("height",h).attr("x",x-20).attr("y",0);}
-				for (var v in graphData) {
-					var curH = (hG-50)*graphData[v]/maxData;
-					var curY = yG-curH-20;
-					var curW = (wG-40) / lengthData - 10;
-					var curRect = svg.append("rect")
-						.attr("width",curW)
-						.attr("height", 0)
-						.attr("height", curH)
-						.attr("x",x)
-						.attr("y",curY)
-						.attr("style","fill:grey")
-						.attr("data",v)
-						.on("mouseout", function() {
-							var d = d3.select(this).transition().duration(1000).style("fill","grey");
-							});
-					if (jj==2) {
-						curRect.attr("data",v)
-						.on("mouseover", function() {
-							var t = d3.select(this);
-							t.transition()
-								.style("fill",t.attr("blue")).style("fill",t.attr("data"));
-							});}
-					else {
-						curRect.on("mouseover", function() {
-							var t = d3.select(this);
-							t.transition().duration(10)
-								.style("fill","blue");
-							});}
-					svg.append("text")
-						.text(v)
-						.attr("x",x+curW/2)
-						.attr("y",yG-10)
-						.attr("alignment-baseline","middle")
-						.attr("text-anchor","middle")
+			var graphData = {};
+			for (var i=0; i<subGraphs[0]; i++) {
+				subGraphGs.push([]);
+				var curRow = subGraphGs[i];
+				for(var j=0; j<subGraphs[1]; j++) {
+					var curG = svg.append("g");
+					curRow.push(curG);
+					svg.append("rect")
+						.attr("width",wG)
+						.attr("height", hG)
+						.attr("x",wG*j)
+						.attr("y",hG*i)
+						.attr("fill","none")
+						.attr("stroke","black")
+						.attr("stroke-width",1);
+					svg.append("rect")
+						.attr("width",20)
+						.attr("height", 20)
+						.attr("x",wG*j+5)
+						.attr("y",hG*i+5)
+						.attr("data",i+","+j)
 						.attr("fill","black")
-						.attr("font-size","12");
-					x+=curW+10;
+						.attr("stroke","black")
+						.attr("stroke-width",1)
+						.on("click", function(){convertTo(d3.select(this).attr("data"),"bar");});
+					svg.append("circle")
+						.attr("r", 10)
+						.attr("cx",wG*j+40)
+						.attr("cy",hG*i+15)
+						.attr("data",i+","+j)
+						.attr("fill","black")
+						.attr("stroke","black")
+						.attr("stroke-width",1)
+						.on("click", function(){convertTo(d3.select(this).attr("data"),"pie");});
 				}
-				console.log(maxData);
+			}
+			console.log(subGraphGs);
+			
+			var r=0,c=0;
+			for (jj=0; jj<keys.length-1; jj++) {
+				if (c>=subGraphs[1]) {c=0; r++;}	
+				if (graphTypes[jj] == 'bar') {console.log(r,c," bar"); plotBarGraph(r,c);}
+				else {console.log(r,c," pie"); plotPieGraph(r,c);}
+
+				c++;
+			}
+		}
+		
+		function getGraphData(r,c) {
+			graphData = {};
+			for (var i=0; i<myData.length; i++)
+			{
+				var v = Object.values(myData[i]);
+				v = v[r*subGraphs[1]+c+1]; //ignore the first column in the data, it's a timestamp
+				if (!(v in graphData)) {graphData[v] = 1; console.log(v)}
+				else {graphData[v]= Number(graphData[v]) + 1;}
+			}
+			return graphData;
+		}
+		
+		function convertTo(subG, type) {
+			var i = Number(subG.split(",")[0]);
+			var j = Number(subG.split(",")[1]);
+			console.log("clear:",i,j);
+			clearG(i,j);
+			if (type == "bar") {plotBarGraph(i,j);}
+			if (type == "pie") {plotPieGraph(i,j);}
+		}
+		
+		function clearG(i,j) {
+			subGraphGs[i][j].selectAll("rect").remove();
+			subGraphGs[i][j].selectAll("path").remove();
+			subGraphGs[i][j].selectAll("text").remove();
+			subGraphGs[i][j].selectAll("g").remove();
+			
+		}
+		function plotPieGraph(r,c) {		
+			var xG = c*wG;
+			var yG = (r+1)*hG;
+			var x = 20 + xG;
+			graphData = getGraphData(r,c);
+			var totalData = 0;
+			var lengthData = 0;
+			for (var v in graphData) {
+				//if (graphData[v] > maxData) {maxData = graphData[v];}
+				totalData += graphData[v];
+				lengthData++;
+			}
+			console.log("total",totalData);
+			var myContainer = subGraphGs[r][c];
+			var cx = (x + (wG-100)/2), cy = yG - hG/2;
+			var RBIG = 1.05; //ratio of large radius to small for mouseover
+			var r = (Math.min(hG,wG-100) / 2 - 10)/RBIG;
+			var curTh = 0;
+			var sx=0,sy=0;
+			var	ex = cx+Math.round(10*r*Math.sin(curTh))/10;
+			var	ey = cy+Math.round(10*r*Math.cos(curTh))/10;
+			var colors = ["red","blue","orange","green"];
+			//console.log(colors);
+			var curY = cy - r;
+			var iii=0;
+			for (var v in graphData) {
+				sx = ex;
+				sy = ey;
+				var th = (graphData[v]/totalData) * Math.PI * 2;
+				curTh += th;
+				ex = cx+Math.round(10*r*Math.sin(curTh))/10;
+				ey = cy+Math.round(10*r*Math.cos(curTh))/10;
+				var cmd = 'M' + cx + "," + cy //Move pointer
+				  + 'L' + sx + "," + sy
+				  + 'A' + r + "," + r + ' 0 0,0 ' + ex + "," + ey
+				  + 'Z';
+				var sx2 = (sx-cx)*RBIG+cx, sy2 = (sy-cy)*RBIG+cy,
+					ex2 = (ex-cx)*RBIG+cx, ey2 = (ey-cy)*RBIG+cy;
+				var cmdBig = 'M' + cx + "," + cy //Move pointer
+				  + 'L' + sx2 + "," + sy2
+				  + 'A' + r*RBIG + "," + r*RBIG + ' 0 0,0 ' + ex2 + "," + ey2
+				  + 'Z';
+				//console.log(cmdBig);
+				
+				var curG = myContainer.append("g");
+				curG.append("path")
+					.attr("d",cmd)
+					.attr("data",cmdBig)
+					.attr("fill","white")
+					.attr("stroke","white").transition().duration(100)
+					.attr("fill",colors[iii])
+					.attr("stroke","black")
+					.attr("stroke-width",2);
+				curG.on("mouseover", function() {
+						var d = d3.select(this).selectAll("path");
+						var temp = d.attr("data");
+						d.attr("data",d.attr("d")).attr("d",temp).attr("stroke-width",4);
+						})
+					.on("mouseout", function() {
+						var d = d3.select(this).selectAll("path");
+						var temp = d.attr("data");
+						d.attr("data",d.attr("d")).attr("d",temp).attr("stroke-width",2);
+						});
+				myContainer.append("rect")
+					.attr("width",20)
+					.attr("height", 20)
+					.attr("x",cx+r+10)
+					.attr("y",curY)
+					.attr("fill","white").transition().duration(1000)
+					.attr("fill",colors[iii]);
+				curY += 25;
+				myContainer.append("text")
+					.text(v)
+					.attr("x",cx + r + 35)
+					.attr("y",curY-12.5)
+					.attr("alignment-baseline","middle")
+					.attr("text-anchor","left")
+					.attr("fill","white").transition().duration(1000)
+					.attr("fill","black")
+					.attr("font-size","12");
+				iii++;
+				if (iii == colors.length){iii=0;}
+			}
+		}
+		
+		function plotBarGraph(r,c) {
+			var xG = c*wG;
+			var yG = (r+1)*hG;
+			var x = 20 + xG;
+			graphData = getGraphData(r,c);
+			var maxData = 0;
+			var lengthData = 0;
+			var myContainer = subGraphGs[r][c];
+			var colors = ["Red","Green","Orange","Yellow","Blue","Indigo","Violet"];
+			for (var v in graphData) {
+				if (graphData[v] > maxData) {maxData = graphData[v];}
+				lengthData++;
+			}
+			for (var v in graphData) {
+				var curH = (hG-60)*graphData[v]/maxData;
+				var curY = yG-curH-20;
+				var curW = (wG-40) / lengthData - 10;
+				var curRect = myContainer.append("rect")
+					.attr("width",curW)
+					.attr("height", 0)
+					.attr("height", curH)
+					.attr("x",x)
+					.attr("y",curY)
+					.attr("data",v)
+					.on("mouseout", function() {
+						var d = d3.select(this).transition().duration(1000).style("fill","grey");
+						});
+				if (colors.indexOf(v)>-1) {
+					curRect.attr("data",v)
+					.on("mouseover", function() {
+						var t = d3.select(this);
+						t.transition()
+							.style("fill",t.attr("blue")).style("fill",t.attr("data"));
+						});}
+				else {
+					curRect.on("mouseover", function() {
+						var t = d3.select(this);
+						t.transition().duration(10)
+							.style("fill","blue");
+						});}
+				curRect.attr("fill","white").transition().duration(500)
+					.attr("fill","grey");
+				myContainer.append("text")
+					.text(v)
+					.attr("x",x+curW/2)
+					.attr("y",yG-10)
+					.attr("alignment-baseline","middle")
+					.attr("text-anchor","middle")
+					.attr("fill","white").transition().duration(1000)
+					.attr("fill","black")
+					.attr("font-size","12");
+				x+=curW+10;
 			}
 		}
 </script>
