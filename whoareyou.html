@@ -181,7 +181,7 @@
 		var xG = 0*wG;
 		var yG = hG; // assume r=1, c=0
 		var hB = (hG - 40) / 7 - 5;
-		var wB = 2*wG - 80;
+		var wB = 2*wG - 40;
 		toolTip.remove();
 		var curY = yG + 20;
 		for (var j=4; j<colNames.length; j++) {
@@ -200,7 +200,7 @@
 		var xG = 0*wG;
 		var yG = hG; // assume r=1, c=0
 		var hB = (hG - 40) / 7 - 5;
-		var wB = 2*wG - 80;
+		var wB = 2*wG - 40;
 		var curY = yG + 40;
 		var myContainer = subGraphGs[1][0];
 		barText = myContainer.append("text")
@@ -242,6 +242,15 @@
 				.attr("stroke","blue");
 			curY += hB + 5;
 		}
+		
+		myContainer.append("circle")
+			.attr("cx", 2*wG - 40)
+			.attr("cy", yG + 20)
+			.attr("r",15)
+			.attr("fill","white")
+			.attr("stroke","black")
+			.attr("stroke-width",1)
+			.on("click", function(){getGraphDataCondition(-1, '');});
 	}
 	
 	function setToolTip(ref,txt) {
@@ -342,9 +351,9 @@
 		myContainer.selectAll("g").remove();
 		myContainer.selectAll("text").remove();
 		
-		var cx = (x + (wG-100)/2), cy = yG - hG/2;
+		var cx = (x + (wG-200)/2), cy = yG - hG/2;
 		var RBIG = 1.05; //ratio of large radius to small for mouseover
-		var r = (Math.min(hG,wG-100) / 2 - 10)/RBIG;
+		var r = (Math.min(hG,wG-200) / 2 - 10)/RBIG;
 		var curTh = 0;
 		var sx=0,sy=0;
 		var	ex = cx+Math.round(10*r*Math.sin(curTh))/10;
