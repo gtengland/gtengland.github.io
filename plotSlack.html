@@ -1,0 +1,394 @@
+<script type="text/javascript" src="d3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="slackdata.js" charset="utf-8"></script>
+<style type="text/css">
+		.unselectable {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			cursor: pointer;
+		}
+</style>
+<div id="graph" style="border: 1px solid black; float: left;"></div>
+<script type="text/javascript">
+	//Width and height
+	var w=1200, h=800;
+	var dur = 500; //duration of animation
+	var myData = [];
+	var colorMap = [];
+	var isScatter = true;
+	var curGroup = 'week';
+	//Create SVG element
+	var svg = d3.select("#graph")
+		.append("svg")
+		.attr("width", w)
+		.attr("height", h);	
+	
+	var toolTip = svg.append("g");//.style("visibility","hidden");
+	
+	//var obj = getSlackData();
+	//myData = obj['data'];
+	
+	var slackData = [];
+	console.log("connecting to csv");
+	d3.text("http://gtengland.github.io/slackdata.csv", function(data) {
+		console.log("parsing csv");
+		slackData =  d3.csvParseRows(data);
+		console.log(slackData);
+		myData = slackData;
+		console.log(myData[0],myData[1]);
+		
+
+		//var headers = obj['headers'];
+		var maxVal = -1;
+		var lengthData = 0;
+		for (var i=1; i<myData.length; i++) {
+			var curVal = Number(myData[i][2])
+			if (curVal > maxVal) {maxVal = curVal;}
+			lengthData++;
+		}
+		
+		/*
+		svg.append("circle")
+			.attr("r",15)
+			.attr("cx",w-40)
+			.attr("cy",30)
+			.attr("fill","grey")
+			.on("click", function() {switchType();})
+			.on("mouseover", function() {d3.select(this).attr("fill","blue");})
+			.on("mouseout", function() {d3.select(this).attr("fill","grey");});
+		*/
+		
+		svg.append("text")
+			.attr("x",w-120)
+			.attr("y",20)
+			.text("Change Type")
+			.attr("class","unselectable")
+			.on("click", function() {switchType();})
+			.on("mouseover", function() {d3.select(this).attr("fill","blue");})
+			.on("mouseout", function() {d3.select(this).attr("fill","grey");});
+		svg.append("text")
+			.attr("x",w-120)
+			.attr("y",35)
+			.text("Group by Day")
+			.attr("class","unselectable")
+			.on("click", function() {fadeOutGraph();
+				updateGraph('day');})
+			.on("mouseover", function() {d3.select(this).attr("fill","blue");})
+			.on("mouseout", function() {d3.select(this).attr("fill","grey");});
+		svg.append("text")
+			.attr("x",w-120)
+			.attr("y",50)
+			.text("Group by Week")
+			.attr("class","unselectable")
+			.on("click", function() {fadeOutGraph();
+				updateGraph('week');})
+			.on("mouseover", function() {d3.select(this).attr("fill","blue");})
+			.on("mouseout", function() {d3.select(this).attr("fill","grey");});
+		svg.append("text")
+			.attr("x",w-120)
+			.attr("y",65)
+			.text("Group by Month")
+			.attr("class","unselectable")
+			.on("click", function() {fadeOutGraph();
+				updateGraph('month');})
+			.on("mouseover", function() {d3.select(this).attr("fill","blue");})
+			.on("mouseout", function() {d3.select(this).attr("fill","grey");});
+			
+			
+		setUpAxis();
+		updateGraph(curGroup);
+	
+	});
+	
+
+	
+	function setToolTip(ref,txt) {
+		var t = 'error no tooltip found';
+		try {t = toolTip.select("text").text();}
+		catch(err) {//console.log(err);
+		}
+		//console.log(t);
+		var c = [0,0];
+		c = d3.mouse(ref);
+		//console.log("coords:",c);
+		c[0]+=5;
+		c[1]-=15;
+		if (t == txt && 0) { //just move it (doesn't work very well)
+			toolTip.transition().duration(50)
+				.attr("transform","translate("+c[0]+","+c[1]+")");	
+		}
+		else { //create a new one
+			toolTip.remove();
+			if (txt.length > 0) {
+				toolTip = svg.append("g");
+				var curRect = toolTip.append("rect")
+					.attr("x",0)
+					.attr("y",0)
+					.attr("height",18)
+					.attr("fill","rgba(255,255,255,0.5)")
+					.style("pointer-events","none");
+				var curText = toolTip.append("text")
+					.text(txt)
+					.attr("x",3)
+					.attr("y",9)
+					.attr("alignment-baseline","middle")
+					.attr("text-anchor","left")
+					.attr("fill","black")
+					.attr("font-size","12")
+					.attr("font-weight","bold")
+					.attr("class","unselectable");
+				var bb = curText.node().getBBox();
+				//console.log(bb);
+				curRect.attr("width",5+bb['width']);
+				toolTip.attr("transform","translate("+c[0]+","+c[1]+")");
+			}
+		}
+	}
+	
+	function regroup(groupBy) {
+		curGroup = groupBy;
+		maxVal = 0;
+		var dIndex = 2;
+		lengthData = 0;
+		var curDate = getDate(myData[1][0]);
+		var curTotal = Number(myData[1][dIndex]);
+		for (var i=2; i<myData.length; i++) {
+			var prevDate = curDate;
+			curDate = getDate(myData[i][0]);
+			var curVal = Number(myData[i][dIndex]);
+			if (prevDate[groupBy] == curDate[groupBy]) {
+				curTotal += curVal;
+			}
+			else {
+				curTotal += curVal;
+				if (curTotal > maxVal) {maxVal = curTotal;}
+				lengthData++;
+				curTotal = 0;
+			}
+		}
+	}
+	
+	function fadeOutGraph() {
+		console.log("fade out");
+		//turn off pointer events
+		svg.selectAll("rect").attr("class","unselectable")
+			.on("mouseover",function() {return;})
+			.on("mouseout",function() {return;});
+		if (isScatter) {
+			svg.selectAll("rect").transition().duration(dur).attr("height",0).remove();
+			svg.selectAll("line").transition().duration(dur).attr("stroke","white").remove();
+		}
+		else {
+			svg.selectAll("rect").transition().duration(dur).attr("height",0).attr("y",h-70).remove();
+		}
+	}
+	
+	function updateGraph(groupBy) {
+		toolTip.remove();
+		regroup(groupBy);
+		var curW = (w-100) / (lengthData+1);
+		console.log(lengthData, curW);
+		var yG = h-50;
+		var x = 20;
+		var yBegin = h-70;
+		if (isScatter) {x = x + curW/3;}
+		if (isScatter) {
+			var wRect = curW/3;
+			if (wRect < 5) {wRect = 5;}
+		}
+		else {var wRect = curW;}
+		var dIndex = 2;
+		console.log("max:", maxVal);
+		var curDate = [];
+		curDate['year'] = -1;
+		curDate['month'] = -1;
+		curDate['day'] = -1;
+		var curTotal = 0;
+		var prevY = -1;
+		for (var i=1; i<myData.length; i++) {
+			var curVal = Number(myData[i][dIndex]);
+			var curH = (h-160)*curVal/maxVal;
+			var curY = yG-curH-20;
+			var prevDate = curDate;
+			curDate = getDate(myData[i][0]);
+			
+			if (curDate[groupBy] != prevDate[groupBy] && prevDate[groupBy] > 0 || i == myData.length-1) {
+				curH = (h-160)*curTotal/maxVal;
+				curY = yG-curH-20;
+				if (isScatter) {
+					yBegin = curY + wRect/2;
+					curH = wRect;
+					}
+				console.log(prevDate, curTotal, maxVal);
+				var curRect = svg.append("rect")
+					.attr("width",wRect)
+					.attr("height", 0)
+					.attr("x",x)
+					.attr("y", yBegin)
+					.attr("height",0)
+					.attr("fill","grey")
+					.on("mouseout", function() {
+						var d = d3.select(this).transition().duration(1000).style("fill","grey");
+						toolTip.remove();
+						})
+					.on("mousemove", function() {
+						setToolTip(this,d3.select(this).attr("val"));
+					})
+					.on("mouseover", function() {
+						var t = d3.select(this);
+						t.transition().duration(10)
+							.style("fill","blue");
+						});
+				if (groupBy == "month") {
+					var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+					curRect.attr("val",months[Number(prevDate['month'])-1] + ':' + curTotal);
+				}
+				else {curRect.attr("val", prevDate['month'] + '/' + prevDate['day'] + ':' + curTotal);}
+				curRect.transition()
+					.duration(dur)
+					.attr("height", curH)
+					.attr("y",curY);
+				if (prevY > 0 && isScatter) {
+					svg.append("line")
+						.attr("x1",x-curW +wRect/2)
+						.attr("y1",prevY+wRect/2)
+						.attr("x2",x-curW +wRect/2)
+						.attr("y2",prevY+wRect/2)
+						.attr("stroke-width",2)
+						.attr("stroke","grey")
+						.attr("stroke-dasharray","5,5")
+						.transition().duration(1000)
+						.attr("x2",x+wRect/2)
+						.attr("y2",curY+wRect/2);
+					}
+				prevY = curY;
+				x+=curW;
+				curTotal = curVal;
+			}
+			else {curTotal += curVal;}
+		}
+	}
+	
+	function setUpAxis() {
+		var curW = (w-100) / myData.length;
+		var yG = h-50;
+		var x = 20;
+		var curDate = [];
+		curDate['year'] = -1;
+		curDate['month'] = -1;
+		curDate['day'] = -1;
+		for (var i=0; i<myData.length; i++) {
+			var prevDate = curDate;
+			curDate = getDate(myData[i][0]);
+			
+			if (!(curDate['year'] == prevDate['year'])) {
+				var curG = svg.append("g");
+				curG.append("text")
+					.text(curDate['year'])//myData[i][0])
+					.attr("x",x+curW/2)
+					.attr("y",yG+24)
+					.attr("alignment-baseline","middle")
+					.attr("text-anchor","middle")
+					.attr("fill","white")//.transition().duration(1000)
+					.attr("fill","black")
+					.attr("font-size","12")
+					.attr("class","unselectable");
+				curG.on("mouseover", function() {
+						d3.select(this).selectAll("text").attr("fill","red");
+						setToolTip(this,'Group by day');
+						})
+					.on("mouseout", function() {
+						d3.select(this).selectAll("text").attr("fill","black");
+						toolTip.remove();
+						})
+					.on("click", function () {
+						fadeOutGraph();
+						setTimeout(function(){updateGraph('day');},dur);
+					});
+				}
+			if (!(curDate['month'] == prevDate['month'])) {
+				var curG = svg.append("g");
+				curG.append("text")
+					.text(curDate['month'])//myData[i][0])
+					.attr("x",x+curW/2)
+					.attr("y",yG+12)
+					.attr("alignment-baseline","middle")
+					.attr("text-anchor","middle")
+					.attr("fill","white")//.transition().duration(1000)
+					.attr("fill","black")
+					.attr("font-size","12")
+					.attr("class","unselectable");
+				curG.on("mouseover", function() {
+						d3.select(this).selectAll("text").attr("fill","red");
+						setToolTip(this,'Group by month');
+						})
+					.on("mouseout", function() {
+						d3.select(this).selectAll("text").attr("fill","black");
+						toolTip.remove();
+						})
+					.on("click", function () {
+						fadeOutGraph();
+						setTimeout(function(){updateGraph('month');},dur);
+					});
+				}
+			//if ((Number(curDate['day']) == 1) || (Number(curDate['day']) == 8) || (Number(curDate['day']) == 15) || (Number(curDate['day']) == 22)) {
+			if (!(curDate['week'] == prevDate['week'])) {
+				var curG = svg.append("g");
+				curG.append("text")
+					.text(curDate['day'])//myData[i][0])
+					.attr("x",x+curW/2)
+					.attr("y",yG)
+					.attr("alignment-baseline","middle")
+					.attr("text-anchor","middle")
+					.attr("fill","white")//.transition().duration(1000)
+					.attr("fill","black")
+					.attr("font-size","12")
+					.attr("class","unselectable");
+				curG.on("mouseover", function() {
+						d3.select(this).selectAll("text").attr("fill","red");
+						setToolTip(this,'Group by week');
+						})
+					.on("mouseout", function() {
+						d3.select(this).selectAll("text").attr("fill","black");
+						toolTip.remove();
+						})
+					.on("click", function () {
+						fadeOutGraph();
+						setTimeout(function(){updateGraph('week');},dur);
+					});
+				}
+			x += curW;
+		}
+	}
+	
+	function getDate(d) {
+		var days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+		var obj = [];
+		obj['year'] = d.substring(0, 4);
+		obj['month'] = d.substring(4, 6);
+		obj['day'] = d.substring(6, 8);
+		var yearDay = 0;
+		for (var i=0; i<Number(obj['month'])-1; i++) {
+			yearDay += days[i];
+		}
+		yearDay += Number(obj['day']);
+		var w = 0;
+		while (yearDay > 0) {
+			yearDay -= 7;
+			w++;
+		}
+		if (w>52) {w--;}
+		obj['week'] = w;
+		return obj;
+	}
+	
+	function switchType() {
+		console.log(isScatter);
+		fadeOutGraph();
+		isScatter = !isScatter;
+		updateGraph(curGroup);
+	}
+</script>
