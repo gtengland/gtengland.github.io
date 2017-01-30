@@ -1,0 +1,28 @@
+<style type="text/css">
+	td {
+		text-align: center;
+		padding: 3px;
+	}
+	input {width: 50px;}
+</style>
+
+<h1>Enter values for the range of refractive indices and thicknesses to simulate:</h1>
+<form action="thinfilm_sparklines.html">
+<table align='center'>
+<tr>
+	<td>nmin</td><td>nmax</td><td>nstep</td>
+</tr>
+<tr><td>
+<input type="text" name="nmin" value="1.5"></td><td>
+<input type="text" name="nmax" value="3"></td><td>
+<input type="text" name="nstep" value="0.1">
+</td></tr>
+<tr><td>
+tmin</td><td>tmax</td><td>tstep</td></tr>
+<tr><td>
+<input type="text" name="tmin" value="150"></td><td>
+<input type="text" name="tmax" value="1000"></td><td>
+<input type="text" name="tstep" value="25"></td></tr>
+<tr><td colspan='3' style='text-align: right'><input type="submit" value="Submit"></td></tr>
+</table>
+</form>

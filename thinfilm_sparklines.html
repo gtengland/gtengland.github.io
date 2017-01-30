@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="colorfromspectrum.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.1.4/math.min.js"></script>
+	<style>
+		html, body{
+			width: 100%;
+			height: 100%;
+			font-size: 1em;
+		}
+		.sl {
+			display: inline-block;
+			width: 7em;
+			vertical-align: middle;
+			stroke: black;
+			stroke-width: 2;
+			//background-color: grey;
+			//border: 1px solid grey;
+		}
+		.sl path{
+			fill: none;
+		}
+		.sl circle{
+			fill: red;
+		}
+		.large{
+			margin: 0;
+			font-size: 5em;
+		}
+		input {
+			border: 1px dotted #ccc; 
+			background: white; 
+			font-family: monospace; 
+			padding: 5px 5px; 
+			font-size: 12px; 
+			margin: 5px 0px 5px 0; 
+			color: black; 
+			text-align: center;
+			width: 50px;
+		}
+		input:hover {background-color:yellow;}
+		input:focus { background-color:cyan; outline: none;}
+		tr {height: 5px; !important}
+	</style>
+</head>
+<body ng-app="app" ng-controller="main">
+	Refractive index of substrate: 
+	<input ng-model="nsub">
+	Maximum y-value for sparklines: 
+	<input ng-model="ymax">
+	<input type="button" ng-click="update()" value="Update"></input><br>
+	<table style="opacity:1">
+	<tr>
+		<td style="width:50px">&nbsp;</td>
+		<td ng-repeat="n in range(nmin,nmax,nstep)" align='center'>&nbsp;
+			<b>{{n | number:2}}</b></td>
+	</tr>
+	<tr ng-repeat = "t in range(tmin,tmax,tstep)">
+		<td>&nbsp;<b>{{t}} </b></td>
+		<td ng-repeat="n in range(nmin,nmax,nstep)">
+		<sl t="{{t}}" n="{{n}}"></sl>
+		</td>
+	</tr>
+	</table>
+	<br>
+	<a href="thinfilm_spark_form.html">Edit thickness and RI ranges.</a>
+</body>
+<script>
+
+var wlMin = 350;
+var wlMax = 800;
+var wlStep = 5;
+
+var curWL = wlMin;
+var wl=[];
+while (curWL <= wlMax) {
+	wl.push(curWL);
+	curWL += wlStep;
+}
+
+var app = angular.module('app', []);
+app.directive('sl', ['$timeout', function(timer){
+	  function link(scope, el, attr, ctrl){
+		el = d3.select(el[0]);
+		var svg = el;
+		svg.append("path");
+		var dS = function(svg,scope) {drawSpark(svg,scope);}
+		timer(function() {dS(svg,scope)},00);
+	  }
+	  return {
+		  link: link
+		, restrict: 'E'
+		, replace: true
+		, template: '<svg class="sl"></svg>'
+	  };
+	}]);
+function main($scope) {
+	$scope.nsub = 1.54;
+	$scope.nmin = 1.2;
+	$scope.nmax = 3;
+	$scope.nstep = 0.1;
+	$scope.tmin = 150;
+	$scope.tmax = 500;
+	$scope.tstep = 25;
+	$scope.ymax = 'x';
+	var s = window.location.search.replace("?","").split("&");
+	for (var i=0; i<s.length; i++) {
+		var ss = s[i].split("=");
+		switch (ss[0]) {
+			case "nmin": 
+				$scope.nmin = Number(ss[1]);
+				break;
+			case "nmax": 
+				$scope.nmax = Number(ss[1]);
+				break;
+			case "nstep": 
+				$scope.nstep = Number(ss[1]);
+				break;
+			case "tmin": 
+				$scope.tmin = Number(ss[1]);
+				break;
+			case "tmax": 
+				$scope.tmax = Number(ss[1]);
+				break;
+			case "tstep": 
+				$scope.tstep = Number(ss[1]);
+				break;
+		}
+	}
+	console.log($scope.nmin, $scope.nmax, $scope.nstep);
+	$scope.range = function(min, max, step) {
+		step = step || 1;
+		var input = [];
+		for (var i = min; i <= max; i += step) {
+			input.push(i);
+		}
+		return input;
+	};
+	$scope.update = function() {
+		var nsub = Number($scope.nsub);
+		var ymax = Number($scope.ymax);
+		d3.selectAll("svg")
+			.each( function() {
+				var curSVG = d3.select(this);
+				drawSpark(curSVG, $scope);	
+			});
+	}
+	//d3.selectAll("table").transition().duration(1000).style("opacity",1);
+}
+function drawSpark(svg, scope) {
+	var t = Number(svg.attr("t"));
+	var n = Number(svg.attr("n"));
+	var TF = thinFilm([t], [n], Number(scope.nsub));
+	var data = TF.data;
+	var min = 0; //attr.min !== undefined ? +attr.min : d3.min(data);
+	var max = (scope.ymax == 'x') ? d3.max(data) : scope.ymax; //attr.max !== undefined ? +attr.max : d3.max(data);
+	var r = 0;
+	var m = 1; //margin
+	var w = svg.node().clientWidth;
+	var h = getComputedStyle(svg.node())['font-size'].replace('px','');
+	svg.attr({width: w, height: h});
+	//console.log(TF);
+	var x = d3.scale.linear().domain([0, data.length - 1]).range([m, w - m]);
+	var y = d3.scale.linear().domain([min, max]).range([h - m, m]);
+	var lines = [];
+	lines = svg.selectAll('path');
+	lines.data(data)
+		.attr('d', 'M' + data.map(function(d, i){return [x(i),y(d)] }).join('L'));
+	lines.attr("stroke",TF.color);
+}
+
+function thinFilm(t, n, nsub) {
+	var dataset = [];
+	var spectrum = [];
+	for (var i = 0; i < wl.length; i++) {	
+		var v1 = wl[i];
+		var v2 = bragg(v1, t, n, nsub);	
+		dataset.push([v1, v2]);
+		spectrum.push(v2);
+	}	
+	specColor = colorFromSpectrum(wl, dataset);	
+	var retObj = [];
+	retObj.data = spectrum;
+	retObj.color = "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")";
+	return retObj;
+}
+function bragg(wl, tt, nn, nsub) {
+	var M = [[1, 0], [0, 1]];
+	var nprev = 1;
+	var ncur = 1;
+	var kx = 1;
+	for (var i=0; i<tt.length; i++) {
+		nprev = ncur;
+		ncur = Number(nn[i]);
+		kx = 2*math.pi*ncur / wl;
+		var T = trans(nprev,ncur),
+			P = prop(kx*Number(tt[i]));
+		M = math.multiply(M,T);
+		M = math.multiply(M,P);
+	}
+	T = trans(ncur,nsub);
+
+	M = math.multiply(M,T);
+	var temp = math.divide(M[1][0],M[0][0]);
+	var r = math.abs(temp) * math.abs(temp);
+	return 100*r;
+}
+
+function prop(kxt) {
+	var a1 = math.complex(math.cos(kxt),math.sin(kxt)),
+		a2 = math.complex(math.cos(-kxt),math.sin(-kxt));
+	var M = [[a1, 0], [0, a2]];
+	return M;
+}
+function trans(ni, nj) {
+	var r = (ni - nj)/(ni+nj),
+		t = 1 + r;
+	var M = [[1/t, r/t], [r/t, 1/t]];
+	return M;
+}
+</script>
+</html>
