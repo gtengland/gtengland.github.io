@@ -1,58 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
-	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-	<script src="colorfromspectrum.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.1.4/math.min.js"></script>
-	<style>
-		html, body{
-			width: 100%;
-			height: 100%;
-			font-size: 1em;
-		}
-		.sl {
-			display: inline-block;
-			width: 7em;
-			vertical-align: middle;
-			stroke: black;
-			stroke-width: 2;
-			//background-color: grey;
-			//border: 1px solid grey;
-		}
-		.sl path{
-			fill: none;
-		}
-		.sl circle{
-			fill: red;
-		}
-		.large{
-			margin: 0;
-			font-size: 5em;
-		}
-		input {
-			border: 1px dotted #ccc; 
-			background: white; 
-			font-family: monospace; 
-			padding: 5px 5px; 
-			font-size: 12px; 
-			margin: 5px 0px 5px 0; 
-			color: black; 
-			text-align: center;
-			width: 50px;
-		}
-		input:hover {background-color:yellow;}
-		input:focus { background-color:cyan; outline: none;}
-		tr {height: 5px; !important}
-	</style>
+<script src="angular.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="colorfromspectrum.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.1.4/math.min.js"></script>
+<style>
+	html, body{
+		width: 100%;
+		height: 100%;
+		font-size: 1em;
+	}
+	.sl {
+		display: inline-block;
+		width: 7em;
+		vertical-align: middle;
+		stroke: black;
+		stroke-width: 3;
+		//background-color: grey;
+		//border: 1px solid grey;
+	}
+	.sl path{
+		fill: none;
+	}
+	.sl circle{
+		fill: red;
+	}
+	.container {
+		border: 1px solid black;
+		padding: 5px;
+		float: left;
+	}
+	input {
+		border: 1px dotted #ccc; 
+		background: white; 
+		font-family: monospace; 
+		padding: 5px 5px; 
+		font-size: 12px; 
+		margin: 5px 0px 5px 0; 
+		color: black; 
+		text-align: center;
+		width: 50px;
+	}
+	input:hover {background-color:yellow;}
+	input:focus { background-color:cyan; outline: none;}
+	tr {height: 5px; !important}
+	.tooltip {
+		position: relative;
+		display: inline-block;
+	}
+	.tooltip .tooltiptext {
+		visibility: hidden;
+		width: 240px;
+		background-color: rgba(0,0,0,0.5);
+		color: #fff;
+		text-align: center;
+		border-radius: 6px;
+		padding: 5px 0;		
+		/* Position the tooltip */
+		position: absolute;
+		z-index: 1;
+		top: 100%;
+		left: 100%;
+		margin-left: -60px;
+	}
+
+	.tooltip:hover .tooltiptext {
+		visibility: visible;
+	}
+</style>
 </head>
 <body ng-app="app" ng-controller="main">
-	Refractive index of substrate: 
-	<input ng-model="nsub">
-	Maximum y-value for sparklines: 
-	<input ng-model="ymax">
+<div style="position:relative">
+<div class="container">
+	RI of substrate: 
+	<div class="tooltip"><input ng-model="nsub"><span class="tooltiptext">Enter the refractive index of the substrate (air=1.0, water=1.33, glass=1.54).</span>
+	</div>
+	Max y-value for sparklines: 
+	<div class="tooltip"><input ng-model="ymax">
+		<span class="tooltiptext">Enter 0-100 for the percent reflectance for ymax, or 'x' to scale to each individual sparkline.</span>
+	</div>
 	<input type="button" ng-click="update()" value="Update"></input><br>
-	<table style="opacity:1">
+	
+	<div class="tooltip">TMin: <input ng-model-options="{ updateOn: 'blur' }"
+				ng-model="tmin" >
+		<span class="tooltiptext" style="width:180px">Minimum value for thickness in nm.</span>
+	</div>
+	<div class="tooltip">TMax: <input ng-model-options="{ updateOn: 'blur' }"
+				ng-model="tmax" >
+		<span class="tooltiptext" style="width:180px">Maximum value for thickness in nm.</span>
+	</div>
+	<div class="tooltip">TStep: <input ng-model-options="{ updateOn: 'blur' }"
+				ng-model="tstep" >
+		<span class="tooltiptext" style="width:180px">Step size for thickness in nm.</span>
+	</div>
+	<br>
+	<div class="tooltip">NMin: <input ng-model-options="{ updateOn: 'blur' }"
+				ng-model="nmin" >
+		<span class="tooltiptext" style="width:180px">Minimum value for refractive index.</span>
+				</div>
+	<div class="tooltip">NMax: <input ng-model-options="{ updateOn: 'blur' }"
+				ng-model="nmax" >
+		<span class="tooltiptext" style="width:180px">Maximum value for refractive index.</span>
+	</div>
+	<div class="tooltip">NStep: <input ng-model-options="{ updateOn: 'blur' }"
+				ng-model="nstep" >
+		<span class="tooltiptext" style="width:180px">Step size for refractive index.</span>
+	</div>
+</div>			
+	<table>
 	<tr>
 		<td style="width:50px">&nbsp;</td>
 		<td ng-repeat="n in range(nmin,nmax,nstep)" align='center'>&nbsp;
@@ -65,8 +121,11 @@
 		</td>
 	</tr>
 	</table>
-	<br>
-	<a href="thinfilm_spark_form.html">Edit thickness and RI ranges.</a>
+<br>
+<div style="position:absolute; bottom:0; ">
+<a href="thinfilm_spark_form.html" style="color:grey; text-decoration: none;">Edit thickness and RI ranges.</a>
+</div>
+</div>
 </body>
 <script>
 
@@ -82,6 +141,7 @@ while (curWL <= wlMax) {
 }
 
 var app = angular.module('app', []);
+app.controller("main",function($scope){main($scope)});
 app.directive('sl', ['$timeout', function(timer){
 	  function link(scope, el, attr, ctrl){
 		el = d3.select(el[0]);
@@ -132,9 +192,9 @@ function main($scope) {
 	}
 	console.log($scope.nmin, $scope.nmax, $scope.nstep);
 	$scope.range = function(min, max, step) {
-		step = step || 1;
+		step = Number(step) || 1;
 		var input = [];
-		for (var i = min; i <= max; i += step) {
+		for (var i = Number(min); i <= Number(max)+0.001; i += step) {
 			input.push(i);
 		}
 		return input;
