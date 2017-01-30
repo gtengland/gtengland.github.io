@@ -21,9 +21,10 @@
 		.sl path{
 			fill: none;
 		}
-		.large{
-			margin: 0;
-			font-size: 5em;
+		.container {
+			border: 1px solid black;
+			padding: 5px;
+			float: left;
 		}
 		input {
 			border: 1px dotted #ccc; 
@@ -63,6 +64,7 @@
 	</style>
 </head>
 <body ng-app="app" ng-controller="main">
+<div class="container">
 RI of: matrix 
 <div class="tooltip"><input ng-model="nmatrix">
 	<span class="tooltiptext">Refractive index of the matrix (air=1.0, TEOS-Silica = 1.45)</span>
@@ -74,12 +76,21 @@ RI of: matrix
 , &nbsp; substrate: 
 <div class="tooltip"><input ng-model="nsub">
 	<span class="tooltiptext">Refractive index of the substrate (glass=1.54, Silicon ~5)</span>
-</div>
+</div><br>
 	Max y-value for sparklines: 
 	<div class="tooltip"><input ng-model="ymax">
 		<span class="tooltiptext">Enter 0-100 for the percent reflectance for ymax, or 'x' to scale to each individual sparkline.</span>
+	</div><br>
+	Width:
+	<div class="tooltip"><input type="number" ng-model="slwidth">
+		<span class="tooltiptext">Width of each sparkline in 'em' units.</span>
+	</div>
+	Height:
+	<div class="tooltip"><input type="number" ng-model="hmult">
+		<span class="tooltiptext">Height of each sparkline in 'em' units.</span>
 	</div>
 	<input type="button" ng-click="update()" value="Update"></input><br>
+<hr>
 <div class="tooltip">LMin: <input type="number" ng-model-options="{ updateOn: 'blur' }"
             ng-model="lmin" >
 	<span class="tooltiptext" style="width:180px">Minimum value for number of layers.</span>
@@ -104,7 +115,8 @@ RI of: matrix
 <div class="tooltip">RStep: <input type="number" ng-model-options="{ updateOn: 'blur' }"
             ng-model="rstep" >
 	<span class="tooltiptext" style="width:180px">Step size for radius.</span>
-</div>			
+</div>	
+</div>		
 <br>
 <table style="opacity:1">
 	<tr>
@@ -160,6 +172,8 @@ function main($scope) {
 	$scope.rmin = 90;
 	$scope.rmax = 125;
 	$scope.rstep = 5;
+	$scope.slwidth = 8;
+	$scope.hmult = 1;
 	var s = window.location.search.replace("?","").split("&");
 	for (var i=0; i<s.length; i++) {
 		var ss = s[i].split("=");
@@ -188,7 +202,7 @@ function main($scope) {
 	$scope.range = function(min, max, step) {
 		step = Number(step) || 1;
 		var input = [];
-		for (var i = Number(min); i <= Number(max); i += step) {
+		for (var i = min; i <= max; i += step) {
 			input.push(i);
 		}
 		return input;
@@ -207,6 +221,7 @@ function main($scope) {
 	//d3.selectAll("table").transition().duration(1000).style("opacity",1);
 }
 function drawSpark(svg, scope) {
+	svg.style("width",Number(scope.slwidth) + "em");
 	var r = Number(svg.attr("r"));
 	var nMatrix = Number(scope.nmatrix);
 	var nPore = Number(scope.npore);
@@ -242,7 +257,7 @@ function drawSpark(svg, scope) {
 	var r = 0;
 	var m = 1; //margin
 	var w = svg.node().clientWidth;
-	var h = getComputedStyle(svg.node())['font-size'].replace('px','');
+	var h = Number(scope.hmult)*getComputedStyle(svg.node())['font-size'].replace('px','');
 	svg.attr({width: w, height: h});
 	var x = d3.scale.linear().domain([0, data.length - 1]).range([m, w - m]);
 	var y = d3.scale.linear().domain([min, max]).range([h - m, m]);
