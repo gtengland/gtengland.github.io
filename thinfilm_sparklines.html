@@ -90,11 +90,11 @@
 	</div>
 	<input style="float:right; border-color: red;" type="button" ng-click="update()" value="Update"></input><br><hr>
 	
-	<div class="tooltip">TMin: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+	<div class="tooltip">TMin: <input type="number" step="5" ng-model-options="{ updateOn: 'blur' }"
 				ng-model="tmin" >
 		<span class="tooltiptext" style="width:180px">Minimum value for thickness in nm.</span>
 	</div>
-	<div class="tooltip">TMax: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+	<div class="tooltip">TMax: <input type="number" step="5" ng-model-options="{ updateOn: 'blur' }"
 				ng-model="tmax" >
 		<span class="tooltiptext" style="width:180px">Maximum value for thickness in nm.</span>
 	</div>
@@ -103,15 +103,15 @@
 		<span class="tooltiptext" style="width:180px">Step size for thickness in nm.</span>
 	</div>
 	<br>
-	<div class="tooltip">NMin: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+	<div class="tooltip">NMin: <input type="number" step=".05" ng-model-options="{ updateOn: 'blur' }"
 				ng-model="nmin" >
 		<span class="tooltiptext" style="width:180px">Minimum value for refractive index.</span>
 				</div>
-	<div class="tooltip">NMax: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+	<div class="tooltip">NMax: <input type="number" step=".05" ng-model-options="{ updateOn: 'blur' }"
 				ng-model="nmax" >
 		<span class="tooltiptext" style="width:180px">Maximum value for refractive index.</span>
 	</div>
-	<div class="tooltip">NStep: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+	<div class="tooltip">NStep: <input type="number" step=".05" ng-model-options="{ updateOn: 'blur' }"
 				ng-model="nstep" >
 		<span class="tooltiptext" style="width:180px">Step size for refractive index.</span>
 	</div>
