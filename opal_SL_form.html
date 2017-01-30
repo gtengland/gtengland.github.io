@@ -1,0 +1,28 @@
+<style type="text/css">
+	td {
+		text-align: center;
+		padding: 3px;
+	}
+	input {width: 50px;}
+</style>
+
+<h1>Enter values for the range of colloid radii and number of layers to simulate:</h1>
+<form action="opal_SL.html">
+<table align='center'>
+<tr>
+	<td>rmin</td><td>rmax</td><td>rstep</td>
+</tr>
+<tr><td>
+<input type="text" name="rmin" value="75"></td><td>
+<input type="text" name="rmax" value="200"></td><td>
+<input type="text" name="rstep" value="25">
+</td></tr>
+<tr><td>
+tmin</td><td>tmax</td><td>tstep</td></tr>
+<tr>
+<td><input type="text" name="lmin" value="1"></td>
+<td><input type="text" name="lmax" value="50"></td>
+<td><input type="text" name="lstep" value="1"></td></tr>
+<tr><td colspan='3' style='text-align: right'><input type="submit" value="Submit"></td></tr>
+</table>
+</form>

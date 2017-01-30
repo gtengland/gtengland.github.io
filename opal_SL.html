@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.10/angular.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="colorfromspectrum.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.1.4/math.min.js"></script>
+	<style>
+		html, body{
+			width: 100%;
+			height: 100%;
+			font-size: 1em;
+		}
+		.sl {
+			display: inline-block;
+			width: 7em;
+			vertical-align: middle;
+			stroke: black;
+			stroke-width: 2;
+			//background-color: grey;
+			//border: 1px solid grey;
+		}
+		.sl path{
+			fill: none;
+		}
+		.sl circle{
+			fill: red;
+		}
+		.large{
+			margin: 0;
+			font-size: 5em;
+		}
+		input {
+			border: 1px dotted #ccc; 
+			background: white; 
+			font-family: monospace; 
+			padding: 5px 5px; 
+			font-size: 12px; 
+			margin: 5px 0px 5px 0; 
+			color: black; 
+			text-align: center;
+			width: 50px;
+		}
+		input:hover {background-color:yellow;}
+		input:focus { background-color:cyan; outline: none;}
+		tr {height: 5px; !important}
+	</style>
+</head>
+<body ng-app="app" ng-controller="main">
+Refractive index of: matrix 
+	<input ng-model="nmatrix">, &nbsp;
+pores: <input ng-model="npore">, &nbsp;
+substrate: <input ng-model="nsub">
+	<input type="button" ng-click="update()" value="Update"></input><br>
+	<table style="opacity:1">
+	<tr>
+		<td style="width:50px">&nbsp;</td>
+		<td ng-repeat="r in range(rmin,rmax,rstep)" align='center'>&nbsp;
+			<b>{{2*r | number:0}}</b></td>
+	</tr>
+	<tr ng-repeat = "LL in range(lmin,lmax,lstep)">
+		<td>&nbsp;<b>{{LL}} </b></td>
+		<td ng-repeat="r in range(rmin,rmax,rstep)">
+		<sl layers="{{LL}}" r="{{r}}" nMatrix="{{nmatrix}}" nPore="{{npore}}"></sl>
+		</td>
+	</tr>
+</body>
+<script>
+
+var wlMin = 400;
+var wlMax = 750;
+var wlStep = 5;
+
+var curWL = wlMin;
+var wl=[];
+while (curWL <= wlMax) {
+	wl.push(curWL);
+	curWL += wlStep;
+}
+var OM = []; //transfer matrices for different opals
+
+var app = angular.module('app', []);
+app.directive('sl', ['$timeout', function(timer){
+	  function link(scope, el, attr, ctrl){
+		el = d3.select(el[0]);
+		var svg = el;
+		svg.append("path");
+		var dS = function(svg,scope) {drawSpark(svg,scope);}
+		timer(function() {dS(svg,scope)},00);
+	  }
+	  return {
+		  link: link
+		, restrict: 'E'
+		, replace: true
+		, template: '<svg class="sl"></svg>'
+	  };
+	}]);
+function main($scope) {
+	$scope.ymax = 100; //'x';
+	$scope.nmatrix = 1;
+	$scope.npore = 1.6;
+	$scope.nsub = 1;
+	$scope.lmin = 1;
+	$scope.lmax = 15;
+	$scope.lstep = 1;
+	$scope.rmin = 90;
+	$scope.rmax = 125;
+	$scope.rstep = 5;
+	var s = window.location.search.replace("?","").split("&");
+	for (var i=0; i<s.length; i++) {
+		var ss = s[i].split("=");
+		switch (ss[0]) {
+			case "rmin": 
+				$scope.rmin = Number(ss[1]);
+				break;
+			case "rmax": 
+				$scope.rmax = Number(ss[1]);
+				break;
+			case "rstep": 
+				$scope.rstep = Number(ss[1]);
+				break;
+			case "lmax": 
+				$scope.lmax = Number(ss[1]);
+				break;
+			case "lmin": 
+				$scope.lmin = Number(ss[1]);
+				break;
+			case "lstep": 
+				$scope.lstep = Number(ss[1]);
+				break;
+		}
+	}
+
+	$scope.range = function(min, max, step) {
+		step = step || 1;
+		var input = [];
+		for (var i = min; i <= max; i += step) {
+			input.push(i);
+		}
+		return input;
+	};
+	$scope.update = function() {
+		var nmatrix = Number($scope.nmatrix);
+		var npore = Number($scope.npore);
+		var nsub = Number($scope.nsub);
+		OM.length = 0; //clear cache
+		d3.selectAll("svg")
+			.each( function() {
+				var curSVG = d3.select(this);
+				drawSpark(curSVG, $scope);	
+			});
+	}
+	//d3.selectAll("table").transition().duration(1000).style("opacity",1);
+}
+function drawSpark(svg, scope) {
+	var r = Number(svg.attr("r"));
+	var nMatrix = Number(scope.nmatrix);
+	var nPore = Number(scope.npore);
+	var layers = Number(svg.attr("layers"));
+	var isNew = false;
+	if (!(r in OM)) {
+		OM[r] = [];
+		isNew = true;
+	}
+	if (!(nMatrix in OM[r])) {
+		OM[r][nMatrix] = [];
+		isNew = true;
+	}
+	if (!(nPore in OM[r][nMatrix])) {
+		OM[r][nMatrix][nPore] = [];
+		isNew = true;
+	}
+	if (isNew) {
+		OM[r][nMatrix][nPore] = opalMatrices(nMatrix,nPore,r,0.02,wl,Number(scope.nsub));
+	}
+	var o = OM[r][nMatrix][nPore];
+	var data = [];
+	var dataset = []
+	for (var i=0; i<wl.length; i++) {
+		var v = opalSpectrum(o[0][i],o[1][i],o[2][i],layers);
+		data.push(v);
+		dataset.push([wl[i], v]);
+	}
+	var specColor = colorFromSpectrum(wl, dataset);
+	var color = "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")";
+	var min = 0; //attr.min !== undefined ? +attr.min : d3.min(data);
+	var max = (scope.ymax == 'x') ? d3.max(data) : scope.ymax; //attr.max !== undefined ? +attr.max : d3.max(data);
+	var r = 0;
+	var m = 1; //margin
+	var w = svg.node().clientWidth;
+	var h = getComputedStyle(svg.node())['font-size'].replace('px','');
+	svg.attr({width: w, height: h});
+	var x = d3.scale.linear().domain([0, data.length - 1]).range([m, w - m]);
+	var y = d3.scale.linear().domain([min, max]).range([h - m, m]);
+	var lines = [];
+	lines = svg.selectAll('path');
+	lines.data(data)
+		.attr('d', 'M' + data.map(function(d, i){return [x(i),y(d)] }).join('L'));
+	lines.attr("stroke",color);
+}
+function opalMatrices(nMatrix,nPores,rOpal, d,wl, nsub) {
+	var refl = [];
+	refl.length = wl.length;
+	var propDist = (2*rOpal)*2*(math.sqrt(6)/3)*d; //propagation distance is diameter of opal * unit cell size * step size				
+	var nEffTop = opalEffectiveIndex(nMatrix,nPores,0,0.5,d,1);
+	var nEffBot = opalEffectiveIndex(nMatrix,nPores,.5,1,d,1);
+	var nEff = opalEffectiveIndex(nMatrix,nPores,.5,1,d,0);
+	//console.log("nEFf",nEffTop,nEff,nEffBot);
+	var ni=0;
+	var nj=0;
+	var MTop = [];
+	var MBot = [];
+	var M = [];
+	for (wlIndex = 0; wlIndex<wl.length; wlIndex++) {
+		var kx = 2*math.pi / wl[wlIndex] * propDist;
+		//console.log("kx",kx);
+		nj = nMatrix;
+		var mm = math.multiply(trans(nMatrix,nEffTop[0]), prop(kx * nEffTop[0]));
+		//console.log("MTop", mm);
+		for (var i=1; i<nEffTop.length; i++) {
+			ni = nj;
+			nj = nEffTop[i];
+			mm = math.multiply(mm,trans(ni,nj));
+			mm = math.multiply(mm,prop(kx * nj));
+			//console.log(i, mm);
+		}
+		MTop.push(mm);
+		nj = nEff[nEff.length-1];
+		mm = math.multiply(trans(nj,nEffBot[0]), prop(kx * nEffBot[0]));
+		for (i=1; i<nEffBot.length; i++) {
+			ni = nj;
+			nj = nEffBot[i];
+			mm = math.multiply(mm,trans(ni,nj));
+			mm = math.multiply(mm,prop(kx * nj));
+		}
+		mm = math.multiply(mm,trans(nj,nsub));
+		MBot.push(mm);
+		nj = nEff[nEff.length-1];
+		mm = math.multiply(trans(nj,nEff[0]),prop(kx * nEff[0]));				
+		for (i=1; i<nEff.length; i++) {
+			ni = nj;
+			nj = nEff[i];
+			mm = math.multiply(mm, trans(ni,nj));
+			mm = math.multiply(mm, prop(kx * nj));
+		}				
+		M.push(mm);
+	}
+	var Mall = [MTop,M,MBot];
+	return Mall;
+}
+function opalSpectrum(MTop,M,MBot,layers) {
+	var Mr = MTop;
+	for(var i=0; i<layers; i++) {	
+		Mr = math.multiply(Mr,M);
+	}
+	Mr = math.multiply(Mr,MBot);
+	var temp = math.divide(Mr[1][0],Mr[0][0]);
+	var r = 100*math.abs(temp) * math.abs(temp);
+	return r;
+}
+function opalEffectiveIndex(nMatrix,nPores,si,sf,d,isEdgeLayer) {
+	var nEff = [];
+	var rs=0, r2=0, s=0, Vtot=0, Vn1=0, Vn0=0;
+	var h = 2*math.sqrt(6)/3; //height for 2 layers of sqrt(6)/3 spacing
+	for (var ii = si; ii<=sf; ii+=d) {
+		s = ii*h; //scale to layer thickness for d=1 spheres
+
+		//central layer of 3 spheres
+		if ((s > (h-1)/2) && (s < (h+1)/2)) {
+			rs = math.re(math.sqrt(.5*.5 - (s - .5*h)*(s - .5*h)));
+		}
+		else {
+			rs = 0;
+		}
+		//7 spheres above and below central sphere
+		if (s <= .5 && isEdgeLayer==0) {
+			r2 = math.re(math.sqrt(.5*.5 - s*s));
+		}
+		else if (s > h-.5 && isEdgeLayer==0) {
+			r2 = math.re(math.sqrt(.5*.5 - (h-s)*(h-s)));
+		}
+		else {
+			r2 = 0;
+		}
+		//total volume of unit cell is sqrt(4/3)*2
+		Vtot = 6*math.sqrt(3)/4; //the factor of 1/4 comes from the radius being 1/2
+		Vn1 = 3*math.pi*rs*rs; //volume of middle layer of 3 spheres
+		Vn1 = Vn1 + 3*math.pi*r2*r2; //volume of 7 spheres above/below
+		Vn0 = Vtot - Vn1;
+		nEff.push(math.sqrt(nMatrix*nMatrix*(Vn0/Vtot) + nPores*nPores*(Vn1/Vtot)));
+	}
+	return nEff;
+}
+
+function thinFilm(t, n, nsub) {
+	var dataset = [];
+	var spectrum = [];
+	for (var i = 0; i < wl.length; i++) {	
+		var v1 = wl[i];
+		var v2 = bragg(v1, t, n, nsub);	
+		dataset.push([v1, v2]);
+		spectrum.push(v2);
+	}	
+	specColor = colorFromSpectrum(wl, dataset);	
+	var retObj = [];
+	retObj.data = spectrum;
+	retObj.color = "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")";
+	return retObj;
+}
+function bragg(wl, tt, nn, nsub) {
+	var M = [[1, 0], [0, 1]];
+	var nprev = 1;
+	var ncur = 1;
+	var kx = 1;
+	for (var i=0; i<tt.length; i++) {
+		nprev = ncur;
+		ncur = Number(nn[i]);
+		kx = 2*math.pi*ncur / wl;
+		var T = trans(nprev,ncur),
+			P = prop(kx*Number(tt[i]));
+		M = math.multiply(M,T);
+		M = math.multiply(M,P);
+	}
+	T = trans(ncur,nsub);
+
+	M = math.multiply(M,T);
+	var temp = math.divide(M[1][0],M[0][0]);
+	var r = math.abs(temp) * math.abs(temp);
+	return 100*r;
+}
+
+function prop(kxt) {
+	var a1 = math.complex(math.cos(kxt),math.sin(kxt)),
+		a2 = math.complex(math.cos(-kxt),math.sin(-kxt));
+	var M = [[a1, 0], [0, a2]];
+	return M;
+}
+function trans(ni, nj) {
+	var r = (ni - nj)/(ni+nj),
+		t = 1 + r;
+	var M = [[1/t, r/t], [r/t, 1/t]];
+	return M;
+}
+</script>
+</html>
