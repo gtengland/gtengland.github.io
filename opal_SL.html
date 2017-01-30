@@ -80,28 +80,28 @@ RI of: matrix
 		<span class="tooltiptext">Enter 0-100 for the percent reflectance for ymax, or 'x' to scale to each individual sparkline.</span>
 	</div>
 	<input type="button" ng-click="update()" value="Update"></input><br>
-<div class="tooltip">LMin: <input ng-model-options="{ updateOn: 'blur' }"
+<div class="tooltip">LMin: <input type="number" ng-model-options="{ updateOn: 'blur' }"
             ng-model="lmin" >
 	<span class="tooltiptext" style="width:180px">Minimum value for number of layers.</span>
 </div>
-<div class="tooltip">LMax: <input ng-model-options="{ updateOn: 'blur' }"
+<div class="tooltip">LMax: <input type="number" ng-model-options="{ updateOn: 'blur' }"
             ng-model="lmax" >
 	<span class="tooltiptext" style="width:180px">Maximum value for number of layers.</span>
 </div>
-<div class="tooltip">LStep: <input ng-model-options="{ updateOn: 'blur' }"
+<div class="tooltip">LStep: <input type="number" ng-model-options="{ updateOn: 'blur' }"
             ng-model="lstep" >
 	<span class="tooltiptext" style="width:180px">Step size for number of layers.</span>
 </div>
 <br>
-<div class="tooltip">RMin: <input ng-model-options="{ updateOn: 'blur' }"
+<div class="tooltip">RMin: <input type="number" ng-model-options="{ updateOn: 'blur' }"
             ng-model="rmin" >
 	<span class="tooltiptext" style="width:180px">Minimum value for radius.</span>
 			</div>
-<div class="tooltip">RMax: <input ng-model-options="{ updateOn: 'blur' }"
+<div class="tooltip">RMax: <input type="number" ng-model-options="{ updateOn: 'blur' }"
             ng-model="rmax" >
 	<span class="tooltiptext" style="width:180px">Maximum value for radius.</span>
 </div>
-<div class="tooltip">RStep: <input ng-model-options="{ updateOn: 'blur' }"
+<div class="tooltip">RStep: <input type="number" ng-model-options="{ updateOn: 'blur' }"
             ng-model="rstep" >
 	<span class="tooltiptext" style="width:180px">Step size for radius.</span>
 </div>			
