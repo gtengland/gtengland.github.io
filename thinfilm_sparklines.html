@@ -79,8 +79,16 @@
 	Max y-value for sparklines: 
 	<div class="tooltip"><input ng-model="ymax">
 		<span class="tooltiptext">Enter 0-100 for the percent reflectance for ymax, or 'x' to scale to each individual sparkline.</span>
+	</div><br>
+	Width:
+	<div class="tooltip"><input type="number" ng-model="slwidth">
+		<span class="tooltiptext">Width of each sparkline in 'em' units.</span>
 	</div>
-	<input type="button" ng-click="update()" value="Update"></input><br>
+	Height:
+	<div class="tooltip"><input type="number" ng-model="hmult">
+		<span class="tooltiptext">Height of each sparkline in 'em' units.</span>
+	</div>
+	<input style="float:right; border-color: red;" type="button" ng-click="update()" value="Update"></input><br><hr>
 	
 	<div class="tooltip">TMin: <input type="number" ng-model-options="{ updateOn: 'blur' }"
 				ng-model="tmin" >
@@ -166,6 +174,8 @@ function main($scope) {
 	$scope.tmax = 500;
 	$scope.tstep = 25;
 	$scope.ymax = 'x';
+	$scope.slwidth = 8;
+	$scope.hmult = 1;
 	var s = window.location.search.replace("?","").split("&");
 	for (var i=0; i<s.length; i++) {
 		var ss = s[i].split("=");
@@ -200,8 +210,6 @@ function main($scope) {
 		return input;
 	};
 	$scope.update = function() {
-		var nsub = Number($scope.nsub);
-		var ymax = Number($scope.ymax);
 		d3.selectAll("svg")
 			.each( function() {
 				var curSVG = d3.select(this);
@@ -216,11 +224,13 @@ function drawSpark(svg, scope) {
 	var TF = thinFilm([t], [n], Number(scope.nsub));
 	var data = TF.data;
 	var min = 0; //attr.min !== undefined ? +attr.min : d3.min(data);
-	var max = (scope.ymax == 'x') ? d3.max(data) : scope.ymax; //attr.max !== undefined ? +attr.max : d3.max(data);
+	var max = (scope.ymax == 'x') ? d3.max(data) : scope.ymax; 
+	svg.style("width", scope.slwidth + "em");
+	//attr.max !== undefined ? +attr.max : d3.max(data);
 	var r = 0;
 	var m = 1; //margin
 	var w = svg.node().clientWidth;
-	var h = getComputedStyle(svg.node())['font-size'].replace('px','');
+	var h = Number(scope.hmult)*getComputedStyle(svg.node())['font-size'].replace('px','');
 	svg.attr({width: w, height: h});
 	//console.log(TF);
 	var x = d3.scale.linear().domain([0, data.length - 1]).range([m, w - m]);
