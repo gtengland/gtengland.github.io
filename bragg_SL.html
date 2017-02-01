@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script  src="angular.min.js"></script>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="colorfromspectrum.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.1.4/math.min.js"></script>
+	<style>
+		html, body{
+			width: 100%;
+			height: 100%;
+			font-size: 1em;
+		}
+		.sl {
+			display: inline-block;
+			width: 7em;
+			vertical-align: middle;
+			stroke: black;
+			stroke-width: 2;
+		}
+		.sl path{
+			fill: none;
+		}
+		.container {
+			border: 1px solid black;
+			padding: 5px;
+			float: left;
+		}
+		input {
+			border: 1px dotted #ccc; 
+			background: white; 
+			font-family: monospace; 
+			padding: 5px 5px; 
+			font-size: 12px; 
+			margin: 5px 0px 5px 0; 
+			color: black; 
+			text-align: center;
+			width: 50px;
+		}
+		input:hover {background-color:yellow;}
+		input:focus { background-color:cyan; outline: none;}
+		.tooltip {
+			position: relative;
+			display: inline-block;
+		}
+		.tooltip .tooltiptext {
+			visibility: hidden;
+			width: 240px;
+			background-color: rgba(0,0,0,0.5);
+			color: #fff;
+			text-align: center;
+			border-radius: 6px;
+			padding: 5px 0;		
+			/* Position the tooltip */
+			position: absolute;
+			z-index: 1;
+			top: 100%;
+			left: 100%;
+			margin-left: -100px;
+		}
+		.tooltip:hover .tooltiptext {
+			visibility: visible;
+		}
+	</style>
+</head>
+<body ng-app="app" ng-controller="main">
+<div class="container">
+<b>Repeating unit:</b> thicknesses  
+<div class="tooltip"><input style="width:80px" ng-model="repunitt">
+	<span class="tooltiptext">Thicknesses (in nm) for the repeating unit of the bragg stack, separated by commas. (Ex: '150,100,120')</span>
+</div>
+, &nbsp; RIs: 
+<div class="tooltip"><input style="width:80px" ng-model="repunitn">
+	<span class="tooltiptext">Refractive indices for the repeating unit of the bragg stack, separated by commas. (Ex: '1.5,1.8,2.0')</span>
+</div><br>
+RI for substrate: 
+<div class="tooltip"><input ng-model="nsub">
+	<span class="tooltiptext">Refractive index of the substrate (glass=1.54, Silicon ~5)</span>
+</div>
+and defect layer:
+<div class="tooltip"><input ng-model="ndef">
+	<span class="tooltiptext">Refractive index of the defect layer (the layer directly above the substrate, but before the repeating unit) (glass=1.54, Silicon ~5)</span>
+</div><br>
+	Max y-value for sparklines: 
+	<div class="tooltip"><input ng-model="ymax">
+		<span class="tooltiptext">Enter 0-100 for the percent reflectance for ymax, or 'x' to scale to each individual sparkline.</span>
+	</div><br>
+	Width:
+	<div class="tooltip"><input type="number" ng-model="slwidth">
+		<span class="tooltiptext">Width of each sparkline in 'em' units.</span>
+	</div>
+	Height:
+	<div class="tooltip"><input type="number" ng-model="hmult">
+		<span class="tooltiptext">Height of each sparkline in 'em' units.</span>
+	</div><br>
+	WL Min:
+	<div class="tooltip"><input type="number" ng-model="wlmin">
+		<span class="tooltiptext">Minimum wavelength to plot (in nm).</span>
+	</div>
+	WL Max:
+	<div class="tooltip"><input type="number" ng-model="wlmax">
+		<span class="tooltiptext">Maximum wavelength to plot (in nm).</span>
+	</div>
+	<input type="button" ng-click="update()" value="Update"></input><br>
+<hr>
+<div class="tooltip">LMin: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+            ng-model="lmin" >
+	<span class="tooltiptext" style="width:180px">Minimum value for number of layers.</span>
+</div>
+<div class="tooltip">LMax: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+            ng-model="lmax" >
+	<span class="tooltiptext" style="width:180px">Maximum value for number of layers.</span>
+</div>
+<div class="tooltip">LStep: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+            ng-model="lstep" >
+	<span class="tooltiptext" style="width:300px">Step size for number of layers. Fractional step sizes will add only a portion of the total repeating unit each time (i.e. if you set the value to 0.5 and have 2 values in the repeating unit fields above, each step will only add one layer).</span>
+</div>
+<br>
+Defect Layer Thicknesses: 
+<div class="tooltip">TMin: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+            ng-model="tmin" >
+	<span class="tooltiptext" style="width:180px">Minimum value for defect layer thickness.</span>
+			</div>
+<div class="tooltip">TMax: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+            ng-model="tmax" >
+	<span class="tooltiptext" style="width:180px">Maximum value for defect layer thickness.</span>
+</div>
+<div class="tooltip">TStep: <input type="number" ng-model-options="{ updateOn: 'blur' }"
+            ng-model="tstep" >
+	<span class="tooltiptext" style="width:180px">Step size for defect layer thickness.</span>
+</div>	
+</div>		
+<br>
+<table style="opacity:1">
+	<tr>
+		<td style="width:50px">&nbsp;</td>
+		<td ng-repeat="t in range(tmin,tmax,tstep)" align='center'>&nbsp;
+			<b>{{t | number:0}}</b></td>
+	</tr>
+	<tr ng-repeat = "LL in range(lmin,lmax,lstep)">
+		<td>&nbsp;<b>{{LL | number:1}} </b></td>
+		<td ng-repeat="t in range(tmin,tmax,tstep)">
+		<sl repeats="{{LL}}" tdefect="{{t}}"></sl>
+		</td>
+	</tr>
+</body>
+<script>
+var wl = [];
+
+var app = angular.module('app', []);
+app.controller("main", function($scope) {main($scope);});
+app.directive('sl', ['$timeout', function(timer){
+	  function link(scope, el, attr, ctrl){
+		el = d3.select(el[0]);
+		var svg = el;
+		svg.append("path");
+		var dS = function(svg,scope) {drawSpark(svg,scope);}
+		timer(function() {dS(svg,scope)},00);
+	  }
+	  return {
+		  link: link
+		, restrict: 'E'
+		, replace: true
+		, template: '<svg class="sl"></svg>'
+	  };
+	}]);
+function main($scope) {
+	$scope.ymax = 100; //'x';
+	$scope.nsub = 1.54;
+	$scope.lmin = 1;
+	$scope.lmax = 15;
+	$scope.lstep = 1;
+	$scope.tmin = 0;
+	$scope.tmax = 20;
+	$scope.tstep = 5;
+	$scope.ndef = 1.9;
+	$scope.repunitt = [100, 100]; //repeating unit thicknesses
+	$scope.repunitn = [1.9, 1.5]; //repeating unit RIs
+	$scope.slwidth = 8;
+	$scope.hmult = 1;
+	$scope.wlmin = 400;
+	$scope.wlmax = 750;
+	$scope.wlstep = 5;
+	setUpWL($scope.wlmin, $scope.wlmax, $scope.wlstep);
+	var s = window.location.search.replace("?","").split("&");
+	for (var i=0; i<s.length; i++) {
+		var ss = s[i].split("=");
+		switch (ss[0]) {
+			case "lmax": 
+				$scope.lmax = Number(ss[1]);
+				break;
+			case "lmin": 
+				$scope.lmin = Number(ss[1]);
+				break;
+			case "lstep": 
+				$scope.lstep = Number(ss[1]);
+				break;
+		}
+	}
+
+	$scope.range = function(min, max, step) {
+		step = Number(step) || 1;
+		var input = [];
+		for (var i = min; i <= max; i += step) {
+			input.push(i);
+		}
+		return input;
+	};
+	$scope.update = function() {
+		if (typeof $scope.repunitt == 'string') {
+			var t = $scope.repunitt.split(',');
+			$scope.repunitt = [];
+			for (var i=0; i<t.length; i++) {
+				$scope.repunitt.push(Number(t[i]));
+			}
+		}
+		if (typeof $scope.repunitn == 'string') {
+			var t = $scope.repunitn.split(',');
+			$scope.repunitn = [];
+			for (var i=0; i<t.length; i++) {
+				$scope.repunitn.push(Number(t[i]));
+			}
+		}
+		setUpWL(Number($scope.wlmin), Number($scope.wlmax), Number($scope.wlstep));
+		console.log(typeof $scope.repunitn, $scope.repunitn, typeof $scope.repunitt, $scope.repunitt);
+		d3.selectAll("svg")
+			.each( function() {
+				var curSVG = d3.select(this);
+				drawSpark(curSVG, $scope);	
+			});
+	}
+	//d3.selectAll("table").transition().duration(1000).style("opacity",1);
+}
+function drawSpark(svg, scope) {
+	svg.style("width",Number(scope.slwidth) + "em");
+	var nSub = Number(scope.nsub);
+	var nDef = Number(scope.ndef);
+	var tDef = Number(svg.attr("tdefect"));
+	var repUnitN = (scope.repunitn);
+	var repUnitT = (scope.repunitt);
+	var repeats = Number(svg.attr("repeats"));
+	var data = [];
+	var dataset = []
+	for (var i=0; i<wl.length; i++) {
+		var M = [[1,0],[0,1]];
+		if (repeats%1 >0) {
+			var numExtra = math.ceil((repeats%1)*repUnitT.length);
+			var tempT = [];
+			var tempN = [];
+			var j=repUnitT.length-1;
+			while (j>=repUnitT.length-numExtra) {
+				tempT.unshift(repUnitT[j]);
+				tempN.unshift(repUnitN[j]);
+				j--;
+			}
+			if (i==0) {console.log(tempT, tempN);}
+			var M = braggM(wl[i], tempT, tempN);
+		}
+		if (!(repeats == 0)) {
+			var M1 = braggM(wl[i], repUnitT, repUnitN);
+			M = math.multiply(M,M1);
+			M1 = braggM(wl[i], repUnitT, repUnitN, repUnitN[repUnitN.length-1]);
+			for (var j=2; j<repeats; j++) {
+				M = math.multiply(M,M1);
+			}
+		}
+		M1 = braggM(wl[i],[tDef],[nDef], repUnitN[repUnitN.length-1]);
+		M = math.multiply(M,M1);
+		M1 = trans(nDef, nSub);
+		M = math.multiply(M,M1);
+		var v = reflectivity(M);
+		data.push(v);
+		dataset.push([wl[i], v]);
+	}
+	var specColor = colorFromSpectrum(wl, dataset);
+	var color = "rgb(" + specColor[0] + "," + specColor[1] + "," + specColor[2] + ")";
+	var min = 0; //attr.min !== undefined ? +attr.min : d3.min(data);
+	var max = (scope.ymax == 'x') ? d3.max(data) : scope.ymax; //attr.max !== undefined ? +attr.max : d3.max(data);
+	var r = 0;
+	var m = 1; //margin
+	var w = svg.node().clientWidth;
+	var h = Number(scope.hmult)*getComputedStyle(svg.node())['font-size'].replace('px','');
+	svg.attr({width: w, height: h});
+	var x = d3.scale.linear().domain([0, data.length - 1]).range([m, w - m]);
+	var y = d3.scale.linear().domain([min, max]).range([h - m, m]);
+	var lines = [];
+	lines = svg.selectAll('path');
+	lines.data(data)
+		.attr('d', 'M' + data.map(function(d, i){return [x(i),y(d)] }).join('L'));
+	lines.attr("stroke",color);
+}
+function braggM(wl, tt, nn ,ncur0) {
+	var M = [[1, 0], [0, 1]];
+	var nprev = 1;
+	var ncur = ncur0 || 1;
+	var kx = 1;
+	for (var i=0; i<tt.length; i++) {
+		nprev = ncur;
+		ncur = Number(nn[i]);
+		kx = 2*math.pi*ncur / wl;
+		var T = trans(nprev,ncur),
+			P = prop(kx*Number(tt[i]));
+		M = math.multiply(M,T);
+		M = math.multiply(M,P);
+	}
+	return M;
+}
+function reflectivity(M) {
+	var temp = math.divide(M[1][0],M[0][0]);
+	var r = math.abs(temp) * math.abs(temp);
+	return 100*r;
+}
+function prop(kxt) {
+	var a1 = math.complex(math.cos(kxt),math.sin(kxt)),
+		a2 = math.complex(math.cos(-kxt),math.sin(-kxt));
+	var M = [[a1, 0], [0, a2]];
+	return M;
+}
+function trans(ni, nj) {
+	var r = (ni - nj)/(ni+nj),
+		t = 1 + r;
+	var M = [[1/t, r/t], [r/t, 1/t]];
+	return M;
+}
+function setUpWL(wlMin, wlMax, wlStep) {
+	wl.length = 0;
+	var curWL = wlMin;
+	while (curWL <= wlMax) {
+		wl.push(curWL);
+		curWL += wlStep;
+	}
+}
+</script>
+</html>
