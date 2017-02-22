@@ -1,0 +1,144 @@
+<html>
+<head>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<style type="text/css">
+	svg {
+		border: 1px solid black;
+	}
+	</style>
+</head>
+<body>
+<script type="text/javascript">
+	//Width and height
+	var w = 800;
+	var h = 600;
+	var state = -1; //0 - newgame
+	var numPlayers = 0;
+	var phrases = [];
+
+	//Create SVG element
+	var svg = d3.select("body")
+		.append("svg")
+		.attr("width", w)
+		.attr("height",h);
+		
+	updateState();
+	
+	function updateState() {
+		state = state+1;
+		svg.selectAll("g").remove();
+		svg.selectAll("text").remove();
+		
+		svg.append("text")
+			.text(state)
+			.attr("text-anchor","middle")
+			.attr("font-size",16)
+			.attr("y",20)
+			.attr("x",10);
+		svg.append("text")
+			.text(numPlayers)
+			.attr("text-anchor","middle")
+			.attr("font-size",16)
+			.attr("y",20)
+			.attr("x",40);
+		switch (state) {
+			case 0:
+				drawNewGame();
+				break;
+			case 1:
+				generatePassphrases();
+			default:
+				showPassphrase();
+				break;
+		}
+	}
+	
+	function drawNewGame() {
+		var g = svg.append("g");
+		g.append("text")
+			.text("Number of Players")
+			.attr("text-anchor","middle")
+			.attr("font-size",24)
+			.attr("y",30)
+			.attr("x",w/2);
+		var wR = (w-20)/4 - 10;
+		var cX = 10;
+		var cY = 50;
+		var a = function(nP) {numPlayers = nP; updateState();};
+		for (var i=3; i<=14; i++) {
+			var r = g.append("rect");
+			r.attr("width",wR)
+				.attr("height",50)
+				.attr("x", cX)
+				.attr("y", cY)
+				.attr("style","fill: rgba(0,0,0,0.3); stroke: black;")
+				.attr("nP",i)
+				.on("click",function() {
+					var nP = Number(d3.select(this).attr("nP")); numPlayers = nP; updateState();
+				});
+			g.append("text")
+				.text(i)
+				.attr("text-anchor","middle")
+				.attr("font-size",24)
+				.attr("y",cY+30)
+				.attr("x",cX + wR/2);
+			
+			cX += wR + 10;
+			if (i==6 || i==10) {cX = 10; cY+=60;}
+		}
+		
+	}
+	
+	function generatePassphrases() {
+		var p = numPlayers;
+		if (p%2==1) {phrases.push("You are the renegade."); p--;}
+		var pairs = [["A","a"],["B","b"],["C","c"],["D","d"],["E","e"],["F","f"],["G","g"]];
+		for (var i=0; i<p/2; i++) {
+			var r = Math.floor(Math.random() * pairs.length);
+			var curP = pairs.splice(r,1);
+			phrases.push(curP[0][0]);
+			phrases.push(curP[0][1]);
+		}
+		console.log(phrases);
+	}
+	
+	function showPassphrase() {
+		if (phrases.length > 0) {
+			var r = Math.floor(Math.random() * phrases.length);
+			var g = svg.append("g");
+			g.append("text")
+				.text(phrases.splice(r,1))
+				.attr("text-anchor","middle")
+				.attr("font-size",24)
+				.attr("y",h/2)
+				.attr("x",w/2);
+			g.append("rect").attr("width",50)
+					.attr("height",50)
+					.attr("x", w-60)
+					.attr("y", h-60)
+					.attr("style","fill: rgba(0,0,0,0.3); stroke: black;")
+					.on("click",function() {
+						svg.selectAll("g").remove(); showBlank();
+					});
+		}
+		else {
+			state = -1;
+			showBlank();
+		}
+		
+	}
+	
+	function showBlank() {
+		var g = svg.append("g");
+		g.append("rect").attr("width",w)
+			.attr("height",h)
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("style","fill: rgba(255,0,0,0.3); stroke: black;")
+			.on("click",function() {
+				updateState();
+			});
+	}
+</script>
+</body>
+</html>
