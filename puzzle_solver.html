@@ -1,0 +1,355 @@
+<html>
+<head>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<style type="text/css">
+	svg {
+		border: 1px solid black;
+	}
+	.unselectable {
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-khtml-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		pointer-events: none;
+	}
+	</style>
+</head>
+<body>
+<script type="text/javascript">
+	//Width and height
+	var w = 800;
+	var h = 600;
+	var puzSize = [5,4];
+	var wR = (w-50) / puzSize[1];
+	var hR = (h-50) / puzSize[0];
+	var map = new Map();
+	var curConfig = 'vrrv' + 'vrrv' + 'xhhx' + 'vddv' + 'vddv';
+	var solvedConfigs = [];
+	var solvePos = [3,1];
+	var grid = [];
+	var q = [];
+	var sq = []; //solution
+	var qq = []; //soln to display
+	map.set(curConfig, 1);
+
+	
+
+	//Create SVG element
+	var svg = d3.select("body")
+		.append("svg")
+		.attr("width", w)
+		.attr("height",h);
+	svg.append("rect")
+		.attr("width",20)
+		.attr("height",20)
+		.attr("x",w-25)
+		.attr("y",5)
+		.attr("fill","green")
+		.on("click", function() {nextConfig();});
+	
+	
+	console.log('set up', curConfig);
+	setUpPuzzle(curConfig);
+	mapRoutes();
+	
+	function mapRoutes() {
+		while (!(curConfig == undefined)) {
+			mapRoutes2();
+			curConfig = q.pop();
+		}
+		showSolution();
+	}
+	function mapRoutes2() {
+		//console.log('curpuz',puz);
+		var rLoc = -1;
+		var hLoc = -1;
+		var vLoc = [[-1,-1],[-1,-1],[-1,-1],[-1,-1]];
+		var vCt = 0;
+		var dLoc = [[],[],[],[]];
+		var dCt = 0;
+		
+		for (var i=0; i<puzSize[0]; i++) {
+			for (var j=0; j<puzSize[1]; j++) {
+				var v = curConfig.charAt(i*puzSize[1]+j);
+				switch (v) {
+					case 'r': //big square
+						if (rLoc<0){rLoc = [i,j];}
+						break;
+					case 'h':
+						if (hLoc<0){hLoc = [i,j];}
+						break;
+					case 'v':
+						//check for overlaps
+						var dupDetect = false;
+						for (var k=0; k<4; k++) {
+							if ((vLoc[k][0] == i-1) && (vLoc[k][1] == j)) {
+								dupDetect = true;
+								break;
+							}
+						}
+						if (!dupDetect){
+							vLoc[vCt] = [i,j]; 
+							vCt++;
+						}
+						break;
+					case 'd':
+						dLoc[dCt] = [i,j]; 
+						dCt++;
+						break;
+				}
+			}
+		}
+		
+		if ((rLoc[0] == solvePos[0]) && rLoc[1]==solvePos[1]) {
+			solvedConfigs.push(curConfig);
+		}
+		else {
+			movePiece(curConfig,'r',rLoc);
+			movePiece(curConfig,'d',dLoc[0]);
+			movePiece(curConfig,'d',dLoc[1]);
+			movePiece(curConfig,'d',dLoc[2]);
+			movePiece(curConfig,'d',dLoc[3]);
+			movePiece(curConfig,'v',vLoc[0]);
+			movePiece(curConfig,'v',vLoc[1]);
+			movePiece(curConfig,'v',vLoc[2]);
+			movePiece(curConfig,'v',vLoc[3]);
+			movePiece(curConfig,'h',hLoc);
+		}
+		
+		
+	}
+	
+	function showSolution() {
+		console.log("solutions", solvedConfigs);
+		for (var i=0; i<solvedConfigs.length; i++) {
+			sq.push([]);
+		}
+		for (var i=0; i<solvedConfigs.length; i++) {
+			sq[i].push(solvedConfigs[i]);
+			var temp = map.get(solvedConfigs[i]);
+			while (temp != 1) {
+				sq[i].push(temp);
+				temp = map.get(temp);
+			}
+		}
+		var minLength = 100000;
+		var minIndex = -1;
+		var ww = (w-50)/solvedConfigs.length;
+		var xCur = 25;
+		for (var i=0; i<solvedConfigs.length; i++) {
+			svg.append("rect")
+				.attr("width", ww-2)
+				.attr("height", 20)
+				.attr("x",xCur)
+				.attr("y",h-20)
+				.attr("fill","grey")
+				.attr("index",i)
+				.on("click", function() {
+					var index = Number(d3.select(this).attr("index"));
+					showSolution2(index);});
+			svg.append("text")
+				.text(sq[i].length)
+				.attr("x",xCur+ww/2)
+				.attr("y",h-10)
+				.attr("alignment-baseline","middle")
+				.attr("text-anchor","middle")
+				.attr("fill","white")
+				.attr("font-size","20")
+				.attr("font-weight","bold")
+				.attr("class","unselectable");
+			console.log(solvedConfigs[i] + ":" + sq[i].length);
+			xCur += ww
+			if (sq[i].length < minLength) {
+				minLength = sq[i];
+				minIndex = i;
+			}
+		}
+		qq = sq[minIndex];
+		
+	}
+	
+	function showSolution2(index) {
+		qq = sq[index];
+		nextConfig();
+	}
+	
+	function movePiece(puz,type,loc) {
+		//console.log('curPuz:',puz, type);
+		var pieceSize = [1,1];
+		switch (type) {
+			case 'r':
+				pieceSize = [2,2];
+				break;
+			case 'h':
+				pieceSize = [1,2];
+				break;
+			case 'v':
+				pieceSize = [2,1];
+				break;
+		}
+		var locInd = (loc[0]*puzSize[1])+loc[1];
+		//down
+		//console.log('down',type,loc,pieceSize);
+		
+		if (!(loc[0] + pieceSize[0] >= puzSize[0])) {
+			var cont = 1;
+			for (var i=0; i<pieceSize[1]; i++) {
+				if (!(puz.charAt(locInd+(pieceSize[0]*puzSize[1])+i) == 'x')) {cont = 0;}
+			}
+			if (cont==1) {
+				var nextPuz = puz;
+				for (var i=0; i<pieceSize[1]; i++) {
+					var ind = locInd+(pieceSize[0]*puzSize[1])+i;
+					nextPuz = replaceAt(nextPuz,ind,type);
+					nextPuz = replaceAt(nextPuz,locInd+i,'x');
+				}
+				//console.log('new map',nextPuz);
+				if (!(map.has(nextPuz))) {
+					q.unshift(nextPuz);
+					map.set(nextPuz,puz);
+				}					
+			}
+		}
+		//up
+		//console.log('up',type,loc,pieceSize);
+		if (loc[0]  > 0) {
+			var cont = 1;
+			for (var i=0; i<pieceSize[1]; i++) {
+				if (!(puz.charAt(locInd-puzSize[1]+i) == 'x')) {cont = 0;}
+			}
+			if (cont==1) {
+				var nextPuz = puz;
+				for (var i=0; i<pieceSize[1]; i++) {
+					var ind = locInd-(puzSize[1])+i;
+					nextPuz = replaceAt(nextPuz,ind,type);
+					nextPuz = replaceAt(nextPuz,locInd+i+((pieceSize[0]-1)*puzSize[1]),'x');
+				}
+				//console.log('new map',nextPuz);
+				if (!(map.has(nextPuz))) {
+					q.unshift(nextPuz);
+					map.set(nextPuz,puz);
+				}					
+			}
+		}
+		//right
+		if (!(loc[1] + pieceSize[1] >= puzSize[1])) {
+			//console.log('right',type,locInd,pieceSize,puz);
+			var cont = 1;
+			for (var i=0; i<pieceSize[0]; i++) {
+				//console.log(puz.charAt(locInd+(i*puzSize[1])+pieceSize[1]));
+				if (!(puz.charAt(locInd+(i*puzSize[1])+pieceSize[1]) == 'x')) {cont = 0;}
+			}
+			if (cont==1) {
+				//console.log('able to move ' + type.toUpperCase() + ' right');
+				var nextPuz = puz;
+				for (var i=0; i<pieceSize[0]; i++) {
+					var ind = locInd+(i*puzSize[1])+pieceSize[1];
+					nextPuz = replaceAt(nextPuz,ind,type);
+					nextPuz = replaceAt(nextPuz,locInd+(i*puzSize[1]),'x');
+				}
+				//console.log('new map',nextPuz);
+				if (!(map.has(nextPuz))) {
+					q.unshift(nextPuz);
+					map.set(nextPuz,puz);
+				}				
+			}
+		}
+		//left
+		//console.log('left',type,loc,pieceSize);	
+		if (loc[1] > 0) {
+			var cont = 1;
+			for (var i=0; i<pieceSize[0]; i++) {
+				if (puz[loc[0]+i][loc[1]-1] > 0) {cont = 0;}
+				if (!(puz.charAt(locInd+(i*puzSize[1])-1) == 'x')) {cont = 0;}
+			}
+			if (cont==1) {
+				var nextPuz = puz;
+				for (var i=0; i<pieceSize[0]; i++) {
+					var ind = locInd+(i*puzSize[1])-1;
+					nextPuz = replaceAt(nextPuz,ind,type);
+					ind = locInd+(i*puzSize[1])+pieceSize[1]-1;
+					nextPuz = replaceAt(nextPuz,ind,'x');
+				}
+				//console.log('new map',nextPuz);
+				if (!(map.has(nextPuz))) {
+					q.unshift(nextPuz);
+					map.set(nextPuz,puz);
+				}				
+			}
+		}
+		//console.log("map",map);
+	}
+	
+	function replaceAt(str,ind,character) {
+		return str.substr(0,ind) + character + str.substr(ind+1)
+	}
+	
+	function setUpPuzzle(config) {
+		var cur = 0;
+		var curX = 25;
+		var curY = 25;
+		svg.append("rect")
+			.attr("width",wR*puzSize[1]+4)
+			.attr("height",hR*puzSize[0]+4)
+			.attr("style","stroke: 5px solid black; fill: white;")
+			.attr("x",23)
+			.attr("y",23);
+		for (var i=0; i<puzSize[0]; i++) {
+			grid.push([]);
+			for (var j=0; j<puzSize[1]; j++) {
+				grid[i].push(svg.append("rect"));
+				grid[i][j].attr("width",wR)
+					.attr("height",hR)
+					.attr("width", wR)
+					.attr("x", curX)
+					.attr("y", curY);
+				cur++;
+				curX += wR;
+			}
+			curY += hR;
+			curX = 25;
+		}
+		updatePuzzle(config);
+	}
+	
+	function updatePuzzle(config) {
+		var cur = 0;
+		for (var i=0; i<puzSize[0]; i++) {
+			for (var j=0; j<puzSize[1]; j++) {
+				switch (config.charAt(cur)) {
+					case 'r':
+						grid[i][j].attr("style","fill:red").attr("width",wR).attr("height",hR).attr("transform","translate(0,0)");
+						break;
+					case 'h':
+						grid[i][j].attr("style","fill:blue").attr("width",wR).attr("height",hR*0.9).attr("transform","translate(0,"+0.05*hR+")");
+						break;
+					case 'v':
+						grid[i][j].attr("style","fill:green").attr("width",wR*0.9).attr("height",hR).attr("transform","translate("+0.05*wR+",0)");
+						break;
+					case 'd':
+						grid[i][j].attr("style","fill:yellow;").attr("width",wR*0.9).attr("height",hR*0.9).attr("transform","translate("+0.05*wR+","+0.05*hR+")");
+						break;
+					case 'x':
+						grid[i][j].attr("style","fill:white").attr("width",wR).attr("height",hR).attr("transform","translate(0,0)");
+						break;
+				}
+				cur++;
+			}
+		}
+	}
+	
+	function nextConfig() {
+		curConfig = qq.pop();
+		console.log('curConfig:', curConfig);
+		if (curConfig != undefined) {
+			updatePuzzle(curConfig);
+			setTimeout(function() {nextConfig();},500);
+		}
+		else {console.log(map);}
+	}
+	
+</script>
+</body>
+</html>
