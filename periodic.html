@@ -18,14 +18,100 @@
 	<body>
 	
 	<script type="text/javascript">
+	class longNo {
+		constructor(value, exponent) {
+			this.val = value;
+			this.exp = exponent;
+			while(this.val>1000 && this.val != 0)
+			{
+				this.val = this.val / 1000;
+				this.exp = this.exp + 1;
+			}
+			while(this.val<1 && this.val != 0)
+			{
+				this.val = this.val * 1000;
+				this.exp = this.exp - 1;
+			}
+		}
+		mult(x) {
+			var vv = this.val*x;
+			var ee = this.exp;
+			while(vv>1000 && vv != 0)
+			{
+				vv = vv / 1000;
+				ee = ee + 1;
+			}
+			while(vv<1 && vv != 0)
+			{
+				vv = vv * 1000;
+				ee = ee - 1;
+			}
+			return new longNo(vv,ee);
+		}
+		//can only add other longNos
+		add(x) {
+			//console.log("add:", this.out(),x.out());
+			var vv = this.val + x.value * Math.pow(10,3*x.exponent - 3*this.exp);
+			var ee = this.exp;
+			//console.log(this.val);
+			while(vv>1000 && vv != 0)
+			{
+				vv = vv / 1000;
+				ee = ee + 1;
+			}
+			while(vv<1 && vv != 0)
+			{
+				vv = vv * 1000;
+				ee = ee - 1;
+			}
+			return new longNo(vv,ee);
+		}
+		subtract(x) {
+			console.log("sub:", this.val,x.value,x.exponent,this.exp);
+			var vv = this.val - x.value * Math.pow(10,3*x.exponent - 3*this.exp);
+			var ee = this.exp;
+			console.log(this.val);
+			while(vv>1000 && vv != 0)
+			{
+				vv = vv / 1000;
+				ee = ee + 1;
+			}
+			while(vv<1 && vv != 0)
+			{
+				vv = vv * 1000;
+				ee = ee - 1;
+			}
+			return new longNo(vv,ee);
+		}
+		gte(x) {
+			if (this.exp > x.exp) {return true;}
+			else if (this.exp < x.exp) {return false;}
+			else if (this.val >= x.val) {return true;}
+			else {return false;}
+		}
+		lte(x) {
+			if (this.exp < x.exp) {return true;}
+			else if (this.exp > x.exp) {return false;}
+			else if (this.val <= x.val) {return true;}
+			else {return false;}
+		}
+		toFloat() {return this.val*Math.pow(10,this.exp);}
+		get value() {return this.val;}
+		get exponent() {return this.exp;}
+		out() {
+			var preFixes = ["", "K", "M", "B", "T", "q", "Q", "s", "S", "O", "N", "D", "Ud", "Dd", "Td", "qD", "QD", "sD", "SD", "OD", "ND", "V", "UV", "DV", "TV", "qV", "QV", "sV", "SV", "OV", "NV", "Tr"];
+			if (this.exp>=0) {return Math.round(this.val*100)/100 + preFixes[this.exp];}
+			else {return Math.round(this.val*100)/100 + "e" + this.exp;}
+		}
+	}
+	
 	//Width and height
 	var w = 1100;
 	var h = 700;
 	var padding = 20;
 	var rPadding = 5;
-	var totalMass = 0;
+	var totalMass = new longNo(0,0);
 	var mps = 0;
-	var totalMassLong = new longNo(0,0);
 	var prev_time = 0;
 	var wR=45, hR=50;
 	var periodicTable = [];
@@ -35,7 +121,7 @@
 	var elemPcts = [];
 	var elemExpts = [];
 	var allMult = 1;
-	var devMult = 1;//500000000;
+	var devMult = 1;
 	//Create SVG element
 	var svg = d3.select("body")
 				.append("svg")
@@ -99,8 +185,9 @@
 			elem.append("text")
 				.text(numFormat(ptData[i].Mass))
 				.attr("text-anchor","middle")
-				.attr("fill","grey")
+				.attr("fill","black")
 				.attr("font-size","12")
+				.attr("font-weight", "bold")
 				.attr("x", wRthis/2)
 				.attr("y", hR-3)
 				.attr("class","unselectable")
@@ -217,7 +304,8 @@ function main() {
 		.attr("y", 3*hR)
 		.attr("style", "fill:red;")
 		.on("click", function() {
-			totalMass = totalMass + devMult*mps + 1;
+			totalMass = totalMass.mult(devMult).add(new longNo(mps+1,0));
+			console.log("click add", totalMass.out());
 			updateUpgradeList();
 		});
 	
@@ -233,9 +321,9 @@ function main() {
 	
 	for(var j=0; j<3; j++) {
 		rectUG[j] = svg.append("rect")
-			.attr("x",padding)
+			.attr("x",padding-10)
 			.attr("y",(8+j)*(hR+rPadding))
-			.attr("width", 280)
+			.attr("width", 300)
 			.attr("height", hR)
 			.attr("fill","green")
 			.attr("data", j)
@@ -250,7 +338,7 @@ function main() {
 					d3.select(this).attr("style","fill:yellow;");
 				});;	
 		txtUG[j] = svg.append("text")
-			.attr("x",padding +5)
+			.attr("x",padding -5)
 			.attr("y",(8+j)*(hR+rPadding)+12)
 			.attr("alignment-baseline","middle")
 			.attr("text-anchor","left")
@@ -265,11 +353,11 @@ function main() {
 			.attr("font-size","12")
 			.attr("class","unselectable");
 		txtUG2[j].append("tspan")
-			.attr("x",padding + 5)
+			.attr("x",padding - 5)
 			.attr("y",(8+j)*(hR+rPadding)+29)
 			.attr("data","0");
 		txtUG2[j].append("tspan")
-			.attr("x",padding + 5)
+			.attr("x",padding - 5)
 			.attr("y",(8+j)*(hR+rPadding)+45);
 	}
 	
@@ -280,11 +368,12 @@ function main() {
 }
 	
 	function update(elapsed) {
-		totalMass = totalMass + mps * ((elapsed-prev_time)/1000);
-		totalMassLong.add(new longNo(mps * ((elapsed-prev_time)/1000),0));
+		var dM = (mps+1) * ((elapsed-prev_time)/1000);
+		totalMass = totalMass.add(new longNo(dM,0));
+		//totalMass = totalMass.add(mps * ((elapsed-prev_time)/1000));
 		//console.log(totalMassLong);
 		prev_time = elapsed;
-		txtMass.text(numFormat(totalMass));
+		txtMass.text(totalMass.out());
 		txtMPS.text(numFormat(mps));
 		txtClickVal.text(numFormat(devMult*mps+1));
 		drawBlackHole();
@@ -292,20 +381,21 @@ function main() {
 	
 	function clickElem(i) {
 		var tmpCost = elemCost(i);
-		if (totalMass > tmpCost.toFloat()) {
-			if (totalMass > 100*tmpCost.toFloat()) {
+		if (totalMass.gte(tmpCost)) {
+			if (totalMass.gte(tmpCost.mult(100))) {
 				elemCts[i] = elemCts[i]+10;
 				//mps = mps + 10*allMult*Number(ptData[i].Mass)*elemMults[i];
-				totalMass = totalMass - 17.5*tmpCost.toFloat(); //assuming increase rate of 1.1x
+				totalMass = totalMass.subtract(tmpCost.mult(17.5)); //assuming increase rate of 1.1x
 			}
 			else {
 				elemCts[i] = elemCts[i]+1;
 				//mps = mps + allMult*Number(ptData[i].Mass)*elemMults[i];
-				totalMass = totalMass - tmpCost.toFloat();
+				totalMass = totalMass.subtract(tmpCost);
 			}
 			updateMPS();
 			toolTip(i);
 		}
+		console.log(tmpCost.out());
 	}
 
 	function toolTip(i) {
@@ -313,7 +403,7 @@ function main() {
 		var xMPS = allMult * ptData[i].Mass * elemCts[i] * elemMults[i];
 		toolTipG.attr("transform", "translate(" + (xTrans) + "," + (hR+rPadding)*ptData[i].row + ")");
 		toolTipT1.text("Total Owned:" + elemCts[i]);
-		toolTipT2.text("Cost:" + numFormatLong(elemCost(i)));
+		toolTipT2.text("Cost:" + elemCost(i).out());
 		toolTipT3.text("MPS:" + numFormat(xMPS) + "(" + numFormat(100*xMPS / mps) + "%)");
 	}
 	
@@ -325,43 +415,55 @@ function main() {
 	function elemCost(i) {
 		var m = Number(ptData[i].Mass);
 		var numOwnedNext = elemCts[i]+1;
-		var ccLong = new longNo(1,0);
+		var cc = new longNo(1,0);
 		var rate = 1.1;
 		rate = rate + i*0.01;
-		ccLong.mult(Math.pow(rate,numOwnedNext) * Math.pow(m+1, 2) * (10+i));
-		ccLong.mult(Math.pow((i+1)/4,i));
+		cc = cc.mult(Math.pow(rate,numOwnedNext) * Math.pow(m+1, 2) * (10+i));
+		cc = cc.mult(Math.pow((i+1)/4,i));
 		//console.log(ccLong);
-		if (i==0) {ccLong.mult(0.01);}
-		return ccLong;
+		if (i==0) {cc = cc.mult(0.01);}
+		return cc;
 	}
 	
 	function drawBlackHole() {
-		var tenPows = [-33,-30,-27,-24,-21,-18,-15,-12,-9,-6,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11];
-		var SIprefixes = ["nanoyocto","microyocto", "milliyocto", "yocto", "zepto", "atto", "femto", "pico", "nano", "micro", "milli","milli","milli", "", "", "", "kilo", "kilo", "kilo", "mega", "mega", "mega", "giga", "giga", "giga"];
-		var descriptions = ["Nothing","Nothing","A few subatomic particles","Cloud of subatomic particles", "A few atoms","Pile of atoms","Mass of a virus","Cloud of gas","Mass of a Bacterial Cell","Mass of a grain of sand","Mass of a snowflake","Mass of an ant","Mass of a bumblebee","Mass of a piece of paper","10g","Mass of a newborn puppy","Mass of a small dog","Mass of a human","","Mass of a car"];
-		var massG = totalMass * 1.66054e-30;
+		var tenPows = [-33,-30,-27,-24,-21,-18,-15,-12,-9,-6,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,36,39,42,45,48,51,52];
+		var SIprefixes = ["nanoyocto","microyocto", "milliyocto", "yocto", "zepto", "atto", "femto", "pico", "nano", "micro", "milli","milli","milli", "", "", "", "kilo", "kilo", "kilo", "mega", "mega", "mega", "giga", "giga", "giga", "tera", "tera", "tera", "peta", "peta", "peta", "exa", "exa", "exa", "zetta", "zetta", "zetta", "yotta", "yotta", "yotta", "kiloyotta", "kiloyotta", "kiloyotta", "megayotta", "megayotta", "megayotta", "gigayotta", "terayotta", "petayotta", "exayotta", "zettayotta", "yottayotta", "kiloyottayotta", "megayottayotta", "gigayottayotta"];
+		var descriptions = ["Nothing","A few subatomic particles","Cloud of subatomic particles", "A few atoms","Pile of atoms","Many atoms","Mass of a virus", //picograms
+			"Cloud of gas","Mass of a Bacterial Cell","Mass of a grain of sand","Mass of a snowflake","Mass of an ant","Mass of a bumblebee","Mass of a piece of paper","Mass of a mouse", //10g
+			"Mass of a newborn puppy","Mass of a small dog","Mass of a human","Mass of a golf cart","Mass of a car","Mass of a small airplane","Mass of a 777", //100k kg
+			"Mass of a WWII Destroyer","Mass of an Aircraft Carrier","Mass of the Empire State Building", //100M kg
+			"Mass of the Golden Gate Bridge","Mass of Manhattan", "10^11 kg",
+			"Mass of all the fish on Earth","Annual Human CO2 Emission","Annual Carbon Fixation by Photosynthesis","1 exagram", //10^18g
+			"Mass of a small Asteroid", "Mass of a small Moon", "Mass of a medium Moon", "Mass of a large Asteroid","Mass of a dwarf planet", "Mass of the asteroid belt", "Mass of the Moon", "Mass of Mercury", "Mass of Earth", "Mass of Uranus", "Mass of Saturn", "Mass of Jupiter", "Mass of a Brown Dwarf", "Mass of a Red Dwarf","Mass of the Sun", "Mass of the Pleiades cluster", "Mass of the Milky Way's Black Hole", "10^42 g","Mass of the Milky Way","Mass of the local cluster","10^51 g","Mass of the observable universe"];
+		var massG = totalMass.mult(1.66054e-30);
+		//console.log("massG", massG);
 		var barLength = 0;
-		for (var i=0; i<SIprefixes.length; i++)
-		{
-			if (massG < Math.pow(10, tenPows[i]) || i == SIprefixes.length)
-			{
-				//console.log(i,tenPows[i],massG);				
-				if (tenPows[i]%3 == 0) {var pOff = 3;}
-				else {var pOff = (tenPows[i]+6)%3;}
-				massG = massG / Math.pow(10,tenPows[i]-pOff);
-				if (massG>0) {barLength = (2*(tenPows[i]+30) + blackHoleSize) * Math.log10(massG)/3;}
-				txtBlackHole.text(Math.round(massG*1000)/1000 + " " + SIprefixes[i-1] + "grams");
-				txtBlackHole2.text(descriptions[i-1]);
-				blackHole.attr("r",barLength);
-				var transparencyVal = 0.03*(i+1);
-				blackHole.attr("style","fill:rgba(0,0,0," + transparencyVal + ");");
-				return;
-			}
-		}
+		var pp = massG.exponent*3 + Math.floor(Math.log10(massG.value));
+		var i = tenPows.indexOf(massG.exponent*3);
+		var j = tenPows.indexOf(pp);
+		if (j==-1) {j = i;}
+		//console.log("draw:",pp,i,tenPows[i]);
+		//console.log(i,tenPows[i],massG);	
+		pp -= (pp%3);
+		barLength = (blackHoleSize + (10*(pp+33))) * (massG.value / 1000) + 5 ;
+		//console.log("bar",barLength);
+		txtBlackHole.text(Math.round(massG.value*1000)/1000 + " " + SIprefixes[i] + "grams");
+		txtBlackHole2.text(descriptions[j]);
+		blackHole.attr("r",barLength);
+		var transparencyVal = 0.05 + (i%10)*0.05;
+		var col = "0,0,255,";
+		if (i>=10) {col = "0,255,0,";}
+		if (i>=20) {col = "255,0,0,";}
+		if (i>=30) {col = "255,0,255,";}
+		if (i>=40) {col = "0,0,0,";}
+		//console.log(i, col);
+		blackHole.attr("style","fill:rgba(" + col + transparencyVal + ");");
+		return;
+
 	}
 	
 	function updateUpgradeList() {
-		console.log(ugData);
+		//console.log(ugData);
 		var ugCount = 0;
 		var tmp = [0, 1];
 		for (var i=0; i<ugData.length; i++)
@@ -392,7 +494,8 @@ function main() {
 	}
 	
 	function buyUpgrade(i) {
-		if (totalMass > Number(ugData[i]["cost"]) && ugPurchases[i]==0) {
+		if (totalMass.gte(new longNo(Number(ugData[i]["cost"]),0)) && ugPurchases[i]==0) {
+			console.log(totalMass, new longNo(Number(ugData[i]["cost"]),0));
 			var f = (ugData[i]["factor"].split("|"));
 			var j = (ugData[i]["elemIndex"].split("|"));
 			if (j.length==1){j = Number(j); f = Number(f)}
@@ -423,7 +526,7 @@ function main() {
 				periodicTable[j].selectAll('#mass').text(numFormat(Math.pow(1+elemExpts[j],elemCts[j])*allMult*elemMults[j]*Number(ptData[j]["Mass"])));
 			}
 			else {
-				totalMass = totalMass - Number(ugData[i]["cost"]);
+				totalMass = totalMass.subtract(new longNo(Number(ugData[i]["cost"]),0));
 				console.log(j);
 				if (j.length > 1) {
 					for(var kk=0; kk<j.length; kk++) {
@@ -446,7 +549,7 @@ function main() {
 		for (var i=0; i<elemMults.length; i++)
 		{
 			mps = mps + Math.pow(1+elemExpts[i],elemCts[i])*elemCts[i]*elemMults[i]*Number(ptData[i]["Mass"]);
-			if (elemCts[i]>0) {console.log(Number(ptData[i]["Mass"]));}
+			//if (elemCts[i]>0) {console.log(Number(ptData[i]["Mass"]));}
 		}
 		mps = mps * allMult;
 		for (var i=0; i<elemMults.length; i++)
@@ -467,23 +570,6 @@ function main() {
 				.attr("pct",0);}
 			
 		}
-	}
-
-	
-	function numFormatLong(num) {
-		var preFixes = ["", "K", "M", "B", "T", "q", "Q", "s", "S", "O", "N", "D", "Ud", "Dd", "Td", "qd", "Qd", "sd", "SD","OD","ND","V","Uv"];
-		var retVal = 0;
-		if (num.exp<0) {return numFormat(num.val) + "e" + num.exp;}
-		if (Number(num.exp) == 0) {
-			return numFormat(num.val);
-		}
-		var j=0;
-		if (num.exp/3 < preFixes.length)
-		{
-			j = num.exp/3;
-			return Math.round((100*Number(num.val)))/100 + preFixes[j];
-		}
-		else {return numFormat(num.val) + 'e' + num.exp}
 	}
 	
 	function numFormat(num) {
@@ -515,52 +601,8 @@ function main() {
 		return retVal;
 	}
 	
-	function longNo(value, exponent) {
-		this.val = value;
-		this.exp = exponent;
-		this.mult = function(x) {
-			this.val = this.val*x;
-			while(this.val>1000)
-			{
-				this.val = this.val / 1000;
-				this.exp = this.exp + 3;
-			}
-			while(this.val<1)
-			{
-				this.val = this.val * 1000;
-				this.exp = this.exp - 3;
-			}
-		};
-		//can only add other longNos
-		this.add = function(x) {
-			this.val = this.val + x.val * Math.pow(x.exp - this.exp);
-			while(this.val>1000)
-			{
-				this.val = this.val / 1000;
-				this.exp = this.exp + 3;
-			}
-			while(this.val<1)
-			{
-				this.val = this.val * 1000;
-				this.exp = this.exp - 3;
-			}
-		};
-		this.gte = function(x) {
-			if (this.exp > x.exp) {return true;}
-			else if (this.exp < x.exp) {return false;}
-			else if (this.val >= x.val) {return true;}
-			else {return false;}
-		};
-		this.lte = function(x) {
-			if (this.exp < x.exp) {return true;}
-			else if (this.exp > x.exp) {return false;}
-			else if (this.val <= x.val) {return true;}
-			else {return false;}
-		};
-		this.toFloat = function() {return this.val*Math.pow(10,this.exp);}
-		this.vv = function() {return this.val;}
-		this.ee = function() {return this.exp;}
-	}
+	
 	</script>
 	</body>
 </html>
+
