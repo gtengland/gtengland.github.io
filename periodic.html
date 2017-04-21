@@ -121,7 +121,7 @@
 	var elemPcts = [];
 	var elemExpts = [];
 	var allMult = 1;
-	var devMult = 1;
+	var devMult = 10;
 	//Create SVG element
 	var svg = d3.select("body")
 				.append("svg")
@@ -400,7 +400,7 @@ function main() {
 
 	function toolTip(i) {
 		var xTrans = padding + (wR+rPadding)*(ptData[i].group) + (wR + rPadding) + wR*(ptData[i].width - 1)+ rPadding*(ptData[i].width - 1);
-		var xMPS = allMult * ptData[i].Mass * elemCts[i] * elemMults[i];
+		var xMPS = Math.pow(1+elemExpts[i],elemCts[i])*allMult * ptData[i].Mass * elemCts[i] * elemMults[i];
 		toolTipG.attr("transform", "translate(" + (xTrans) + "," + (hR+rPadding)*ptData[i].row + ")");
 		toolTipT1.text("Total Owned:" + elemCts[i]);
 		toolTipT2.text("Cost:" + elemCost(i).out());
@@ -445,7 +445,7 @@ function main() {
 		//console.log("draw:",pp,i,tenPows[i]);
 		//console.log(i,tenPows[i],massG);	
 		pp -= (pp%3);
-		barLength = (blackHoleSize + (10*(pp+33))) * (massG.value / 1000) + 5 ;
+		barLength = (blackHoleSize + (8*(pp+33))) * (massG.value / 1000) + 5 ;
 		//console.log("bar",barLength);
 		txtBlackHole.text(Math.round(massG.value*1000)/1000 + " " + SIprefixes[i] + "grams");
 		txtBlackHole2.text(descriptions[j]);
