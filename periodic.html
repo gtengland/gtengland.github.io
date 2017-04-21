@@ -368,7 +368,7 @@ function main() {
 }
 	
 	function update(elapsed) {
-		var dM = (mps+1) * ((elapsed-prev_time)/1000);
+		var dM = (mps) * ((elapsed-prev_time)/1000);
 		totalMass = totalMass.add(new longNo(dM,0));
 		//totalMass = totalMass.add(mps * ((elapsed-prev_time)/1000));
 		//console.log(totalMassLong);
